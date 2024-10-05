@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Types\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Using Include="Microsoft.Xna.Framework" />
     <Using Include="Microsoft.Xna.Framework.Graphics" />
     <Using Include="Microsoft.Xna.Framework.Input" />

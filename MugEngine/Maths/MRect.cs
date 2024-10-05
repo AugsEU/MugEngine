@@ -3,30 +3,30 @@
 	/// <summary>
 	/// Rectangle in world space used for colliders
 	/// </summary>
-	struct Rect2f
+	public struct MRect2f
 	{
-		public Rect2f(Vector2 vec1, Vector2 vec2)
+		public MRect2f(Vector2 min, Vector2 max)
 		{
-			mMin = new Vector2(MathF.Min(vec1.X, vec2.X), MathF.Min(vec1.Y, vec2.Y));
-			mMax = new Vector2(MathF.Max(vec1.X, vec2.X), MathF.Max(vec1.Y, vec2.Y));
+			mMin = new Vector2(MathF.Min(min.X, max.X), MathF.Min(min.Y, max.Y));
+			mMax = new Vector2(MathF.Max(min.X, max.X), MathF.Max(min.Y, max.Y));
 		}
 
-		public Rect2f(Rectangle rect)
+		public MRect2f(Rectangle rect)
 		{
 			mMin = new Vector2(rect.X, rect.Y);
 			mMax = new Vector2(rect.X + rect.Width, rect.Y + rect.Height);
 		}
 
-		public Rect2f(Vector2 _min, Texture2D texture)
+		public MRect2f(Vector2 min, Texture2D texture)
 		{
-			mMin = _min;
-			mMax = new Vector2(_min.X + texture.Width, _min.Y + texture.Height);
+			mMin = min;
+			mMax = new Vector2(min.X + texture.Width, min.Y + texture.Height);
 		}
 
-		public Rect2f(Vector2 _min, float width, float height)
+		public MRect2f(Vector2 min, float width, float height)
 		{
-			mMin = _min;
-			mMax = new Vector2(_min.X + width, _min.Y + height);
+			mMin = min;
+			mMax = new Vector2(min.X + width, min.Y + height);
 		}
 
 		public float GetWidth()
@@ -44,17 +44,17 @@
 			return (mMin + mMax) / 2.0f;
 		}
 
-		public static Rect2f operator +(Rect2f a, Rect2f b)
+		public static MRect2f operator +(MRect2f a, MRect2f b)
 		{
 			float minX = Math.Min(a.mMin.X, b.mMin.X);
 			float minY = Math.Min(a.mMin.Y, b.mMin.Y);
 			float maxX = Math.Max(a.mMax.X, b.mMax.X);
 			float maxY = Math.Max(a.mMax.Y, b.mMax.Y);
 
-			return new Rect2f(new Vector2(minX, minY), new Vector2(maxX, maxY));
+			return new MRect2f(new Vector2(minX, minY), new Vector2(maxX, maxY));
 		}
 
-		public static Rect2f operator +(Rect2f rect, Vector2 vec)
+		public static MRect2f operator +(MRect2f rect, Vector2 vec)
 		{
 			rect.mMin += vec;
 			rect.mMax += vec;
