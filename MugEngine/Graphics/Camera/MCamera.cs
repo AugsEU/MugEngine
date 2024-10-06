@@ -1,4 +1,5 @@
-﻿using MugEngine.Types;
+﻿using AridArnold;
+using MugEngine.Types;
 
 namespace MugEngine.Graphics.Camera
 {
@@ -14,6 +15,8 @@ namespace MugEngine.Graphics.Camera
 		Vector2 mViewPortSize;
 
 		Matrix? mMatrixCache;
+
+		MCameraMovementPlayer mCurrentMovement;
 
 		#endregion rMembers
 
@@ -59,6 +62,47 @@ namespace MugEngine.Graphics.Camera
 		public void Update(MUpdateInfo info)
 		{
 			mMatrixCache = CalculateMatrix();
+			
+			if(mCurrentMovement is not null)
+			{
+				mCurrentMovement.Update(info);
+				if(mCurrentMovement.IsFinished())
+				{
+					EndCurrentMovement();
+				}
+			}
+		}
+
+
+
+		/// <summary>
+		/// Make the camera follow movement.
+		/// </summary>
+		public void StartMovement(MCameraMovement movement, float time)
+		{
+			if(mCurrentMovement is not null)
+			{
+				EndCurrentMovement();
+			}
+
+			mCurrentMovement = new MCameraMovementPlayer(movement, time);
+		}
+
+
+
+		/// <summary>
+		/// Immediately end the current movement, jumping to the end.
+		/// </summary>
+		public void EndCurrentMovement()
+		{
+			if (mCurrentMovement is null)
+			{
+				return;
+			}
+
+			mCurrentSpec += mCurrentMovement.GetFinalDelta();
+
+			mCurrentMovement = null;
 		}
 
 		#endregion rUpdate
@@ -106,13 +150,20 @@ namespace MugEngine.Graphics.Camera
 		/// </summary>
 		Matrix CalculateMatrix()
 		{
+			MCameraSpec ourSpec = mCurrentSpec;
+
+			if(mCurrentMovement is not null)
+			{
+				ourSpec += mCurrentMovement.GetSpecDelta();
+			}
+
 			Vector3 centrePoint3 = new Vector3(mViewPortSize / 2.0f, 0.0f);
 
-			Vector3 initDelta = new Vector3(-(int)mCurrentSpec.mPosition.X, -(int)mCurrentSpec.mPosition.Y, 0) - centrePoint3;
+			Vector3 initDelta = new Vector3(-(int)ourSpec.mPosition.X, -(int)ourSpec.mPosition.Y, 0) - centrePoint3;
 
 			return Matrix.CreateTranslation(initDelta) *
-				   Matrix.CreateRotationZ(mCurrentSpec.mRotation) *
-				   Matrix.CreateScale(new Vector3(mCurrentSpec.mZoom, mCurrentSpec.mZoom, 1)) *
+				   Matrix.CreateRotationZ(ourSpec.mRotation) *
+				   Matrix.CreateScale(new Vector3(ourSpec.mZoom, ourSpec.mZoom, 1)) *
 				   Matrix.CreateTranslation(centrePoint3);
 		}
 

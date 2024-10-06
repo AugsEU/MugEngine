@@ -64,6 +64,16 @@ namespace AridArnold
 
 
 		/// <summary>
+		/// Has the timer reached the goal time?
+		/// </summary>
+		public bool IsComplete()
+		{
+			return GetElapsedMs() >= mTotalTime;
+		}
+
+
+
+		/// <summary>
 		/// Jump to 100%
 		/// </summary>
 		public void SetComplete()
