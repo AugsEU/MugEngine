@@ -6,6 +6,33 @@
 	static class MugMath
 	{
 		/// <summary>
+		/// Convert a vector to an integer coordinate
+		/// </summary>
+		/// <param name="vec">Vector to convert</param>
+		/// <returns>Point</returns>
+		public static Point VecToPoint(Vector2 vec)
+		{
+			int px = (int)MathF.Round(vec.X);
+			int py = (int)MathF.Round(vec.Y);
+
+			return new Point(px, py);
+		}
+
+
+
+		/// <summary>
+		/// Convert a point to a vector
+		/// </summary>
+		/// <param name="point">Point to convert</param>
+		/// <returns>Vector</returns>
+		public static Vector2 PointToVec(Point point)
+		{
+			return new Vector2(point.X, point.Y);
+		}
+
+
+
+		/// <summary>
 		/// Cross two vectors
 		/// </summary>
 		/// <param name="a">Vector a</param>

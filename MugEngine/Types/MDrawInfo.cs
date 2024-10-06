@@ -1,4 +1,6 @@
-﻿namespace MugEngine.Types
+﻿using MugEngine.Graphics;
+
+namespace MugEngine.Types
 {
 	/// <summary>
 	/// Info needed to draw
@@ -6,8 +8,7 @@
 	public struct MDrawInfo
 	{
 		public float mDelta;
-		public SpriteBatch mSpriteBatch;
-		public GraphicsDeviceManager mGraphics;
+		public MCanvas2D mCanvas;
 		public GraphicsDevice mDevice;
 	}
 }
