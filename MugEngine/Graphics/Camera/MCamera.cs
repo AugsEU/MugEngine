@@ -12,12 +12,11 @@ namespace MugEngine.Graphics.Camera
 		#region rMembers
 
 		MCameraSpec mCurrentSpec;
-		MSpriteBatchOptions mSpriteBatchOptions;
 		Vector2 mViewPortSize;
 
 		Matrix? mMatrixCache;
 
-		MCameraMovementPlayer mCurrentMovement;
+		List<MCameraMovementPlayer> mMovements;
 
 		#endregion rMembers
 
@@ -33,7 +32,6 @@ namespace MugEngine.Graphics.Camera
 		public MCamera(Vector2 viewportSize)
 		{
 			mCurrentSpec = new MCameraSpec();
-			mSpriteBatchOptions = new MSpriteBatchOptions();
 			mViewPortSize = viewportSize;
 		}
 
@@ -45,7 +43,6 @@ namespace MugEngine.Graphics.Camera
 		public MCamera(Vector2 viewportSize, MSpriteBatchOptions sbSettings)
 		{
 			mCurrentSpec = new MCameraSpec();
-			mSpriteBatchOptions = sbSettings;
 			mViewPortSize = viewportSize;
 		}
 
@@ -63,13 +60,16 @@ namespace MugEngine.Graphics.Camera
 		public void Update(MUpdateInfo info)
 		{
 			mMatrixCache = CalculateMatrix();
-			
-			if(mCurrentMovement is not null)
+
+			for(int i = 0; i < mMovements.Count; i++)
 			{
-				mCurrentMovement.Update(info);
-				if(mCurrentMovement.IsFinished())
+				MCameraMovementPlayer movement = mMovements[i];
+				movement.Update(info);
+
+				if (movement.IsFinished())
 				{
-					EndCurrentMovement();
+					mCurrentSpec += movement.GetFinalDelta();
+					mMovements.RemoveAt(i--);
 				}
 			}
 		}
@@ -81,29 +81,7 @@ namespace MugEngine.Graphics.Camera
 		/// </summary>
 		public void StartMovement(MCameraMovement movement, float time)
 		{
-			if(mCurrentMovement is not null)
-			{
-				EndCurrentMovement();
-			}
-
-			mCurrentMovement = new MCameraMovementPlayer(movement, time);
-		}
-
-
-
-		/// <summary>
-		/// Immediately end the current movement, jumping to the end.
-		/// </summary>
-		public void EndCurrentMovement()
-		{
-			if (mCurrentMovement is null)
-			{
-				return;
-			}
-
-			mCurrentSpec += mCurrentMovement.GetFinalDelta();
-
-			mCurrentMovement = null;
+			mMovements.Add(new MCameraMovementPlayer(movement, time));
 		}
 
 		#endregion rUpdate
@@ -115,47 +93,15 @@ namespace MugEngine.Graphics.Camera
 		#region rDraw
 
 		/// <summary>
-		/// Start the sprite batch
-		/// </summary>
-		public void StartSpriteBatch(SpriteBatch spriteBatch)
-		{
-			if(!mMatrixCache.HasValue)
-			{
-				mMatrixCache = CalculateMatrix();
-			}
-
-			spriteBatch.Begin(mSpriteBatchOptions.mSortMode,
-									mSpriteBatchOptions.mBlend,
-									mSpriteBatchOptions.mSamplerState,
-									mSpriteBatchOptions.mDepthStencilState,
-									mSpriteBatchOptions.mRasterizerState,
-									null,
-									mMatrixCache.Value);
-		}
-
-
-
-		/// <summary>
-		/// End the sprite batch
-		/// </summary>
-		/// <param name="info"></param>
-		public void EndSpriteBatch(SpriteBatch spriteBatch)
-		{
-			spriteBatch.End();
-		}
-
-
-
-		/// <summary>
 		/// Caulate perspective matrix.
 		/// </summary>
 		Matrix CalculateMatrix()
 		{
 			MCameraSpec ourSpec = mCurrentSpec;
 
-			if(mCurrentMovement is not null)
+			foreach(MCameraMovementPlayer movement in mMovements)
 			{
-				ourSpec += mCurrentMovement.GetSpecDelta();
+				ourSpec += movement.GetSpecDelta();
 			}
 
 			Vector3 centrePoint3 = new Vector3(mViewPortSize / 2.0f, 0.0f);
@@ -175,16 +121,6 @@ namespace MugEngine.Graphics.Camera
 
 
 		#region rUtil
-
-		/// <summary>
-		/// Set sprite batch options
-		/// </summary>
-		public void SetOptions(MSpriteBatchOptions options)
-		{
-			mSpriteBatchOptions = options;
-		}
-
-
 
 		/// <summary>
 		/// Get the current spec
