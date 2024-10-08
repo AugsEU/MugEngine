@@ -128,6 +128,17 @@ namespace MugEngine.Graphics
 			spriteBatch.DrawString(font, text, drawPosition, color, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, depth);
 		}
 
+		public static void MugStartSpriteBatch(this SpriteBatch spriteBatch, MSpriteBatchOptions options, Matrix viewPort)
+		{
+			spriteBatch.Begin(options.mSortMode,
+								options.mBlend,
+								options.mSamplerState,
+								options.mDepthStencilState,
+								options.mRasterizerState,
+								options.mEffect,
+								viewPort);
+		}
+
 		#endregion rRender
 
 

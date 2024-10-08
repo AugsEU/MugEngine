@@ -95,7 +95,7 @@ namespace MugEngine.Graphics.Camera
 		/// <summary>
 		/// Caulate perspective matrix.
 		/// </summary>
-		Matrix CalculateMatrix()
+		public Matrix CalculateMatrix()
 		{
 			MCameraSpec ourSpec = mCurrentSpec;
 

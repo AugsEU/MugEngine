@@ -1,10 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using MugEngine.Collections;
-using MugEngine.Graphics.Camera;
+﻿using MugEngine.Graphics.Camera;
 using MugEngine.Maths;
 using MugEngine.Types;
-using System.Reflection.Emit;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace MugEngine.Graphics
 {
@@ -13,19 +9,9 @@ namespace MugEngine.Graphics
 	/// </summary>
 	public class MCanvas2D : IMUpdate
 	{
-		#region rConstants
-
-		const int BASE_DRAW_COMMANDS = 512; // Reserved size for each layer.
-
-		#endregion rConstants
-
-
-
-
-
 		#region rMembers
 
-		List<MStructArray<MDrawCommand>> mDrawCommandLayers = new List<MStructArray<MDrawCommand>>(BASE_DRAW_COMMANDS);
+		List<MCanvasLayer> mLayers = new List<MCanvasLayer>();
 		RenderTarget2D mRenderTarget;
 
 		MCamera mCamera;
@@ -49,9 +35,9 @@ namespace MugEngine.Graphics
 
 			mCamera = new MCamera(MugMath.PointToVec(resolution));
 
-			while (mDrawCommandLayers.Count < numLayers)
+			while (mLayers.Count < numLayers)
 			{
-				mDrawCommandLayers.Add(new MStructArray<MDrawCommand>(BASE_DRAW_COMMANDS));
+				mLayers.Add(new MCanvasLayer());
 			}
 		}
 
@@ -84,11 +70,6 @@ namespace MugEngine.Graphics
 		/// </summary>
 		public MDrawInfo BeginDraw(MDrawInfo info)
 		{
-			for(int i = 0; i < mDrawCommandLayers.Count; i++)
-			{
-				mDrawCommandLayers[i].Clear();
-			}
-
 			MDrawInfo thisInfo = new MDrawInfo();
 			thisInfo.mDelta = info.mDelta;
 			thisInfo.mCanvas = this;
@@ -107,38 +88,12 @@ namespace MugEngine.Graphics
 			info.mDevice.SetRenderTarget(mRenderTarget);
 			info.mDevice.Clear(Color.Black);
 
-			for (int i = 0; i < mDrawCommandLayers.Count; i++)
+			Matrix viewPort = mCamera.CalculateMatrix();
+
+			for (int i = 0; i < mLayers.Count; i++)
 			{
-				DrawLayer(mDrawCommandLayers[i]);
+				mLayers[i].DrawLayer(mBatcher, viewPort);
 			}
-		}
-
-
-
-		/// <summary>
-		/// Draw a single layer.
-		/// </summary>
-		private void DrawLayer(MStructArray<MDrawCommand> layer)
-		{
-			mCamera.StartSpriteBatch(mBatcher);
-
-			for(int c = 0; c < layer.Count; c++)
-			{
-				MDrawCommand cmd = layer[c];
-
-				if(cmd.IsStringCommand())
-				{
-					SpriteFont font = (SpriteFont)cmd.mTextureInfo;
-					mBatcher.DrawString(font, cmd.mText, cmd.mPosition, cmd.mColor, cmd.mRotation, cmd.mOrigin, cmd.mScale, cmd.mEffects, 0.0f);
-				}
-				else
-				{
-					Texture2D texture = (Texture2D)cmd.mTextureInfo;
-					mBatcher.Draw(texture, cmd.mPosition, cmd.mSourceRectangle, cmd.mColor, cmd.mRotation, cmd.mOrigin, cmd.mScale, cmd.mEffects, 0.0f);
-				}
-			}
-
-			mCamera.EndSpriteBatch(mBatcher);
 		}
 
 		#endregion rDraw
@@ -149,50 +104,59 @@ namespace MugEngine.Graphics
 
 		#region rCommands
 
+
 		/// <summary>
-		/// Queue a texture draw.
+		/// Draw a texture to the canvas
 		/// </summary>
 		public void DrawTexture(Texture2D texture, Vector2 position, Rectangle? sourceRect, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effect, int layer)
 		{
-			MDrawCommand cmd = new MDrawCommand(texture, position, sourceRect, color, rotation, origin, scale, effect);
-			mDrawCommandLayers[layer].Add(cmd);
+			MTextureDrawData data = new MTextureDrawData(texture, position, sourceRect, color, rotation, origin, scale, effect);
+			mLayers[layer].DrawTexture(ref data);
 		}
 
 
 
 		/// <summary>
-		/// Queue a texture draw.
-		/// </summary>
-		public void DrawTexture<T>(Texture2D texture, Vector2 position, Rectangle? sourceRect, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effect, T layer) where T : Enum
-		{
-			int layerInt = (int)(object)layer;
-
-			DrawTexture(texture, position, sourceRect, color, rotation, origin, scale, effect, layerInt);
-		}
-
-
-
-		/// <summary>
-		/// Queue a string draw.
+		/// Draw a string to the canvas
 		/// </summary>
 		public void DrawString(SpriteFont font, string text, Vector2 position, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effect, int layer)
 		{
-			MDrawCommand cmd = new MDrawCommand(font, text, position, color, rotation, origin, scale, effect);
-			mDrawCommandLayers[layer].Add(cmd);
-		}
-
-
-
-		/// <summary>
-		/// Queue a string draw.
-		/// </summary>
-		public void DrawString<T>(SpriteFont font, string text, Vector2 position, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effect, T layer) where T : Enum
-		{
-			int layerInt = (int)(object)layer;
-
-			DrawString(font, text, position, color, rotation, origin, scale, effect, layerInt);
+			MStringDrawData data = new MStringDrawData(font, text, position, color, rotation, origin, scale, effect);
+			mLayers[layer].DrawString(ref data);
 		}
 
 		#endregion rCommands
+
+
+
+
+
+		#region rTextureHelpers
+
+		/// <summary>
+		/// Simple texture draw
+		/// </summary>
+		public void DrawTexture(Texture2D texture, Vector2 position, int layer = 0)
+		{
+			DrawTexture(texture, position, null, Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, layer);
+		}
+
+		#endregion rTextureHelpers
+
+
+
+
+
+		#region rStringHelpers
+
+		/// <summary>
+		/// Simple string draw
+		/// </summary>
+		public void DrawString(SpriteFont font, string text, Vector2 position, Color color, int layer = 0)
+		{
+			DrawString(font, text, position, color, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, layer);
+		}
+
+		#endregion rStringHelpers
 	}
 }
