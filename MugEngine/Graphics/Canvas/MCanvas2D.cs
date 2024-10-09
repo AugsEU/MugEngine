@@ -1,8 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using MugEngine.Graphics.Camera;
-using MugEngine.Maths;
+﻿using MugEngine.Maths;
 using MugEngine.Types;
-using System.Reflection.Emit;
 
 namespace MugEngine.Graphics
 {
@@ -44,7 +41,7 @@ namespace MugEngine.Graphics
 				mLayers.Add(new MCanvasLayer());
 			}
 
-			if(sDummyTexture is null)
+			if (sDummyTexture is null)
 			{
 				sDummyTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
 				Color[] data = new Color[] { Color.White };

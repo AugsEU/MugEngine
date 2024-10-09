@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Reflection.Metadata.Ecma335;
 
 namespace MugEngine.Collections
 {
@@ -53,7 +52,7 @@ namespace MugEngine.Collections
 
 		public void Add(T item)
 		{
-			if(mData.Length <= mHead)
+			if (mData.Length <= mHead)
 			{
 				GrowList();
 			}

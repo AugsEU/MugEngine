@@ -1,4 +1,4 @@
-﻿namespace MugEngine.Graphics.Camera
+﻿namespace MugEngine.Graphics
 {
 	/// <summary>
 	/// Struct to specify the camera parameters

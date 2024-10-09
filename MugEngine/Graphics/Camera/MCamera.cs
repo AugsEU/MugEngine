@@ -1,8 +1,6 @@
-﻿using AridArnold;
-using Microsoft.Xna.Framework.Graphics;
-using MugEngine.Types;
+﻿using MugEngine.Types;
 
-namespace MugEngine.Graphics.Camera
+namespace MugEngine.Graphics
 {
 	/// <summary>
 	/// Camera class. Handles all camera positioning.
@@ -61,7 +59,7 @@ namespace MugEngine.Graphics.Camera
 		{
 			mMatrixCache = CalculateMatrix();
 
-			for(int i = 0; i < mMovements.Count; i++)
+			for (int i = 0; i < mMovements.Count; i++)
 			{
 				MCameraMovementPlayer movement = mMovements[i];
 				movement.Update(info);
@@ -99,7 +97,7 @@ namespace MugEngine.Graphics.Camera
 		{
 			MCameraSpec ourSpec = mCurrentSpec;
 
-			foreach(MCameraMovementPlayer movement in mMovements)
+			foreach (MCameraMovementPlayer movement in mMovements)
 			{
 				ourSpec += movement.GetSpecDelta();
 			}

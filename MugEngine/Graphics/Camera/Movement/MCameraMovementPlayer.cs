@@ -1,7 +1,7 @@
 ﻿using AridArnold;
 using MugEngine.Types;
 
-namespace MugEngine.Graphics.Camera
+namespace MugEngine.Graphics
 {
 	/// <summary>
 	/// Class that handles playing camera movement

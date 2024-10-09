@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace MugEngine.Graphics
+﻿namespace MugEngine.Graphics
 {
 	/// <summary>
 	/// Options to start a spritebatch.

@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace MugEngine.Graphics
+﻿namespace MugEngine.Graphics
 {
 	struct MSpriteBatchBookmark
 	{
@@ -29,7 +27,7 @@ namespace MugEngine.Graphics
 		{
 			int count = GetCount();
 
-			if(count == 0)
+			if (count == 0)
 			{
 				return;
 			}
@@ -47,7 +45,7 @@ namespace MugEngine.Graphics
 					sb.MugStartSpriteBatch(mBookmarks[bookmarkIdx].mOptions, viewPort);
 					bookmarkIdx++;
 
-					if(bookmarkIdx == mBookmarks.Count)
+					if (bookmarkIdx == mBookmarks.Count)
 					{
 						bookmarkIdx = -1;
 					}
@@ -64,7 +62,7 @@ namespace MugEngine.Graphics
 		{
 			int count = GetCount();
 
-			if(count == 0)
+			if (count == 0)
 			{
 				mStartBatchOptions = options;
 			}

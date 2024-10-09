@@ -24,9 +24,9 @@ namespace MugEngine.Graphics
 			base.Clear();
 		}
 
-		protected override  void DrawIndex(SpriteBatch sb, int index)
+		protected override void DrawIndex(SpriteBatch sb, int index)
 		{
-			for(int i = 0; i < mDatas.Count; i++)
+			for (int i = 0; i < mDatas.Count; i++)
 			{
 				MStringDrawData data = mDatas[i];
 				sb.DrawString(data.mFont,

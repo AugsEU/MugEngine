@@ -1,9 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using MugEngine.Maths;
+﻿using MugEngine.Maths;
 
-namespace MugEngine.Graphics.Camera
+namespace MugEngine.Graphics
 {
-    public class MCameraShake : MCameraMovement
+	public class MCameraShake : MCameraMovement
 	{
 		IMEase mDiminishFunc;
 		Vector2 mAmplitude;
