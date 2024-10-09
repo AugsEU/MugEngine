@@ -39,6 +39,15 @@
 			return Math.Abs(mMax.Y - mMin.Y);
 		}
 
+		public Vector2 GetSize()
+		{
+			Vector2 size = mMax - mMin;
+			size.X = MathF.Abs(size.X);
+			size.Y = MathF.Abs(size.Y);
+
+			return size;
+		}
+
 		public Vector2 GetCentre()
 		{
 			return (mMin + mMax) / 2.0f;

@@ -7,6 +7,22 @@
 	public static class MugTextureUtil
 	{
 		/// <summary>
+		/// Start a sprite batch using options struct
+		/// </summary>
+		public static void MugStartSpriteBatch(this SpriteBatch spriteBatch, MSpriteBatchOptions options, Matrix viewPort)
+		{
+			spriteBatch.Begin(options.mSortMode,
+								options.mBlend,
+								options.mSamplerState,
+								options.mDepthStencilState,
+								options.mRasterizerState,
+								options.mEffect,
+								viewPort);
+		}
+
+
+
+		/// <summary>
 		/// Memcpy a texture
 		/// </summary>
 		public static void MemCopyTexture(GraphicsDevice graphics, Texture2D source, Texture2D dest)
