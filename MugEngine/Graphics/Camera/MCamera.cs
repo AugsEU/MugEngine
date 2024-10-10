@@ -12,8 +12,6 @@ namespace MugEngine.Graphics
 		MCameraSpec mCurrentSpec;
 		Vector2 mViewPortSize;
 
-		Matrix? mMatrixCache;
-
 		List<MCameraMovementPlayer> mMovements;
 
 		#endregion rMembers
@@ -57,8 +55,6 @@ namespace MugEngine.Graphics
 		/// </summary>
 		public void Update(MUpdateInfo info)
 		{
-			mMatrixCache = CalculateMatrix();
-
 			for (int i = 0; i < mMovements.Count; i++)
 			{
 				MCameraMovementPlayer movement = mMovements[i];
