@@ -9,6 +9,5 @@ namespace MugEngine.Types
 	{
 		public float mDelta;
 		public MCanvas2D mCanvas;
-		public GraphicsDevice mDevice;
 	}
 }

@@ -1,8 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using MugEngine.Core;
+﻿using MugEngine.Core;
 using MugEngine.Maths;
 using MugEngine.Types;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MugEngine.Graphics
 {
@@ -23,13 +21,13 @@ namespace MugEngine.Graphics
 		#region rMembers
 
 		static Texture2D sDummyTexture = null;
+		static bool sCurrentlyDrawing = false;
 
 		RenderTarget2D mRenderTarget;
 
 		MCamera mCamera;
 		Matrix mCurrentViewport;
 		SpriteBatch mBatcher;
-		bool mCurrentlyDrawing;
 		MSpriteBatchOptions mCurrentOptions;
 
 		float mLayerOffset;
@@ -47,23 +45,51 @@ namespace MugEngine.Graphics
 		/// <summary>
 		/// Create a canvas on which to draw.
 		/// </summary>
-		public MCanvas2D(Point resolution, GraphicsDeviceManager graphics, int numLayers)
+		public MCanvas2D(Point resolution)
 		{
-			mRenderTarget = new RenderTarget2D(graphics.GraphicsDevice, resolution.X, resolution.Y);
-			mBatcher = new SpriteBatch(graphics.GraphicsDevice);
-			mCurrentlyDrawing = false;
+			GraphicsDevice device = MugCore.I.GetDevice();
 
+			mRenderTarget = new RenderTarget2D(device, resolution.X, resolution.Y);
 			mCamera = new MCamera(MugMath.PointToVec(resolution));
 
-			mDivLayerCount = 1.0f / numLayers;
-			mLayerOffset = 0.0f;
+			InitCanvas(device);
+		}
+
+
+
+		/// <summary>
+		/// Create a canvas on which to draw.
+		/// This canvas is a "null canvas" meaning it is rendering to the back buffer.
+		/// </summary>
+		public MCanvas2D()
+		{
+			GraphicsDevice device = MugCore.I.GetDevice();
+
+			mRenderTarget = null;
+			mCamera = new MCamera(Vector2.Zero);
+
+			InitCanvas(device);
+		}
+
+
+
+		/// <summary>
+		/// Init the canvas
+		/// </summary>
+		private void InitCanvas(GraphicsDevice device)
+		{
+			mBatcher = new SpriteBatch(device);
 
 			if (sDummyTexture is null)
 			{
-				sDummyTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
+				sDummyTexture = new Texture2D(device, 1, 1);
 				Color[] data = new Color[] { Color.White };
 				sDummyTexture.SetData(data);
 			}
+
+
+			mDivLayerCount = 1.0f / MugCore.I.GetNumLayers();
+			mLayerOffset = 0.0f;
 		}
 
 		#endregion rInit
@@ -93,20 +119,24 @@ namespace MugEngine.Graphics
 		/// Call to ready the canvas for drawing.
 		/// Returns draw information for drawing to this specific canvas.
 		/// </summary>
-		public MDrawInfo BeginDraw(MDrawInfo info)
+		public MDrawInfo BeginDraw(float delta)
 		{
+			MugDebug.Assert(!sCurrentlyDrawing, "Cannot start drawing while another canvas is drawing.");
+
+			GraphicsDevice device = MugCore.I.GetDevice();
+
 			MDrawInfo thisInfo = new MDrawInfo();
-			thisInfo.mDelta = info.mDelta;
+			thisInfo.mDelta = delta;
 			thisInfo.mCanvas = this;
 
-			info.mDevice.SetRenderTarget(mRenderTarget);
-			info.mDevice.Clear(Color.Black);
+			device.SetRenderTarget(mRenderTarget);
+			device.Clear(Color.Black);
 
 			mCurrentViewport = mCamera.CalculateMatrix();
 			mLayerOffset = 0.0f;
 
 			mBatcher.MugStartSpriteBatch(mCurrentOptions, mCurrentViewport);
-			mCurrentlyDrawing = true;
+			sCurrentlyDrawing = true;
 
 			return thisInfo;
 		}
@@ -117,11 +147,11 @@ namespace MugEngine.Graphics
 		/// Draws everything that was added to the canvas.
 		/// Everything added after this is not going to be drawn.
 		/// </summary>
-		public void EndDraw(MDrawInfo info)
+		public void EndDraw()
 		{
-			MugDebug.Assert(mCurrentlyDrawing, "Ending draw before we started.");
+			MugDebug.Assert(sCurrentlyDrawing, "Ending draw before we started.");
 			mBatcher.End();
-			mCurrentlyDrawing = false;
+			sCurrentlyDrawing = false;
 		}
 
 		#endregion rDraw
@@ -133,35 +163,30 @@ namespace MugEngine.Graphics
 		#region rUtil
 
 		/// <summary>
-		/// Set new spritebatch options.
-		/// Will always restart the spritebatcher
+		/// Get the output that we can draw.
 		/// </summary>
-		public void SetOptions(MSpriteBatchOptions options)
+		public Texture2D GetOutput()
 		{
-			mCurrentOptions = options;
-
-			if (mCurrentlyDrawing)
-			{
-				mBatcher.End();
-				mBatcher.MugStartSpriteBatch(mCurrentOptions, mCurrentViewport);
-			}
+			return mRenderTarget;
 		}
 
 
 
 		/// <summary>
-		/// Bind an effect. Will apply to all things drawn.
-		/// Will always restart the sprite batch.
+		/// Get the size of the render target
 		/// </summary>
-		public void BindEffect(Effect effect)
+		public Point GetSize()
 		{
-			mCurrentOptions.mEffect = effect;
-
-			if(mCurrentlyDrawing)
+			// Simple case
+			if (mRenderTarget is not null)
 			{
-				mBatcher.End();
-				mBatcher.MugStartSpriteBatch(mCurrentOptions, mCurrentViewport);
+				return new Point(mRenderTarget.Width, mRenderTarget.Height);
 			}
+
+			// Null means we are rendering to the back buffer.
+			Viewport vp = MugCore.I.GetDevice().Viewport;
+
+			return new Point(vp.Width, vp.Height);
 		}
 
 
@@ -186,6 +211,46 @@ namespace MugEngine.Graphics
 
 
 
+		#region rOptions
+
+		/// <summary>
+		/// Set new spritebatch options.
+		/// Will always restart the spritebatcher
+		/// </summary>
+		public void SetOptions(MSpriteBatchOptions options)
+		{
+			mCurrentOptions = options;
+
+			if (sCurrentlyDrawing)
+			{
+				mBatcher.End();
+				mBatcher.MugStartSpriteBatch(mCurrentOptions, mCurrentViewport);
+			}
+		}
+
+
+
+		/// <summary>
+		/// Bind an effect. Will apply to all things drawn.
+		/// Will always restart the sprite batch.
+		/// </summary>
+		public void BindEffect(Effect effect)
+		{
+			mCurrentOptions.mEffect = effect;
+
+			if (sCurrentlyDrawing)
+			{
+				mBatcher.End();
+				mBatcher.MugStartSpriteBatch(mCurrentOptions, mCurrentViewport);
+			}
+		}
+
+		#endregion rOptions
+
+
+
+
+
 		#region rTexture
 
 		/// <summary>
@@ -195,6 +260,18 @@ namespace MugEngine.Graphics
 		{
 			mBatcher.Draw(texture, position, sourceRect, color, rotation, origin, scale, effect, GetDepth(layer));
 		}
+
+
+
+		/// <summary>
+		/// Draw a texture to the canvas
+		/// </summary>
+		public void DrawTexture(Texture2D texture, Rectangle destRectangle, Rectangle? sourceRect, Color color, float rotation, Vector2 origin, SpriteEffects effect, int layer)
+		{
+			mBatcher.Draw(texture, destRectangle, sourceRect, color, rotation, origin, effect, GetDepth(layer));
+		}
+
+
 
 		/// <summary>
 		/// Simple texture draw
@@ -233,6 +310,17 @@ namespace MugEngine.Graphics
 		public void DrawTexture(Texture2D texture, Vector2 position, Color color, int layer = 0)
 		{
 			DrawTexture(texture, position, null, color, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, layer);
+		}
+
+
+
+
+		/// <summary>
+		/// Draw a texture to the canvas
+		/// </summary>
+		public void DrawTexture(Texture2D texture, Rectangle destRectangle, int layer)
+		{
+			mBatcher.Draw(texture, destRectangle, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GetDepth(layer));
 		}
 
 		#endregion rTexture

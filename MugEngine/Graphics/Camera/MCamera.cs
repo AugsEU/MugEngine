@@ -29,6 +29,8 @@ namespace MugEngine.Graphics
 		{
 			mCurrentSpec = new MCameraSpec();
 			mViewPortSize = viewportSize;
+
+			mMovements = new List<MCameraMovementPlayer>();
 		}
 
 
