@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\LDtkMonogame\LDtk\LDtk.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Microsoft.Xna.Framework" />
     <Using Include="Microsoft.Xna.Framework.Graphics" />
     <Using Include="Microsoft.Xna.Framework.Input" />

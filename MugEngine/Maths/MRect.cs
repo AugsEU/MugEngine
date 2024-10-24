@@ -29,6 +29,12 @@
 			mMax = new Vector2(min.X + width, min.Y + height);
 		}
 
+		public MRect2f(float x, float y, float width, float height)
+		{
+			mMin = new Vector2(x,y);
+			mMax = new Vector2(x + width, y + height);
+		}
+
 		public float GetWidth()
 		{
 			return Math.Abs(mMax.X - mMin.X);

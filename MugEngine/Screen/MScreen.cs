@@ -9,6 +9,7 @@ namespace MugEngine
 	{
 		#region rMembers
 
+		Point mResolution;
 		protected MCanvas2D mCanvas;
 
 		#endregion rMembers
@@ -22,9 +23,9 @@ namespace MugEngine
 		/// <summary>
 		/// Create screen
 		/// </summary>
-		public MScreen()
+		public MScreen(Point resolution)
 		{
-			mCanvas = new MCanvas2D(MugCore.I.GetScreenResolution());
+			mCanvas = new MCanvas2D(resolution);
 		}
 
 

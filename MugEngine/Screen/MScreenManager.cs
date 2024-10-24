@@ -29,7 +29,7 @@ namespace MugEngine.Screen
 		/// Load a screens of a specific types.
 		/// Screens must be registered here to work.
 		/// </summary>
-		public void AddScreenTypes(params Type[] screenTypes)
+		public void AddScreenTypes(Point resolution, params Type[] screenTypes)
 		{
 			if(mActiveScreen is not null)
 			{
@@ -43,7 +43,7 @@ namespace MugEngine.Screen
 					throw new Exception("Invalid screen type.");
 				}
 				
-				MScreen? screen = Activator.CreateInstance(type) as MScreen;
+				MScreen? screen = Activator.CreateInstance(type, resolution) as MScreen;
 
 				if(screen is null)
 				{

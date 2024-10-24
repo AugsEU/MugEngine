@@ -34,7 +34,7 @@ namespace MugEngine.Core
 		public void InitEngine(MugEngineSettings settings)
 		{
 			mSettings = settings;
-			MScreenManager.I.AddScreenTypes(settings.mScreenTypes);
+			MScreenManager.I.AddScreenTypes(settings.mResolution, settings.mScreenTypes);
 			MScreenManager.I.LoadScreens(settings.mStartScreen);
 
 			mBackBufferCanvas = new MCanvas2D();
@@ -113,16 +113,6 @@ namespace MugEngine.Core
 		public int GetNumLayers()
 		{
 			return mSettings.mNumLayers;
-		}
-
-
-
-		/// <summary>
-		/// Get resolution of screens
-		/// </summary>
-		public Point GetScreenResolution()
-		{
-			return mSettings.mResolution;
 		}
 
 		#endregion rAccess

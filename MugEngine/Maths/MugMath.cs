@@ -1,10 +1,14 @@
-﻿namespace MugEngine.Maths
+﻿using MugEngine.Types;
+
+namespace MugEngine.Maths
 {
 	/// <summary>
 	/// Math utility functions
 	/// </summary>
 	static class MugMath
 	{
+		#region rVector
+
 		/// <summary>
 		/// Convert a vector to an integer coordinate
 		/// </summary>
@@ -70,6 +74,16 @@
 
 
 		/// <summary>
+		/// Rotate vector clockwise
+		/// </summary>
+		public static Vector2 RotateDeg(Vector2 a, float angle)
+		{
+			return Rotate(a, DegToRad(angle));
+		}
+
+
+
+		/// <summary>
 		/// Lerp two vectors
 		/// </summary>
 		public static Vector2 Lerp(Vector2 p1, Vector2 p2, float t)
@@ -79,10 +93,14 @@
 
 
 
+		/// <summary>
+		/// Project V2 to V3
+		/// </summary>
 		public static Vector3 ToVec3(Vector2 vec)
 		{
 			return new Vector3(vec, 0.0f);
 		}
+
 
 
 		/// <summary>
@@ -97,6 +115,62 @@
 		}
 
 
+
+		/// <summary>
+		/// Round a float to an int.
+		/// </summary>
+		public static Vector2 Round(Vector2 v)
+		{
+			return new Vector2(MathF.Round(v.X), MathF.Round(v.Y));
+		}
+
+
+
+		/// <summary>
+		/// Reflect vector along normal
+		/// </summary>
+		public static Vector2 Reflect(Vector2 vec, Vector2 normal)
+		{
+			return vec - 2.0f * Vector2.Dot(vec, normal) * normal;
+		}
+
+
+
+		/// <summary>
+		/// Reflect vector along normal and centre of reflection
+		/// </summary>
+		public static Vector2 Reflect(Vector2 vec, Vector2 normal, Vector2 centre)
+		{
+			vec -= centre;
+			return vec - 2.0f * Vector2.Dot(vec, normal) * normal + centre;
+		}
+
+
+
+		/// <summary>
+		/// Truncate annoying float stuff
+		/// </summary>
+		public static Vector2 TruncateSmall(Vector2 a)
+		{
+			const float THRESH = 0.000001f;
+			if (-THRESH < a.X && a.X < THRESH)
+			{
+				a.X = 0.0f;
+			}
+			else if (-THRESH < a.Y && a.Y < THRESH)
+			{
+				a.Y = 0.0f;
+			}
+
+			return a;
+		}
+
+		#endregion rVector
+
+
+
+
+		#region rColor
 
 		/// <summary>
 		/// Lerp two colours
@@ -114,15 +188,13 @@
 			return new Color((byte)R, (byte)G, (byte)B);
 		}
 
+		#endregion rColor
 
-		/// <summary>
-		/// Rotate vector clockwise
-		/// </summary>
-		public static Vector2 RotateDeg(Vector2 a, float angle)
-		{
-			return Rotate(a, DegToRad(angle));
-		}
 
+
+
+
+		#region rNumber
 
 		/// <summary>
 		/// Rotate vector clockwise
@@ -180,47 +252,11 @@
 
 
 		/// <summary>
-		/// Sine-wave like function that goes from 0 to 1 and repeats every unit. Starts at 0
+		/// Round a float to an int.
 		/// </summary>
-		/// <param name="t"></param>
-		/// <returns></returns>
-		public static float UnitWave(float t)
+		public static int Round(float f)
 		{
-			t *= 4.0f;
-			t += 1.0f;
-			t %= 4.0f;
-			t -= 2.0f;
-			t *= 2.0f - MathF.Abs(t);
-			t += 1.0f;
-			t *= 0.5f;
-			return t;
-		}
-
-
-
-		/// <summary>
-		/// Function that goes smoothly from 0 to 1
-		/// </summary>
-		public static float SmoothZeroToOne(float t)
-		{
-			t *= 2.0f;
-			t -= 1.0f;
-			t *= 2.0f - MathF.Abs(t);
-			t += 1.0f;
-			t *= 0.5f;
-			return t;
-		}
-
-
-		/// <summary>
-		/// Goes from 0 to 1, but starts sharp.
-		/// </summary>
-		public static float LeapZeroToSmoothOne(float t)
-		{
-			t -= 1.0f;
-			t *= -t;
-			t += 1.0f;
-			return t;
+			return (int)MathF.Round(f);
 		}
 
 
@@ -258,52 +294,6 @@
 
 
 		/// <summary>
-		/// Round a float to an int.
-		/// </summary>
-		public static int Round(float f)
-		{
-			return (int)MathF.Round(f);
-		}
-
-
-
-		/// <summary>
-		/// Round a float to an int.
-		/// </summary>
-		public static Vector2 Round(Vector2 v)
-		{
-			return new Vector2(MathF.Round(v.X), MathF.Round(v.Y));
-		}
-
-
-		/// <summary>
-		/// Counts the number of bits which are set
-		/// </summary>
-		public static UInt32 BitCountI32(UInt32 i)
-		{
-			i = i - ((i >> 1) & 0x55555555);                // add pairs of bits
-			i = (i & 0x33333333) + ((i >> 2) & 0x33333333); // quads
-			i = (i + (i >> 4)) & 0x0F0F0F0F;                // groups of 8
-			return (i * 0x01010101) >> 24;                  // horizontal sum of bytes
-		}
-
-
-
-		/// <summary>
-		/// Get adjacent points.
-		/// </summary>
-		public static List<Point> GetAdjacentPoints(Point point)
-		{
-			List<Point> returnVal = new List<Point>();
-			returnVal.Add(new Point(point.X + 1, point.Y));
-			returnVal.Add(new Point(point.X - 1, point.Y));
-			returnVal.Add(new Point(point.X, point.Y + 1));
-			returnVal.Add(new Point(point.X, point.Y - 1));
-			return returnVal;
-		}
-
-
-		/// <summary>
 		/// Get digits of a number as a list
 		/// </summary>
 		public static int[] GetDigits(int num)
@@ -326,7 +316,87 @@
 			return digits;
 		}
 
+		#endregion rNumber
 
+
+
+
+
+
+		#region rLerp MOVE THIS TO EASING FOLDER.
+
+		/// <summary>
+		/// Sine-wave like function that goes from 0 to 1 and repeats every unit. Starts at 0
+		/// </summary>
+		public static float UnitWave(float t)
+		{
+			t *= 4.0f;
+			t += 1.0f;
+			t %= 4.0f;
+			t -= 2.0f;
+			t *= 2.0f - MathF.Abs(t);
+			t += 1.0f;
+			t *= 0.5f;
+			return t;
+		}
+
+
+
+		/// <summary>
+		/// Function that goes smoothly from 0 to 1
+		/// </summary>
+		public static float SmoothZeroToOne(float t)
+		{
+			t *= 2.0f;
+			t -= 1.0f;
+			t *= 2.0f - MathF.Abs(t);
+			t += 1.0f;
+			t *= 0.5f;
+			return t;
+		}
+
+
+
+		/// <summary>
+		/// Goes from 0 to 1, but starts sharp.
+		/// </summary>
+		public static float LeapZeroToSmoothOne(float t)
+		{
+			t -= 1.0f;
+			t *= -t;
+			t += 1.0f;
+			return t;
+		}
+
+		#endregion rLerp
+
+
+
+
+
+		#region rBits
+
+		/// <summary>
+		/// Counts the number of bits which are set
+		/// </summary>
+		public static UInt32 BitCountI32(UInt32 i)
+		{
+			i = i - ((i >> 1) & 0x55555555);                // add pairs of bits
+			i = (i & 0x33333333) + ((i >> 2) & 0x33333333); // quads
+			i = (i + (i >> 4)) & 0x0F0F0F0F;                // groups of 8
+			return (i * 0x01010101) >> 24;                  // horizontal sum of bytes
+		}
+
+		#endregion rBits
+
+
+
+
+
+
+
+
+		#region rGeom
 
 		/// <summary>
 		/// Create a square centered at a location
@@ -352,52 +422,115 @@
 
 
 		/// <summary>
-		/// Reflect vector along normal
+		/// Get adjacent points.
 		/// </summary>
-		public static Vector2 Reflect(Vector2 vec, Vector2 normal)
+		public static List<Point> GetAdjacentPoints(Point point)
 		{
-			return vec - 2.0f * Vector2.Dot(vec, normal) * normal;
+			List<Point> returnVal = new List<Point>();
+			returnVal.Add(new Point(point.X + 1, point.Y));
+			returnVal.Add(new Point(point.X - 1, point.Y));
+			returnVal.Add(new Point(point.X, point.Y + 1));
+			returnVal.Add(new Point(point.X, point.Y - 1));
+			return returnVal;
 		}
 
 
 
 		/// <summary>
-		/// Reflect vector along normal and centre of reflection
+		/// Convert cardinal direction enum to unit vector
 		/// </summary>
-		public static Vector2 Reflect(Vector2 vec, Vector2 normal, Vector2 centre)
+		/// <param name="dir">Cardinal direction</param>
+		/// <returns>Cardinal direction unit vector</returns>
+		/// <exception cref="NotImplementedException">Requires a valid cardinal direction</exception>
+		public static Vector2 GetNormal(MCardDir dir)
 		{
-			vec -= centre;
-			return vec - 2.0f * Vector2.Dot(vec, normal) * normal + centre;
-		}
-
-
-
-		/// <summary>
-		/// Multiply vector components
-		/// </summary>
-		public static Vector2 CompMult(Vector2 a, Vector2 b)
-		{
-			return new Vector2(a.X * b.X, a.Y * b.Y);
-		}
-
-
-
-		/// <summary>
-		/// Truncate annoying float stuff
-		/// </summary>
-		public static Vector2 TruncateSmall(Vector2 a)
-		{
-			const float THRESH = 0.000001f;
-			if (-THRESH < a.X && a.X < THRESH)
+			switch (dir)
 			{
-				a.X = 0.0f;
-			}
-			else if (-THRESH < a.Y && a.Y < THRESH)
-			{
-				a.Y = 0.0f;
+				case MCardDir.Up:
+					return new Vector2(0.0f, -1.0f);
+				case MCardDir.Down:
+					return new Vector2(0.0f, 1.0f);
+				case MCardDir.Left:
+					return new Vector2(-1.0f, 0.0f);
+				case MCardDir.Right:
+					return new Vector2(1.0f, 0.0f);
 			}
 
-			return a;
+			throw new NotImplementedException();
 		}
+
+
+
+		/// <summary>
+		/// Convert cardinal direction enum to unit point
+		/// </summary>
+		/// <param name="dir">Cardinal direction</param>
+		/// <returns>Cardinal direction unit vector</returns>
+		/// <exception cref="NotImplementedException">Requires a valid cardinal direction</exception>
+		public static Point GetNormalPoint(MCardDir dir)
+		{
+			switch (dir)
+			{
+				case MCardDir.Up:
+					return new Point(0, -1);
+				case MCardDir.Down:
+					return new Point(0, 1);
+				case MCardDir.Left:
+					return new Point(-1, 0);
+				case MCardDir.Right:
+					return new Point(1, 0);
+			}
+
+			throw new NotImplementedException();
+		}
+
+
+
+		/// <summary>
+		/// Gets angle from cardinal direction
+		/// </summary>
+		public static float GetRotation(MCardDir dir)
+		{
+			switch (dir)
+			{
+				case MCardDir.Up:
+					return 0.0f;
+				case MCardDir.Right:
+					return MathHelper.PiOver2;
+				case MCardDir.Down:
+					return MathHelper.Pi;
+				case MCardDir.Left:
+					return MathHelper.PiOver2 * 3.0f;
+			}
+
+			throw new NotImplementedException();
+		}
+
+
+
+		/// <summary>
+		/// Swap cardinal direction for it's opposite
+		/// </summary>
+		/// <param name="dir">Cardinal direction</param>
+		/// <returns>Opposite cardinal direction of input</returns>
+		/// <exception cref="NotImplementedException">Requires a valid cardinal direction</exception>
+		public static MCardDir InvertDirection(MCardDir dir)
+		{
+			switch (dir)
+			{
+				case MCardDir.Up:
+					return MCardDir.Down;
+				case MCardDir.Right:
+					return MCardDir.Left;
+				case MCardDir.Down:
+					return MCardDir.Up;
+				case MCardDir.Left:
+					return MCardDir.Right;
+			}
+
+			throw new NotImplementedException();
+		}
+
+		#endregion rGeom
 	}
 }

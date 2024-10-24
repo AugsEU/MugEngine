@@ -1,6 +1,8 @@
-﻿using MugEngine.Core;
+﻿using Microsoft.Xna.Framework.Graphics;
+using MugEngine.Core;
 using MugEngine.Maths;
 using MugEngine.Types;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace MugEngine.Graphics
 {
@@ -266,6 +268,16 @@ namespace MugEngine.Graphics
 		/// <summary>
 		/// Draw a texture to the canvas
 		/// </summary>
+		public void DrawTexture(Texture2D texture, Vector2 position, Rectangle? sourceRect, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effect, int layer)
+		{
+			mBatcher.Draw(texture, position, sourceRect, color, rotation, origin, scale, effect, GetDepth(layer));
+		}
+
+
+
+		/// <summary>
+		/// Draw a texture to the canvas
+		/// </summary>
 		public void DrawTexture(Texture2D texture, Rectangle destRectangle, Rectangle? sourceRect, Color color, float rotation, Vector2 origin, SpriteEffects effect, int layer)
 		{
 			mBatcher.Draw(texture, destRectangle, sourceRect, color, rotation, origin, effect, GetDepth(layer));
@@ -321,6 +333,83 @@ namespace MugEngine.Graphics
 		public void DrawTexture(Texture2D texture, Rectangle destRectangle, int layer)
 		{
 			mBatcher.Draw(texture, destRectangle, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GetDepth(layer));
+		}
+
+		#endregion rTexture
+
+
+
+
+		#region rTexturePart
+
+		/// <summary>
+		/// Draw a texture part to the canvas
+		/// </summary>
+		public void DrawTexture(MTexturePart texture, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effect, int layer)
+		{
+			mBatcher.Draw(texture.mTexture, position, texture.mUV, color, rotation, origin, scale, effect, GetDepth(layer));
+		}
+
+
+
+		/// <summary>
+		/// Draw a texture to the canvas
+		/// </summary>
+		public void DrawTexture(MTexturePart texture, Rectangle destRectangle, Color color, float rotation, Vector2 origin, SpriteEffects effect, int layer)
+		{
+			mBatcher.Draw(texture.mTexture, destRectangle, texture.mUV, color, rotation, origin, effect, GetDepth(layer));
+		}
+
+
+
+		/// <summary>
+		/// Simple texture draw
+		/// </summary>
+		public void DrawTexture(MTexturePart texture, Vector2 position, int layer = 0)
+		{
+			mBatcher.Draw(texture.mTexture, position, texture.mUV, Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, GetDepth(layer));
+		}
+
+
+
+		/// <summary>
+		/// Draw a texture at position(with effect).
+		/// </summary>
+		public void DrawTexture(MTexturePart texture, Vector2 position, SpriteEffects effect, int layer = 0)
+		{
+			DrawTexture(texture, position, Color.White, 0.0f, Vector2.Zero, Vector2.One, effect, layer);
+		}
+
+
+
+
+		/// <summary>
+		/// Draw a texture at position(with effect).
+		/// </summary>
+		public void DrawTexture(MTexturePart texture, Vector2 position, Vector2 scale, int layer = 0)
+		{
+			DrawTexture(texture, position, Color.White, 0.0f, Vector2.Zero, scale, SpriteEffects.None, layer);
+		}
+
+
+
+		/// <summary>
+		/// Simple texture draw
+		/// </summary>
+		public void DrawTexture(MTexturePart texture, Vector2 position, Color color, int layer = 0)
+		{
+			DrawTexture(texture, position, color, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, layer);
+		}
+
+
+
+
+		/// <summary>
+		/// Draw a texture to the canvas
+		/// </summary>
+		public void DrawTexture(MTexturePart texture, Rectangle destRectangle, int layer)
+		{
+			mBatcher.Draw(texture.mTexture, destRectangle, texture.mUV, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GetDepth(layer));
 		}
 
 		#endregion rTexture
