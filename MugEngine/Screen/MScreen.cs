@@ -1,6 +1,4 @@
-﻿using MugEngine.Core;
-using MugEngine.Graphics;
-using MugEngine.Interface;
+﻿using MugEngine.Graphics;
 using MugEngine.Types;
 
 namespace MugEngine

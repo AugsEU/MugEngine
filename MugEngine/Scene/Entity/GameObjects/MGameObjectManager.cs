@@ -1,7 +1,5 @@
 ﻿using MugEngine.Collections;
-using MugEngine.Core;
 using MugEngine.Types;
-using System.Linq;
 
 namespace MugEngine.Scene
 {
@@ -49,7 +47,7 @@ namespace MugEngine.Scene
 		/// </summary>
 		public override void Update(MScene scene, MUpdateInfo info)
 		{
-			for(int i = 0; i < mObjects.Count; i++)
+			for (int i = 0; i < mObjects.Count; i++)
 			{
 				mObjects[i].Update(scene, info);
 			}
@@ -70,7 +68,7 @@ namespace MugEngine.Scene
 		/// </summary>
 		public override void Draw(MScene scene, MDrawInfo info)
 		{
-			for(int i = 0; i < mObjects.Count; i++)
+			for (int i = 0; i < mObjects.Count; i++)
 			{
 				mObjects[i].Draw(scene, info);
 			}
@@ -143,7 +141,7 @@ namespace MugEngine.Scene
 		/// </summary>
 		public List<MGameObject> GetAll<T>()
 		{
-			List<MGameObject > list = new List<MGameObject>();
+			List<MGameObject> list = new List<MGameObject>();
 
 			foreach (MGameObject go in mObjects)
 			{

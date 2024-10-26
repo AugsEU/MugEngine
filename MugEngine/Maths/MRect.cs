@@ -31,7 +31,7 @@
 
 		public MRect2f(float x, float y, float width, float height)
 		{
-			mMin = new Vector2(x,y);
+			mMin = new Vector2(x, y);
 			mMax = new Vector2(x + width, y + height);
 		}
 

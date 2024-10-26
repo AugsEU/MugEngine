@@ -1,5 +1,4 @@
-﻿
-namespace AridArnold
+﻿namespace MugEngine.Core
 {
 	/// <summary>
 	/// Timer that runs on a portion of time.

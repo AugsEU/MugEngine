@@ -22,6 +22,12 @@
 			mTexture = texture;
 		}
 
+		public MTexturePart(Texture2D texture)
+		{
+			mTexture = texture;
+			mUV = new Rectangle(0, 0, texture.Width, texture.Height);
+		}
+
 		public int Width()
 		{
 			return mUV.Width;

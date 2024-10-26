@@ -1,8 +1,5 @@
 ﻿using MugEngine.Core;
-using MugEngine.Interface;
 using MugEngine.Types;
-using System.Data.SqlTypes;
-using System.Dynamic;
 
 namespace MugEngine.Scene
 {
@@ -51,7 +48,7 @@ namespace MugEngine.Scene
 		public void Update(MUpdateInfo info)
 		{
 			// Update entities in scene.
-			for(int i = 0; i < mEntities.Count; i++)
+			for (int i = 0; i < mEntities.Count; i++)
 			{
 				mEntities[i].Update(this, info);
 			}
@@ -66,7 +63,7 @@ namespace MugEngine.Scene
 		/// </summary>
 		public void ResolveDeleteQueue()
 		{
-			for(int i = 0; i < mEntities.Count && mDeletePool.Count > 0; i++)
+			for (int i = 0; i < mEntities.Count && mDeletePool.Count > 0; i++)
 			{
 				MEntity entity = mEntities[i];
 				if (mDeletePool.Contains(entity))
@@ -75,7 +72,7 @@ namespace MugEngine.Scene
 					mEntities.RemoveAt(i);
 
 					Type entType = entity.GetType();
-					if(mUniqueEntities.ContainsKey(entType))
+					if (mUniqueEntities.ContainsKey(entType))
 					{
 						mUniqueEntities.Remove(entType);
 					}

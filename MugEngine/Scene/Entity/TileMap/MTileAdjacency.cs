@@ -307,25 +307,17 @@
 		public static MTileAdjacency GetDirectlyAdjacent(MTileAdjacency input)
 		{
 			byte inputByte = (byte)input;
-			inputByte = (byte)(inputByte & 0b0000_1111);
-			return (MTileAdjacency)inputByte;
+			return (MTileAdjacency)(inputByte & 0b0000_1111);
 		}
 
 		public static MTileAdjacency RemoveRedundantTiles(MTileAdjacency input)
 		{
 			// Bit stuff haha
-			byte inputByte = (byte)input;
-			byte byteA = (byte)(inputByte & 0b0000_1111);
-			byteA = (byte)(byteA | 0b0001_0000);
-			byteA = (byte)(byteA >> 1);
-			byteA = (byte)(byteA & inputByte);
-			byte byteB = (byte)(inputByte << 3);
-			byteB = (byte)(byteA & byteB);
-			byteA = (byte)(byteA << 4);
-			byteA = (byte)(byteA | byteB);
-			byteA = (byte)(byteA << 1);
-			byteA = (byte)(byteA | 0b0000_1111);
-			return (MTileAdjacency)(byteA & inputByte);
+			byte value = (byte)input;
+			// Combine all operations into a single expression to allow CPU to optimize
+			return (MTileAdjacency)(
+				(((value & 0x0F) | 0x10) >> 1) & value & ((value << 3) | 0x0F)
+			);
 		}
 	}
 }

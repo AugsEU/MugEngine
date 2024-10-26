@@ -1,5 +1,4 @@
 ﻿using MugEngine.Core;
-using MugEngine.Interface;
 using MugEngine.Types;
 
 namespace MugEngine.Screen
@@ -31,7 +30,7 @@ namespace MugEngine.Screen
 		/// </summary>
 		public void AddScreenTypes(Point resolution, params Type[] screenTypes)
 		{
-			if(mActiveScreen is not null)
+			if (mActiveScreen is not null)
 			{
 				throw new Exception("Can't add more screen types after initialisation.");
 			}
@@ -42,10 +41,10 @@ namespace MugEngine.Screen
 				{
 					throw new Exception("Invalid screen type.");
 				}
-				
+
 				MScreen? screen = Activator.CreateInstance(type, resolution) as MScreen;
 
-				if(screen is null)
+				if (screen is null)
 				{
 					throw new Exception(string.Format("Failed to create {0}", type.ToString()));
 				}
@@ -61,7 +60,7 @@ namespace MugEngine.Screen
 		/// </summary>
 		public void LoadScreens(Type startScreen)
 		{
-			foreach(MScreen screen in mScreens.Values)
+			foreach (MScreen screen in mScreens.Values)
 			{
 				screen.Initialise();
 			}
@@ -83,9 +82,9 @@ namespace MugEngine.Screen
 		/// </summary>
 		public void Update(MUpdateInfo updateInfo)
 		{
-			if(mNextScreen is not null)
+			if (mNextScreen is not null)
 			{
-				if(mActiveScreen.AllowQuit())
+				if (mActiveScreen.AllowQuit())
 				{
 					mActiveScreen = mNextScreen;
 					mNextScreen = null;
@@ -192,7 +191,7 @@ namespace MugEngine.Screen
 		public MScreen GetScreen<T>() where T : MScreen
 		{
 			MScreen? retScreen = null;
-			if(mScreens.TryGetValue(typeof(T), out retScreen))
+			if (mScreens.TryGetValue(typeof(T), out retScreen))
 			{
 				return retScreen;
 			}
@@ -218,7 +217,7 @@ namespace MugEngine.Screen
 		/// </summary>
 		public void ActivateScreen<T>() where T : MScreen
 		{
-			if(mNextScreen is null)
+			if (mNextScreen is null)
 			{
 				// Only do this if we haven't already started.
 				mActiveScreen.BeginDeactivate();

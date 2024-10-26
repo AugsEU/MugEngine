@@ -1,8 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using MugEngine.Core;
+﻿using MugEngine.Core;
 using MugEngine.Maths;
 using MugEngine.Types;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace MugEngine.Graphics
 {

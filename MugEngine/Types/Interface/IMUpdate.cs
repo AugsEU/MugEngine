@@ -1,6 +1,4 @@
-﻿using MugEngine.Types;
-
-namespace MugEngine
+﻿namespace MugEngine.Types
 {
 	/// <summary>
 	/// A thing that can be updated.

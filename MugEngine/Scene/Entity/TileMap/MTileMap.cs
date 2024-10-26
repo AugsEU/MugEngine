@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using MugEngine.Graphics;
+﻿using MugEngine.Graphics;
 using MugEngine.Types;
 
 namespace MugEngine.Scene

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MugEngine.Types
+﻿namespace MugEngine.Types
 {
 	/// <summary>
 	/// Simple singleton implementation. It uses lazy initialisation.

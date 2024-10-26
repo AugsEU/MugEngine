@@ -1,6 +1,4 @@
-﻿using MugEngine.Types;
-
-namespace MugEngine.Interface
+﻿namespace MugEngine.Types
 {
 	public interface IMDraw
 	{
