@@ -9,7 +9,7 @@ namespace MugEngine.Graphics
 		/// <summary>
 		/// Frame of animation
 		/// </summary>
-		struct AnimationFrame
+		public struct AnimationFrame
 		{
 			public AnimationFrame(MTexturePart tex, float t)
 			{
@@ -28,8 +28,10 @@ namespace MugEngine.Graphics
 		/// </summary>
 		public enum PlayType
 		{
-			OneShot, // Play the animation once then stop
-			Repeat // Play the animation on repeat
+			Forward, // Play the animation forwards
+			Backwards, // Play the animation backwards
+			PingPong, // Play the animation forwards then backwards
+			PingPongBackwards // Play the animation backwards then forwards
 		};
 
 		#endregion rTypes
@@ -40,11 +42,18 @@ namespace MugEngine.Graphics
 
 		#region rMembers
 
-		List<AnimationFrame> mFrames = new List<AnimationFrame>();
-		PlayType mPlayType;
-		float mTotalDuration;
-		float mPlayHead;
-		bool mPlaying;
+		AnimationFrame[] mFrames = null;
+
+		PlayType mPlayType = PlayType.Forward;
+
+		int mNumRepeats = 0;
+		int mRepeatsRemaining = 0;
+
+		float mTotalDuration = 0.0f;
+		float mPlayHead = 0.0f;
+		float mPlayDirection = 1.0f;
+		
+		bool mPlaying = true;
 
 		#endregion rMembers
 
@@ -58,20 +67,15 @@ namespace MugEngine.Graphics
 		/// Animation constructor
 		/// </summary>
 		/// <param name="playType">Play mode.(See enum for details)</param>
-		public MAnimation(PlayType playType, params (MTexturePart, float)[] frameData)
+		public MAnimation(PlayType playType, int numRepeats, AnimationFrame[] frameData)
 		{
-			mPlaying = false;
-			mTotalDuration = 0.0f;
-			mPlayHead = 0.0f;
 			mPlayType = playType;
 
-			for (int i = 0; i < frameData.Length; i++)
-			{
-				mTotalDuration += frameData[i].Item2;
-				mFrames.Add(new AnimationFrame(frameData[i].Item1, frameData[i].Item2));
-			}
+			mNumRepeats = numRepeats;
+			mRepeatsRemaining = numRepeats;
 
-			mPlaying = true;
+			mFrames = frameData;
+			CalcTotalDuration();
 		}
 
 
@@ -82,15 +86,10 @@ namespace MugEngine.Graphics
 		/// <param name="playType">Play mode.(See enum for details)</param>
 		public MAnimation(MTexturePart tex)
 		{
-			mPlaying = false;
-			mTotalDuration = 0.0f;
-			mPlayHead = 0.0f;
-			mPlayType = PlayType.OneShot;
-			mTotalDuration = 1.0f;
+			AnimationFrame frame = new AnimationFrame(tex, 1.0f);
+			mFrames = new AnimationFrame[] { frame };
 
-			mFrames.Add(new AnimationFrame(tex, 1.0f));
-
-			mPlaying = false;
+			CalcTotalDuration();
 		}
 
 
@@ -101,15 +100,22 @@ namespace MugEngine.Graphics
 		/// <param name="playType">Play mode.(See enum for details)</param>
 		public MAnimation(Texture2D tex)
 		{
-			mPlaying = false;
-			mTotalDuration = 0.0f;
-			mPlayHead = 0.0f;
-			mPlayType = PlayType.OneShot;
-			mTotalDuration = 1.0f;
+			AnimationFrame frame = new AnimationFrame(new MTexturePart(tex), 1.0f);
+			mFrames = new AnimationFrame[] { frame };
+			CalcTotalDuration();
+		}
 
-			mFrames.Add(new AnimationFrame(new MTexturePart(tex), 1.0f));
 
-			mPlaying = false;
+
+		/// <summary>
+		/// Calculate the animation's total duration and cache it.
+		/// </summary>
+		private void CalcTotalDuration()
+		{
+			for (int i = 0; i < mFrames.Length; i++)
+			{
+				mTotalDuration += mFrames[i].mDuration;
+			}
 		}
 
 		#endregion rInit
@@ -120,7 +126,6 @@ namespace MugEngine.Graphics
 
 		#region rUpdate
 
-
 		/// <summary>
 		/// Update animation
 		/// </summary>
@@ -128,59 +133,57 @@ namespace MugEngine.Graphics
 		{
 			if (mPlaying)
 			{
-				mPlayHead += info.mDelta;
+				UpdatePlayhead(info);
 
-				switch (mPlayType)
+				if(mNumRepeats != 0 && mRepeatsRemaining == 0)
 				{
-					case PlayType.OneShot:
-						if (mPlayHead > mTotalDuration)
-						{
-							Stop();
-						}
-						break;
-					case PlayType.Repeat:
-						while (mPlayHead > mTotalDuration)
-						{
-							mPlayHead -= mTotalDuration;
-						}
-						break;
-					default:
-						break;
+					Stop();
 				}
-
 			}
 		}
 
 
-
 		/// <summary>
-		/// Begin playing
+		/// Updates the play head position based on delta time and play mode.
+		/// Handles loop boundaries and direction changes.
 		/// </summary>
-		public void Play()
+		private void UpdatePlayhead(MUpdateInfo info)
 		{
-			mPlaying = true;
-			mPlayHead = 0.0f;
-		}
+			// Update position
+			mPlayHead += info.mDelta * mPlayDirection;
 
+			// Check boundaries
+			bool reachedEnd = mPlayHead >= mTotalDuration;
+			bool reachedStart = mPlayHead <= 0.0f;
 
+			// Handle boundary cases
+			if (reachedEnd || reachedStart)
+			{
+				// Calculate overflow/underflow amount
+				float overflow = reachedEnd ? mPlayHead - mTotalDuration : -mPlayHead;
 
-		/// <summary>
-		/// Begin playing at a percent marker
-		/// </summary>
-		public void Play(float percentPlayed)
-		{
-			mPlaying = true;
-			mPlayHead = percentPlayed * mTotalDuration;
-		}
+				// Update direction and position based on play type
+				switch (mPlayType)
+				{
+					case PlayType.Forward:
+						mPlayHead = overflow;
+						mPlayDirection = 1.0f;
+						break;
 
+					case PlayType.Backwards:
+						mPlayHead = mTotalDuration - overflow;
+						mPlayDirection = -1.0f;
+						break;
 
+					case PlayType.PingPong:
+					case PlayType.PingPongBackwards:
+						mPlayHead = reachedEnd ? mTotalDuration - overflow : overflow;
+						mPlayDirection *= -1.0f;
+						break;
+				}
 
-		/// <summary>
-		/// Stop playing
-		/// </summary>
-		public void Stop()
-		{
-			mPlaying = false;
+				mRepeatsRemaining--;
+			}
 		}
 
 		#endregion rUpdate
@@ -199,7 +202,7 @@ namespace MugEngine.Graphics
 		{
 			float timeLeft = mPlayHead;
 			int i = 0;
-			for (; i < mFrames.Count; i++)
+			for (; i < mFrames.Length; i++)
 			{
 				timeLeft -= mFrames[i].mDuration;
 
@@ -209,7 +212,7 @@ namespace MugEngine.Graphics
 				}
 			}
 
-			i = Math.Min(i, mFrames.Count - 1);
+			i = Math.Min(i, mFrames.Length - 1);
 
 			return mFrames[i].mTexture;
 		}
@@ -227,6 +230,66 @@ namespace MugEngine.Graphics
 		}
 
 		#endregion rDraw
+
+
+
+
+
+		#region rControl
+
+		/// <summary>
+		/// Begin playing
+		/// </summary>
+		public void Play()
+		{
+			mPlaying = true;
+			mRepeatsRemaining = mNumRepeats;
+			switch (mPlayType)
+			{
+				case PlayType.PingPong:
+				case PlayType.Forward:
+					mPlayDirection = 1.0f;
+					mPlayHead = 0.0f;
+					break;
+				case PlayType.Backwards:
+				case PlayType.PingPongBackwards:
+					mPlayDirection = -1.0f;
+					mPlayHead = mTotalDuration;
+					break;
+			}
+		}
+
+
+
+		/// <summary>
+		/// Stop playing
+		/// </summary>
+		public void Stop()
+		{
+			mPlaying = false;
+		}
+
+
+
+		/// <summary>
+		/// Seek to point in animation.
+		/// </summary>
+		public void Seek(float percent)
+		{
+			switch (mPlayType)
+			{
+				case PlayType.PingPong:
+				case PlayType.Forward:
+					mPlayHead = percent * mTotalDuration;
+					break;
+				case PlayType.Backwards:
+				case PlayType.PingPongBackwards:
+					mPlayHead = (1.0f - percent) * mTotalDuration;
+					break;
+			}
+		}
+
+		#endregion rControl
 
 
 

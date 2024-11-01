@@ -1,24 +1,46 @@
 ﻿using MugEngine.Graphics;
 using System.Globalization;
 using System.Xml;
+using static MugEngine.Graphics.MAnimation;
 
 namespace MugEngine.Core
 {
 	/// <summary>
 	/// Utility class for loading animations from data
 	/// </summary>
-	class AnimationData
+	internal class MAnimationData
 	{
-		MAnimation.PlayType mPlayType;
-		(string, float)[] mTexturePaths;
-
-		public AnimationData()
+		private struct FrameData
 		{
-			mPlayType = MAnimation.PlayType.Repeat;
-			mTexturePaths = null;
+			public string mTexturePath;
+			public Rectangle mRect;
+			public float mDuration;
+
+			public FrameData(string texturePath)
+			{
+				mTexturePath = texturePath;
+				mRect = Rectangle.Empty;
+				mDuration = 100.0f;
+			}
+
+			public FrameData()
+			{
+
+			}
 		}
 
-		public AnimationData(string filePath)
+		PlayType mPlayType;
+		int mNumRepeats;
+		FrameData[] mFrameData;
+
+		public MAnimationData()
+		{
+			mPlayType = PlayType.Forward;
+			mFrameData = null;
+			mNumRepeats = 1;
+		}
+
+		public MAnimationData(string filePath)
 		{
 			LoadFromFile(filePath);
 		}
@@ -31,8 +53,8 @@ namespace MugEngine.Core
 				case "":
 				{
 					// Load as single texture
-					mTexturePaths = new (string, float)[] { (filePath, 1.0f) };
-					mPlayType = MAnimation.PlayType.OneShot;
+					mFrameData = new FrameData[] { new FrameData(filePath) };
+					mPlayType = PlayType.Forward;
 					break;
 				}
 				case ".max": // Mono Animation XML
@@ -51,27 +73,38 @@ namespace MugEngine.Core
 			xmlDoc.Load(XMLPath);
 			XmlNode rootNode = xmlDoc.LastChild;
 
-			string type = rootNode.Attributes["type"].Value.ToLower();
+			mPlayType = MugParse.GetEnum<PlayType>(rootNode["type"], PlayType.Forward);
+			mNumRepeats = MugParse.GetInt(rootNode["repeats"]);
 
-			mPlayType = type == "repeat" ? MAnimation.PlayType.Repeat : MAnimation.PlayType.OneShot;
+			// Parse frames.
+			XmlNodeList frameNodes = rootNode.SelectNodes("frame");
+			mFrameData = new FrameData[frameNodes.Count];
 
-			XmlNodeList textureNodes = rootNode.ChildNodes;
-
-			mTexturePaths = new (string, float)[textureNodes.Count];
-
-			int idx = 0;
-			foreach (XmlNode textureNode in textureNodes)
+			foreach (XmlNode frameNode in frameNodes)
 			{
-				XmlAttribute timeAttrib = textureNode.Attributes["time"];
-				float time = timeAttrib is not null ? float.Parse(timeAttrib.Value, CultureInfo.InvariantCulture.NumberFormat) : 1.0f;
-				mTexturePaths[idx++] = (textureNode.InnerText, time);
+				int idx = int.Parse(MugParse.GetStringAttrib(frameNode, "id"), CultureInfo.InvariantCulture);
+
+				FrameData frameData = new FrameData();
+				frameData.mTexturePath = MugParse.GetString(frameNode["texture"]);
+				frameData.mRect = MugParse.GetRectangle(frameNode);
+				frameData.mDuration = MugParse.GetFloat(frameNode["duration"]);
+
+				mFrameData[idx] = frameData;
 			}
 		}
 
-		public MAnimation GenerateMAnimation()
+		public MAnimation GenerateAnimation()
 		{
-			// To do: Load animation.
-			return null;// new MAnimation(mPlayType, mTextures);
+			AnimationFrame[] animationFrames = new AnimationFrame[mFrameData.Length];
+
+			for(int i = 0; i < mFrameData.Length; ++i)
+			{
+				Texture2D texture = MData.I.Load<Texture2D>(mFrameData[i].mTexturePath);
+				MTexturePart texPart = new MTexturePart(texture, mFrameData[i].mRect);
+				animationFrames[i] = new AnimationFrame(texPart, mFrameData[i].mDuration);
+			}
+
+			return new MAnimation(mPlayType, mNumRepeats, animationFrames);
 		}
 	}
 }

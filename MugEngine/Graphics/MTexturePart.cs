@@ -1,4 +1,6 @@
-﻿namespace MugEngine.Graphics
+﻿using System.Xml;
+
+namespace MugEngine.Graphics
 {
 	/// <summary>
 	/// Represents a part of a texture.

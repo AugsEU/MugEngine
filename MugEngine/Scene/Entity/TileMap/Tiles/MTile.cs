@@ -145,7 +145,7 @@ namespace MugEngine.Scene
 		/// <returns>Rotation in radians</returns>
 		public virtual float GetRotation()
 		{
-			return MEnumHelper.GetRotation(mRotation);
+			return MugEnum.GetRotation(mRotation);
 		}
 
 

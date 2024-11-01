@@ -15,6 +15,8 @@ namespace MugEngine.Core
 		ContentManager mContentManager;
 		List<MDataTheme> mActiveThemes;
 
+		Dictionary<string, MAnimationData> mAnimationDataCache;
+
 		#endregion rMembers
 
 
@@ -28,6 +30,7 @@ namespace MugEngine.Core
 		/// </summary>
 		public MData()
 		{
+			mAnimationDataCache = new Dictionary<string, MAnimationData>();
 		}
 
 
@@ -37,6 +40,8 @@ namespace MugEngine.Core
 		public void Init(ContentManager content)
 		{
 			mContentManager = content;
+
+			// To do: try to populate animation cache.
 		}
 
 		#endregion rInit
@@ -62,11 +67,11 @@ namespace MugEngine.Core
 		/// <summary>
 		/// Generates a new animator from an XML file.
 		/// </summary>
-		public MAnimation LoadAnimator(string path)
+		public MAnimation LoadAnimation(string path)
 		{
-			AnimationData animData = LoadAnimatorData(path);
+			MAnimationData animData = LoadAnimData(path);
 
-			return animData.GenerateAnimator();
+			return animData.GenerateAnimation();
 		}
 
 
@@ -74,38 +79,28 @@ namespace MugEngine.Core
 		/// <summary>
 		/// Load animator data
 		/// </summary>
-		public AnimationData LoadAnimatorData(string path)
+		private MAnimationData LoadAnimData(string alias)
 		{
-			path = GetRemappedPath(path);
+			string realPath = GetRemappedPath(alias);
 
-			AnimationData animData = null;
+			MAnimationData animData = null;
 
-			if (mAnimationDataCache.TryGetValue(path, out animData))
+			if (mAnimationDataCache.TryGetValue(realPath, out animData))
 			{
-				// Loaded anim data easily.
+				// Loaded anim data from cache.
 			}
 			else
 			{
-				animData = new AnimationData(path);
+				animData = new MAnimationData(alias);
 
 				// Add to the cache
-				mAnimationDataCache.Add(path, animData);
+				mAnimationDataCache.Add(realPath, animData);
 			}
 
 			return animData;
 		}
 
 		#endregion rLoadUnload
-
-
-
-
-
-		#region rDraw
-
-
-
-		#endregion rDraw
 
 
 
