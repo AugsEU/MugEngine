@@ -1,4 +1,5 @@
-﻿using MugEngine.Graphics;
+﻿using LDtk;
+using MugEngine.Graphics;
 using MugEngine.Types;
 
 namespace MugEngine.Scene
@@ -6,7 +7,7 @@ namespace MugEngine.Scene
 	/// <summary>
 	/// Represents a map of square tiles.
 	/// </summary>
-	class MTileMap : MEntity
+	public class MTileMap : MEntity
 	{
 		#region rMembers
 
@@ -88,6 +89,53 @@ namespace MugEngine.Scene
 
 
 
+		#region rLoad
+
+		/// <summary>
+		/// Load tilemap from ldtk level.
+		/// </summary>
+		public void LoadFromLDtkLevel(LDtkLevel level, MTileFactory factory)
+		{
+			LDtkIntGrid typeGrid = level.GetIntGrid("Type");
+			LDtkIntGrid rotGrid = level.GetIntGrid("Rotation");
+			LDtkIntGrid paramGrid = level.GetIntGrid("Param");
+
+			Vector2 basePos = new Vector2(level.Position.X, level.Position.Y);
+
+			LoadFromIntGrids(factory, basePos, typeGrid.Get2DArray(), rotGrid.Get2DArray(), paramGrid.Get2DArray());
+		}
+
+
+
+		/// <summary>
+		/// Load from int grids
+		/// </summary>
+		public void LoadFromIntGrids(MTileFactory factory, Vector2 basePosition, int[,] types, int[,] rot, int[,] param)
+		{
+			mBasePosition = basePosition;
+
+			mDummyTile = factory.GenerateDummyTile(mTileSize);
+
+			mTileMap = new MTile[types.GetLength(0), types.GetLength(1)];
+
+			for(int x = 0; x < mTileMap.GetLength(0); x++)
+			{
+				for(int y = 0; y < mTileMap.GetLength(1); y++)
+				{
+					mTileMap[x, y] = factory.GenerateTile(mTileSize, types[x, y], rot[x, y], param[x, y]);
+					mTileMap[x, y].ClearAdjacent();
+				}
+			}
+
+			CalculateTileAdjacency();
+		}
+
+		#endregion rLoad
+
+
+
+
+
 		#region rUpdate
 
 		public override void Update(MScene scene, MUpdateInfo info)
@@ -128,6 +176,12 @@ namespace MugEngine.Scene
 					Vector2 tilePos = mBasePosition + new Vector2((x + 0.5f) * mTileSize.X, (y + 0.5f) * mTileSize.Y);
 
 					MTexturePart tileTexture = tile.GetTexture();
+
+					if(tileTexture.IsNull())
+					{
+						continue;
+					}
+
 					TileTexDrawInfo tileDrawInfo = MTileDrawHelpers.GetTileDrawInfo(this, tile);
 					Rectangle sourceRectangle = new Rectangle(tileDrawInfo.mTileIndex * mTileSize, mTileSize);
 

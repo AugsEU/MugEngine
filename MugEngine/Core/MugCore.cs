@@ -1,4 +1,5 @@
-﻿using MugEngine.Graphics;
+﻿using Microsoft.Xna.Framework.Content;
+using MugEngine.Graphics;
 using MugEngine.Screen;
 using MugEngine.Types;
 
@@ -31,13 +32,17 @@ namespace MugEngine.Core
 		/// <summary>
 		/// Initialise the engine.
 		/// </summary>
-		public void InitEngine(MugEngineSettings settings)
+		public void InitEngine(MugEngineSettings settings, ContentManager content)
 		{
+			// Load data before anything.
+			MData.I.Init(content);
+
 			mSettings = settings;
 			MScreenManager.I.AddScreenTypes(settings.mResolution, settings.mScreenTypes);
 			MScreenManager.I.LoadScreens(settings.mStartScreen);
 
 			mBackBufferCanvas = new MCanvas2D();
+
 		}
 
 		#endregion rInit

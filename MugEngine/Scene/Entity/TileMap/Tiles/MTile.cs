@@ -25,11 +25,19 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Create a tile with default bounds.
 		/// </summary>
-		public MTile(float tileSize)
+		public MTile(Point tileSize)
 		{
-			mLocalBounds = new MRect2f(0.0f, 0.0f, tileSize, tileSize);
+			mLocalBounds = new MRect2f(0.0f, 0.0f, tileSize.X, tileSize.Y);
 		}
 
+
+		/// <summary>
+		/// Clear adjacency info.
+		/// </summary>
+		public void ClearAdjacent()
+		{
+			mAdjacency = MTileAdjacency.Ad0;
+		}
 
 
 		/// <summary>

@@ -1,11 +1,27 @@
-﻿using MugEngine.Graphics;
+﻿using MugEngine.Core;
+using MugEngine.Graphics;
+using MugEngine.Types;
 
 namespace MugEngine.Scene
 {
-	class MAnimatedTile : MTile
+	public class MAnimatedTile : MTile
 	{
-		public MAnimatedTile(float tileSize, MAnimation anim) : base(tileSize)
+		MAnimation mAnim;
+
+		public MAnimatedTile(Point tileSize, string animPath) : base(tileSize)
 		{
+			mAnim = MData.I.LoadAnimation(animPath);
+		}
+
+		public override void Update(MScene scene, MUpdateInfo info)
+		{
+			mAnim.Update(info);
+			base.Update(scene, info);
+		}
+
+		public override MTexturePart GetTexture()
+		{
+			return mAnim.GetCurrentTexture();
 		}
 	}
 }

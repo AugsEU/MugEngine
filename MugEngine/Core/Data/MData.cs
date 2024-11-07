@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using LDtk;
+using Microsoft.Xna.Framework.Content;
 using MugEngine.Graphics;
 using MugEngine.Types;
 using System.IO;
@@ -31,6 +32,7 @@ namespace MugEngine.Core
 		public MData()
 		{
 			mAnimationDataCache = new Dictionary<string, MAnimationData>();
+			mActiveThemes = new List<MDataTheme>();
 		}
 
 
@@ -59,7 +61,7 @@ namespace MugEngine.Core
 		public T Load<T>(string alias)
 		{
 			string realPath = GetRemappedPath(alias);
-			return mContentManager.Load<T>(GetRemappedPath(alias));
+			return mContentManager.Load<T>(realPath);
 		}
 
 
@@ -91,13 +93,25 @@ namespace MugEngine.Core
 			}
 			else
 			{
-				animData = new MAnimationData(alias);
+				animData = new MAnimationData(realPath);
 
 				// Add to the cache
 				mAnimationDataCache.Add(realPath, animData);
 			}
 
 			return animData;
+		}
+
+
+
+		/// <summary>
+		/// Load LDtk file
+		/// </summary>
+		public LDtkFile LoadLDtkFile(string alias)
+		{
+			string realPath = GetRemappedPath(alias);
+
+			return LDtkFile.FromFile(GetRemappedPath(alias), mContentManager);
 		}
 
 		#endregion rLoadUnload
@@ -111,7 +125,7 @@ namespace MugEngine.Core
 		/// <summary>
 		/// Apply a theme.
 		/// </summary>
-		void ApplyTheme(MDataTheme theme)
+		public void ApplyTheme(MDataTheme theme)
 		{
 #if DEBUG
 			// Check for conflicts.
@@ -128,7 +142,7 @@ namespace MugEngine.Core
 		/// <summary>
 		/// Remove a theme of a certain ID.
 		/// </summary>
-		void RemoveTheme(string id)
+		public void RemoveTheme(string id)
 		{
 			for (int i = 0; i < mActiveThemes.Count; i++)
 			{

@@ -1,6 +1,6 @@
 ﻿namespace MugEngine.Core
 {
-	internal class MDataTheme
+	public class MDataTheme
 	{
 		string mID;
 		Dictionary<string, string> mAliasToPathMap;
