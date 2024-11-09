@@ -1,4 +1,4 @@
-/MugEngine/bin/
-/MugEngine/obj/
-/.vs/
-/MugEngine/MugEngine.csproj.user
+/MugEngine/MugEngine/bin/
+/MugEngine/MugEngine/obj/
+/MugEngine/.vs/
+/MugEngine/MugEngine/MugEngine.csproj.user
