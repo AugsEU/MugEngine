@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\LDtkMonogame\LDtk\LDtk.csproj" />
-    <ProjectReference Include="..\..\monogame-aseprite\source\MonoGame.Aseprite\MonoGame.Aseprite.csproj" />
   </ItemGroup>
 
   <ItemGroup>
