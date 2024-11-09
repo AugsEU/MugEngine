@@ -11,6 +11,7 @@ namespace MugEngine.Core
 
 		MugEngineSettings mSettings;
 		MCanvas2D mBackBufferCanvas;
+		GraphicsDeviceManager mGraphics;
 
 		#endregion rMembers
 
@@ -32,17 +33,20 @@ namespace MugEngine.Core
 		/// <summary>
 		/// Initialise the engine.
 		/// </summary>
-		public void InitEngine(MugEngineSettings settings, ContentManager content)
+		public void InitEngine(MugEngineSettings settings, MugEngineInitParams init)
 		{
-			// Load data before anything.
-			MData.I.Init(content);
+			// Init params
+			mGraphics = init.mGraphics;
 
+			// Load data
+			MData.I.Init(init.mContentManager);
+
+			// General setup
 			mSettings = settings;
 			MScreenManager.I.AddScreenTypes(settings.mResolution, settings.mScreenTypes);
 			MScreenManager.I.LoadScreens(settings.mStartScreen);
 
 			mBackBufferCanvas = new MCanvas2D();
-
 		}
 
 		#endregion rInit
@@ -106,7 +110,7 @@ namespace MugEngine.Core
 		/// </summary>
 		public GraphicsDevice GetDevice()
 		{
-			return mSettings.mDeviceManager.GraphicsDevice;
+			return mGraphics.GraphicsDevice;
 		}
 
 

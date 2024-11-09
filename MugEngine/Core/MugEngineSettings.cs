@@ -1,4 +1,6 @@
-﻿namespace MugEngine.Core
+﻿using Microsoft.Xna.Framework.Content;
+
+namespace MugEngine.Core
 {
 	public enum MScreenFit
 	{
@@ -13,10 +15,12 @@
 		StretchNearest
 	}
 
+	/// <summary>
+	/// Settings to configure the engine.
+	/// </summary>
 	public struct MugEngineSettings
 	{
-		// Init requirements
-		public GraphicsDeviceManager mDeviceManager;
+		// Screen
 		public Type[] mScreenTypes;
 		public Type mStartScreen;
 
@@ -25,9 +29,8 @@
 		public Point mResolution;
 		public int mNumLayers;
 
-		public MugEngineSettings(GraphicsDeviceManager deviceManager)
+		public MugEngineSettings()
 		{
-			mDeviceManager = deviceManager;
 			SetDefaultSettings();
 		}
 
@@ -36,6 +39,21 @@
 			mFPS = 60;
 			mResolution = new Point(640, 360);
 			mNumLayers = 1;
+		}
+	}
+
+	/// <summary>
+	/// Things needed to initalise the engine.
+	/// </summary>
+	public struct MugEngineInitParams
+	{
+		public GraphicsDeviceManager mGraphics;
+		public ContentManager mContentManager;
+
+		public MugEngineInitParams(GraphicsDeviceManager graphics, ContentManager content)
+		{
+			mGraphics = graphics;
+			mContentManager = content;
 		}
 	}
 }

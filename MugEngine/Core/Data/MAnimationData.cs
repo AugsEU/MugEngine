@@ -97,11 +97,21 @@ namespace MugEngine.Core
 		{
 			AnimationFrame[] animationFrames = new AnimationFrame[mFrameData.Length];
 
-			for(int i = 0; i < mFrameData.Length; ++i)
+			// Special case for 1 frame, means we loaded from a texture not a .max file.
+			if (mFrameData.Length == 1 && mFrameData[0].mRect == Rectangle.Empty)
 			{
-				Texture2D texture = MData.I.Load<Texture2D>(mFrameData[i].mTexturePath);
-				MTexturePart texPart = new MTexturePart(texture, mFrameData[i].mRect);
-				animationFrames[i] = new AnimationFrame(texPart, mFrameData[i].mDuration);
+				Texture2D texture = MData.I.Load<Texture2D>(mFrameData[0].mTexturePath);
+				MTexturePart texPart = new MTexturePart(texture);
+				animationFrames[0] = new AnimationFrame(texPart, mFrameData[0].mDuration);
+			}
+			else
+			{
+				for (int i = 0; i < mFrameData.Length; ++i)
+				{
+					Texture2D texture = MData.I.Load<Texture2D>(mFrameData[i].mTexturePath);
+					MTexturePart texPart = new MTexturePart(texture, mFrameData[i].mRect);
+					animationFrames[i] = new AnimationFrame(texPart, mFrameData[i].mDuration);
+				}
 			}
 
 			return new MAnimation(mPlayType, mNumRepeats, animationFrames);

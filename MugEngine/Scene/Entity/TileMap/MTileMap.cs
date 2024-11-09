@@ -76,7 +76,7 @@ namespace MugEngine.Scene
 					{
 						if (mTileMap[x, y].IsSameType(mTileMap[x, y + 1]))
 						{
-							mTileMap[x, y].InformAdjacent(mTileMap[x, y + 1], MTileAdjacency.Ad8);
+							mTileMap[x, y].InformAdjacent(mTileMap[x, y + 1], MTileAdjacency.Ad2);
 						}
 					}
 				}
@@ -173,7 +173,7 @@ namespace MugEngine.Scene
 						continue;
 					}
 
-					Vector2 tilePos = mBasePosition + new Vector2((x + 0.5f) * mTileSize.X, (y + 0.5f) * mTileSize.Y);
+					Vector2 tilePos = mBasePosition + new Vector2(x * mTileSize.X, y * mTileSize.Y);
 
 					MTexturePart tileTexture = tile.GetTexture();
 
@@ -183,9 +183,9 @@ namespace MugEngine.Scene
 					}
 
 					TileTexDrawInfo tileDrawInfo = MTileDrawHelpers.GetTileDrawInfo(this, tile);
-					Rectangle sourceRectangle = new Rectangle(tileDrawInfo.mTileIndex * mTileSize, mTileSize);
+					Rectangle sourceRectangle = new Rectangle(tileTexture.mUV.Location + tileDrawInfo.mTileIndex * mTileSize, mTileSize);
 
-					info.mCanvas.DrawTexture(tileTexture.mTexture, tilePos, sourceRectangle, Color.White, tileDrawInfo.mRotation, new Vector2(0.5f), 1.0f, tileDrawInfo.mEffect, mDrawLayer);
+					info.mCanvas.DrawTexture(tileTexture.mTexture, tilePos, sourceRectangle, Color.White, tileDrawInfo.mRotation, Vector2.Zero, 1.0f, tileDrawInfo.mEffect, mDrawLayer);
 				}
 			}
 		}
@@ -205,6 +205,16 @@ namespace MugEngine.Scene
 
 
 		#region rAccess
+
+		/// <summary>
+		/// Move the tile map to a position.
+		/// </summary>
+		public void SetPosition(Vector2 pos)
+		{
+			mBasePosition = pos;
+		}
+
+
 
 		/// <summary>
 		/// Get tile at a world position

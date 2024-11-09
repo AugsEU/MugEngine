@@ -90,6 +90,8 @@ namespace MugEngine.Graphics
 
 			mDivLayerCount = 1.0f / MugCore.I.GetNumLayers();
 			mLayerOffset = 0.0f;
+
+			mCurrentOptions = new MSpriteBatchOptions();
 		}
 
 		#endregion rInit
