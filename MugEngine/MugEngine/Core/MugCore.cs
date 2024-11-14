@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using MugEngine.Graphics;
+using MugEngine.Input;
 using MugEngine.Screen;
 using MugEngine.Types;
 
@@ -22,15 +23,6 @@ namespace MugEngine.Core
 		#region rInit
 
 		/// <summary>
-		/// Create mug engine. Called automatically be singleton
-		/// </summary>
-		public MugCore()
-		{
-		}
-
-
-
-		/// <summary>
 		/// Initialise the engine.
 		/// </summary>
 		public void InitEngine(MugEngineSettings settings, MugEngineInitParams init)
@@ -45,6 +37,8 @@ namespace MugEngine.Core
 			mSettings = settings;
 			MScreenManager.I.AddScreenTypes(settings.mResolution, settings.mScreenTypes);
 			MScreenManager.I.LoadScreens(settings.mStartScreen);
+
+			MugInput.I.Init(mSettings.mInputHistorySize);
 
 			mBackBufferCanvas = new MCanvas2D();
 		}
@@ -65,6 +59,10 @@ namespace MugEngine.Core
 			MUpdateInfo info = new MUpdateInfo();
 			info.mDelta = MugUtil.ToDelta(gameTime);
 
+			// Poll inputs
+			MugInput.I.Update(gameTime.TotalGameTime);
+
+			// Update game state
 			MScreenManager.I.Update(info);
 		}
 
