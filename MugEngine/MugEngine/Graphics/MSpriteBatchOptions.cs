@@ -14,7 +14,7 @@
 
 		public MSpriteBatchOptions()
 		{
-			mSortMode = SpriteSortMode.Texture;
+			mSortMode = SpriteSortMode.FrontToBack;
 			mBlend = BlendState.AlphaBlend;
 			mSamplerState = SamplerState.PointClamp;
 			mDepthStencilState = DepthStencilState.Default;

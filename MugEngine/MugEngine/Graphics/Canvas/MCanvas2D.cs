@@ -204,7 +204,7 @@ namespace MugEngine.Graphics
 			MugDebug.Assert(mLayerOffset < mDivLayerCount, "Too many objects have been drawn!");
 			MugDebug.Assert(0.0f < result && result < 1.0f, "Layer outside of clip bounds.");
 
-			return result + mLayerOffset;
+			return result;
 		}
 
 		#endregion rUtil
