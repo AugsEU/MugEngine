@@ -1,6 +1,6 @@
 ﻿namespace MugEngine.Input
 {
-	internal class MKeyboardButton : MButton
+	public class MKeyboardButton : MButton
 	{
 		Keys mKey = Keys.None;
 

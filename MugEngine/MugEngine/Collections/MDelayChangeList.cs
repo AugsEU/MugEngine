@@ -3,33 +3,43 @@ using System.Collections;
 
 namespace MugEngine.Collections
 {
-	public class MDelayDeleteList<T> : IList<T> where T : class
+	/// <summary>
+	/// A list that only adds or deletes when update is called.
+	/// </summary>
+	public class MDelayChangeList<T> : IList<T> where T : class
 	{
 		IList<T> mList;
-		HashSet<T> mDeletePool;
+		List<int> mDeletePool;
+		List<T> mAddPool;
 
-		public MDelayDeleteList(IList<T> list)
+		public MDelayChangeList(IList<T> list)
 		{
 			mList = list;
-			mDeletePool = new HashSet<T>();
+			mDeletePool = new List<int>();
+			mAddPool = new List<T>();
 		}
 
-		public void ProcessDeletes()
-		{
-			for (int i = 0; i < mList.Count && mList.Count > 0; i++)
-			{
-				T item = mList[i];
-				if (mDeletePool.Contains(item))
-				{
-					mDeletePool.Remove(item);
-					mList.RemoveAt(i);
 
-					i--;
-				}
+		/// <summary>
+		/// Process all adds and deletes
+		/// </summary>
+		public void ProcessAddsDeletes()
+		{
+			// Handle deletes
+			for(int i = 0; i < mDeletePool.Count; i++)
+			{
+				int idx = mDeletePool[i];
+				mList.RemoveAt(idx);
 			}
 
-			MugDebug.Assert(mDeletePool.Count == 0, "Queued items to delete that aren't in the list.");
+			// Now add new elements
+			for(int i = 0; i < mAddPool.Count; i++)
+			{
+				mList.Add(mAddPool[i]);
+			}
+
 			mDeletePool.Clear();
+			mAddPool.Clear();
 		}
 
 		public T this[int index] { get => mList[index]; set => mList[index] = value; }
@@ -40,13 +50,16 @@ namespace MugEngine.Collections
 
 		public void Add(T item)
 		{
-			mList.Add(item);
+			mAddPool.Add(item);
 		}
 
 		public void Clear()
 		{
-			mList.Clear();
 			mDeletePool.Clear();
+			for (int i = 0; i < mList.Count; i++)
+			{
+				mDeletePool.Add(i);
+			}
 		}
 
 		public bool Contains(T item)
@@ -71,17 +84,24 @@ namespace MugEngine.Collections
 
 		public void Insert(int index, T item)
 		{
-			mList.Insert(index, item);
+			throw new NotImplementedException();
 		}
 
 		public bool Remove(T item)
 		{
-			return mDeletePool.Add(item);
+			int index = IndexOf(item);
+			if (index == -1)
+			{
+				return false;
+			}
+
+			mDeletePool.Add(index);
+			return true;
 		}
 
 		public void RemoveAt(int index)
 		{
-			mDeletePool.Add(mList[index]);
+			mDeletePool.Add(index);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()

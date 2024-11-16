@@ -10,17 +10,19 @@ namespace MugEngine.Input
 		/// <summary>
 		/// Is this button currently down?
 		/// </summary>
-		bool ButtonDown<T>(T id) where T : Enum
+		public bool ButtonDown<T>(T id) where T : Enum
 		{
 			MButtonSet set = GetButtonSet(id);
 			MInputSnapshot snapShot = mHistory.SnapshotFromFrames(0);
 			return set.IsPressed(ref snapShot);
 		}
 
+
+
 		/// <summary>
 		/// Is this button currently down but wasn't on the previous frame?
 		/// </summary>
-		bool ButtonPressed<T>(T id) where T : Enum
+		public bool ButtonPressed<T>(T id) where T : Enum
 		{
 			MButtonSet set = GetButtonSet(id);
 			MInputSnapshot snapShotNow = mHistory.SnapshotFromFrames(0);

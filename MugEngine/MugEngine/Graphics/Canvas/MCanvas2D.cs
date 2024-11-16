@@ -429,6 +429,16 @@ namespace MugEngine.Graphics
 		}
 
 
+		/// <summary>
+		/// Draw a simple rectangle. Used mostly for debugging
+		/// </summary>
+		public void DrawRect(Rectangle rect, Color color, int layer = 0)
+		{
+			Vector2 pos = new Vector2(rect.X, rect.Y);
+			Vector2 size = new Vector2(rect.Width, rect.Height);
+			DrawTexture(sDummyTexture, pos, null, color, 0.0f, Vector2.Zero, size, SpriteEffects.None, layer);
+		}
+
 
 		/// <summary>
 		/// Draw a simple rectangle with a shadow.

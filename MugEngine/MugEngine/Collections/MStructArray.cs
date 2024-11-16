@@ -46,6 +46,11 @@ namespace MugEngine.Collections
 			}
 		}
 
+		public ref T GetRef(int index)
+		{
+			return ref mData[index];
+		}
+
 		public int Count => mHead;
 
 		public bool IsReadOnly => false;
@@ -152,7 +157,7 @@ namespace MugEngine.Collections
 
 		private void GrowList()
 		{
-			int newSize = mData.Length * 2;
+			int newSize = mData.Length + (1 + mData.Length / 2);
 			T[] newList = new T[newSize];
 			Array.Copy(mData, newList, mHead);
 			mData = newList;
