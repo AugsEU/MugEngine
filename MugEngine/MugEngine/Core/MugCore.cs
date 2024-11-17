@@ -56,6 +56,8 @@ namespace MugEngine.Core
 		/// </summary>
 		public void UpdateEngine(GameTime gameTime)
 		{
+			MProfileScope updateProfile = new MProfileScope(Color.Red);
+
 			MUpdateInfo info = new MUpdateInfo();
 			info.mDelta = MugUtil.ToDelta(gameTime);
 
@@ -64,6 +66,8 @@ namespace MugEngine.Core
 
 			// Update game state
 			MScreenManager.I.Update(info);
+
+			updateProfile.End();
 		}
 
 		#endregion rUpdate
