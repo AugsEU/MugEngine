@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Represents a thing that can collide.
 	/// </summary>
-	internal interface IMCollider
+	public interface IMCollider
 	{
 		public bool CollidesWith(MRectCollider rect);
 

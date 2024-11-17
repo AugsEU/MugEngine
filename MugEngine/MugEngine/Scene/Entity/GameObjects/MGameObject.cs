@@ -58,18 +58,30 @@ namespace MugEngine.Scene
 
 
 
-
+		 
 
 		#region rCollision
 
 		/// <summary>
-		/// Get collider for this entity.
+		/// Get bounding box for this entity.
 		/// </summary>
-		/// <returns></returns>
-		public virtual Rectangle ColliderBounds()
+		public virtual Rectangle LocalBounds()
 		{
-			return new Rectangle(MugMath.VecToPoint(mPosition), new Point(1, 1));
+			return new Rectangle(0, 0, 1, 1);
 		}
+
+
+
+		/// <summary>
+		/// Get collider in world coordinates
+		/// </summary>
+		public Rectangle AbsoluteBounds()
+		{
+			Rectangle ret = LocalBounds();
+			ret.Location += MugMath.VecToPoint(mPosition);
+			return ret;
+		}
+
 
 
 		/// <summary>
@@ -78,6 +90,26 @@ namespace MugEngine.Scene
 		public virtual void ReactToCollision(MCardDir normal)
 		{
 
+		}
+
+
+
+		/// <summary>
+		/// React to a collision.
+		/// </summary>
+		public virtual void ReactToSquish(MCardDir normal)
+		{
+
+		}
+
+
+
+		/// <summary>
+		/// Are we riding atop another game object?
+		/// </summary>
+		public virtual bool IsRiding(MGameObject other)
+		{
+			return false;
 		}
 
 		#endregion rCollision

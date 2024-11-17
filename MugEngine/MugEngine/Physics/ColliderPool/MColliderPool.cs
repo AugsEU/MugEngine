@@ -11,6 +11,7 @@ namespace MugEngine.Physics
 		#region rRegion
 
 		const int INIT_RECT_CAPACITY = 1024;
+		const int INIT_QUERY_CAPACITY = 128;
 
 		#endregion rRegion
 
@@ -22,6 +23,8 @@ namespace MugEngine.Physics
 
 		// Our various types of collider
 		MStructArray<MRectCollider> mRectColliders;
+
+		MStructArray<MColliderPoolID> mQueryResultsBuffer;
 
 		#endregion rMembers
 
@@ -37,6 +40,8 @@ namespace MugEngine.Physics
 		public MColliderPool(int initCapacity)
 		{
 			mRectColliders = new MStructArray<MRectCollider>(INIT_RECT_CAPACITY);
+
+			mQueryResultsBuffer = new MStructArray<MColliderPoolID>(INIT_QUERY_CAPACITY);
 		}
 
 
@@ -141,7 +146,43 @@ namespace MugEngine.Physics
 			}
 		}
 
+
+
+		/// <summary>
+		/// Move a collider in X-Y coordinates
+		/// </summary>
+		public void MoveColliderXY(MColliderPoolID id, int x, int y)
+		{
+			switch (id.mColliderType)
+			{
+				case MColliderType.Rectangle:
+					mRectColliders.GetRef(id.mIndex).MoveX(x);
+					mRectColliders.GetRef(id.mIndex).MoveY(y);
+					break;
+				default:
+					break;
+			}
+		}
+
+
+
+		/// <summary>
+		/// Set the mask of a collider
+		/// </summary>
+		public void SetColliderMask(MColliderPoolID id, MColliderMask mask)
+		{
+			switch (id.mColliderType)
+			{
+				case MColliderType.Rectangle:
+					mRectColliders.GetRef(id.mIndex).mMask = mask;
+					break;
+				default:
+					break;
+			}
+		}
+
 		#endregion rAccess
+
 
 
 
@@ -187,6 +228,64 @@ namespace MugEngine.Physics
 			}
 
 			return false;
+		}
+
+
+
+		/// <summary>
+		/// Check if collider intersects.
+		/// Populates query buffer.
+		/// </summary>
+		public bool Query(MColliderPoolID id, MColliderMask mask)
+		{
+			mQueryResultsBuffer.Clear();
+			switch (id.mColliderType)
+			{
+				case MColliderType.Rectangle:
+					return RectQuery(id.mIndex, mask);
+				default:
+					break;
+			}
+
+			throw new NotImplementedException();
+		}
+
+
+
+		/// <summary>
+		/// Check if rect at idx collides with anything in the pool.
+		/// </summary>
+		private bool RectQuery(int idx, MColliderMask mask)
+		{
+			bool result = false;
+
+			// To do: Smart lookup instead of brute force?
+			for (int i = 0; i < mRectColliders.Count; ++i)
+			{
+				// Must have the same mask. Cannot collide with itself.
+				if (idx == i || ((mask & mRectColliders[i].mMask) == 0b0000_0000))
+				{
+					continue;
+				}
+
+				if (mRectColliders[i].CollidesWith(mRectColliders[idx]))
+				{
+					result = true;
+					mQueryResultsBuffer.Add(new MColliderPoolID(MColliderType.Rectangle, i));
+				}
+			}
+
+			return result;
+		}
+
+
+
+		/// <summary>
+		/// Get results of previous query.
+		/// </summary>
+		public MStructArray<MColliderPoolID> GetQueryResults()
+		{
+			return mQueryResultsBuffer;
 		}
 
 		#endregion rCollisionChecks

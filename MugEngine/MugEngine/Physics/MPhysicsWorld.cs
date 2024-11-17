@@ -26,8 +26,9 @@ namespace MugEngine.Physics
 
 		MColliderPool mColliderPool;
 		MColliderPool mPrevFrameColliderPool;
-		MStructArray<MGameObjectSubmission> mActorSubmissions;
-		MStructArray<MGameObjectSubmission> mKinematicSubmissions;
+		Dictionary<MColliderPoolID, int> mColliderIDToActorIdx;
+		MStructArray<MActorSubmission> mActorSubmissions;
+		MStructArray<MKinematicSubmission> mKinematicSubmissions;
 		MStructArray<MTriggerSubmission> mTriggerSubmissions;
 
 		int mDebugDrawLayer;
@@ -48,9 +49,11 @@ namespace MugEngine.Physics
 			mColliderPool = new MColliderPool(1000);
 			mPrevFrameColliderPool = mColliderPool;
 
-			mActorSubmissions = new MStructArray<MGameObjectSubmission>(INIT_ACTOR_ARRAY_CAPACITY);
-			mKinematicSubmissions = new MStructArray<MGameObjectSubmission>(INIT_ACTOR_ARRAY_CAPACITY);
+			mActorSubmissions = new MStructArray<MActorSubmission>(INIT_ACTOR_ARRAY_CAPACITY);
+			mKinematicSubmissions = new MStructArray<MKinematicSubmission>(INIT_ACTOR_ARRAY_CAPACITY);
 			mTriggerSubmissions = new MStructArray<MTriggerSubmission>(INIT_ACTOR_ARRAY_CAPACITY);
+
+			mColliderIDToActorIdx = new Dictionary<MColliderPoolID, int>();
 
 			mDebugDrawLayer = debugDrawLayer;
 		}
@@ -73,7 +76,7 @@ namespace MugEngine.Physics
 			MoveActors(info);
 
 			// Then move kinematic colliders, making sure to move actors in our path.
-			//MoveKinematic(info);
+			MoveKinematics(info);
 
 			// Finally we send back triggers for any actor or kinematic that moved into a trigger.
 			//TriggerTriggers(info);
@@ -84,6 +87,7 @@ namespace MugEngine.Physics
 			mActorSubmissions.Clear();
 			mKinematicSubmissions.Clear();
 			mTriggerSubmissions.Clear();
+			mColliderIDToActorIdx.Clear();
 		}
 
 		public override int UpdateOrder()
@@ -92,6 +96,8 @@ namespace MugEngine.Physics
 		}
 
 		#endregion rUpdate
+
+
 
 
 
@@ -104,59 +110,84 @@ namespace MugEngine.Physics
 		{
 			for(int i = 0; i < mActorSubmissions.Count; i++)
 			{
-				ref MGameObjectSubmission sub = ref mActorSubmissions.GetRef(i);
-				Vector2 currPos = sub.mSenderObject.GetPos();
-				Vector2 destPos = currPos + sub.mVelocity * info.mDelta;
+				ref MActorSubmission actor = ref mActorSubmissions.GetRef(i);
 
-				Vector2 delta = destPos - currPos;
-				Point coordDelta = MugMath.VecToPoint(destPos) - MugMath.VecToPoint(currPos);
-				Point signs = new Point(MathF.Sign(delta.X), MathF.Sign(delta.Y));
-				
-				// Move X and Y separately. This can cause slight inaccuracies but at a high framerate it is negligible.
-
-				// Resolve X
-				while(Math.Abs(coordDelta.X) >= 1)
-				{
-					if(TryMoveActorX(sub.mColliderID, signs.X))
-					{
-						// Actor can move. Keep going...
-						coordDelta.X -= signs.X;
-						delta.X -= signs.X;
-						currPos.X += signs.X;
-					}
-					else
-					{
-						// Hit something.
-						coordDelta.X = 0;
-						delta.X = 0.0f;
-						sub.mSenderObject.ReactToCollision(signs.X > 0 ? MCardDir.Left : MCardDir.Right);
-					}
-				}
-				currPos.X += delta.X;
-
-
-				// Resolve Y
-				while (Math.Abs(coordDelta.Y) >= 1.0f)
-				{
-					if (TryMoveActorY(sub.mColliderID, signs.Y))
-					{
-						// Actor can move. Keep going...
-						coordDelta.Y -= signs.Y;
-						delta.Y -= signs.Y;
-						currPos.Y += signs.Y;
-					}
-					else
-					{
-						// Hit something. Stop moving.
-						coordDelta.Y = 0;
-						delta.Y = 0.0f;
-						sub.mSenderObject.ReactToCollision(signs.Y > 0 ? MCardDir.Up : MCardDir.Down);
-					}
-				}
-				currPos.Y += delta.Y;
-
-				sub.mSenderObject.SetPos(currPos);
+				MoveActorXY(ref actor, actor.mVelocity * info.mDelta, false);
 			}
+		}
+
+
+
+		/// <summary>
+		/// Move an actor by a displacement.
+		/// </summary>
+		private void MoveActorXY(ref MActorSubmission actor, Vector2 delta, bool isPush)
+		{
+			Vector2 currPos = actor.mSenderObject.GetPos();
+			Vector2 destPos = currPos + delta;
+
+			Point pixelDelta = MugMath.VecToPoint(destPos) - MugMath.VecToPoint(currPos);
+			Point pixelsToMove = pixelDelta;
+			Point signs = new Point(MathF.Sign(pixelsToMove.X), MathF.Sign(pixelsToMove.Y));
+
+			// Move X and Y separately. This can cause slight inaccuracies but at a high framerate it is negligible.
+
+			// Resolve X
+			while (Math.Abs(pixelsToMove.X) >= 1)
+			{
+				if (TryMoveActorX(actor.mColliderID, signs.X))
+				{
+					// Actor can move. Keep going...
+					pixelsToMove.X -= signs.X;
+				}
+				else
+				{
+					// Hit something. Stop moving.
+					delta.X = pixelDelta.X - pixelsToMove.X;
+					pixelsToMove.X = 0;
+
+					MCardDir collisionNormal = signs.X > 0 ? MCardDir.Left : MCardDir.Right;
+					if(isPush)
+					{
+						actor.mSenderObject.ReactToSquish(collisionNormal);
+					}
+					else
+					{
+						actor.mSenderObject.ReactToCollision(collisionNormal);
+					}
+				}
+			}
+			currPos.X += delta.X;
+
+
+			// Resolve Y
+			while (Math.Abs(pixelsToMove.Y) >= 1.0f)
+			{
+				if (TryMoveActorY(actor.mColliderID, signs.Y))
+				{
+					// Actor can move. Keep going...
+					pixelsToMove.Y -= signs.Y;
+				}
+				else
+				{
+					// Hit something. Stop moving.
+					delta.Y = pixelDelta.Y - pixelsToMove.Y;
+					pixelsToMove.Y = 0;
+
+					MCardDir collisionNormal = signs.Y > 0 ? MCardDir.Up : MCardDir.Down;
+					if(isPush)
+					{
+						actor.mSenderObject.ReactToSquish(collisionNormal);
+					}
+					else
+					{
+						actor.mSenderObject.ReactToCollision(collisionNormal);
+					}
+				}
+			}
+			currPos.Y += delta.Y;
+
+			actor.mSenderObject.SetPos(currPos);
 		}
 
 
@@ -209,6 +240,119 @@ namespace MugEngine.Physics
 
 
 
+		#region rResolveKinematic
+
+		/// <summary>
+		/// Fill in kinematic riders of kinematic sub
+		/// </summary>
+		private void FindKinematicRiders(ref MKinematicSubmission kine, ref List<int> riderIdxList)
+		{
+			riderIdxList.Clear();
+
+			for (int g = 0; g < mActorSubmissions.Count; g++)
+			{
+				if (mActorSubmissions[g].mSenderObject.IsRiding(kine.mSenderObject))
+				{
+					riderIdxList.Add(g);
+				}
+			}
+		}
+
+
+
+		/// <summary>
+		/// Move all of our actors. Making sure to not intersect kinematic and static colliders.
+		/// </summary>
+		private void MoveKinematics(MUpdateInfo info)
+		{
+			List<int> riderIdxList = new List<int>();
+			for(int k = 0; k < mKinematicSubmissions.Count; k++)
+			{
+				ref MKinematicSubmission kine = ref mKinematicSubmissions.GetRef(k);
+
+				// Find all actors riding this.
+				FindKinematicRiders(ref kine, ref riderIdxList);
+
+				Vector2 currPos = kine.mSenderObject.GetPos();
+				Vector2 destPos = currPos + kine.mVelocity * info.mDelta;
+
+				Vector2 delta = destPos - currPos;
+				Point pixelDelta = MugMath.VecToPoint(destPos) - MugMath.VecToPoint(currPos);
+				Point signs = new Point(MathF.Sign(pixelDelta.X), MathF.Sign(pixelDelta.Y));
+
+				// Turn off collision to avoid actor problems.
+				mColliderPool.SetColliderMask(kine.mColliderID, MColliderMask.None);
+
+				// Move collider & push actors.
+
+				// Resolve X
+				while (Math.Abs(pixelDelta.X) >= 1)
+				{
+					// Move along one.
+					mColliderPool.MoveColliderX(kine.mColliderID, signs.X);
+
+					mColliderPool.Query(kine.mColliderID, MColliderMask.Actor);
+					MStructArray<MColliderPoolID> collidedActors = mColliderPool.GetQueryResults();
+
+					for(int a = 0; a < collidedActors.Count; a++)
+					{
+						int submissionIdx;
+						mColliderIDToActorIdx.TryGetValue(collidedActors[a], out submissionIdx);
+
+						MoveActorXY(ref mActorSubmissions.GetRef(collidedActors[a].mIndex), new Vector2(signs.X, 0.0f), true);
+
+						riderIdxList.Remove(submissionIdx);
+					}
+
+					pixelDelta.X -= signs.X;
+				}
+
+				// Riders come along too in X dir.
+				for (int r = 0; r < riderIdxList.Count; r++)
+				{
+					MoveActorXY(ref mActorSubmissions.GetRef(r), new Vector2(delta.X, 0.0f), false);
+				}
+
+				// Resolve Y
+				while (Math.Abs(pixelDelta.Y) >= 1)
+				{
+					// Move along one.
+					mColliderPool.MoveColliderY(kine.mColliderID, signs.Y);
+
+					mColliderPool.Query(kine.mColliderID, MColliderMask.Actor);
+					MStructArray<MColliderPoolID> collidedActors = mColliderPool.GetQueryResults();
+
+					for (int a = 0; a < collidedActors.Count; a++)
+					{
+						int submissionIdx;
+						mColliderIDToActorIdx.TryGetValue(collidedActors[a], out submissionIdx);
+
+						MoveActorXY(ref mActorSubmissions.GetRef(submissionIdx), new Vector2(0.0f, signs.Y), true);
+
+						riderIdxList.Remove(submissionIdx);
+					}
+
+					pixelDelta.Y -= signs.Y;
+				}
+
+				// Riders come along too in Y dir.
+				for (int r = 0; r < riderIdxList.Count; r++)
+				{
+					MoveActorXY(ref mActorSubmissions.GetRef(r), new Vector2(0.0f, delta.Y), false);
+				}
+
+				// Turn back on for other colliders.
+				mColliderPool.SetColliderMask(kine.mColliderID, MColliderMask.Kinematic);
+
+				// Apply position to GO
+				kine.mSenderObject.SetPos(destPos);
+			}
+		}
+
+		#endregion rResolveKinematic
+
+
+
 
 
 		#region rDraw
@@ -248,11 +392,13 @@ namespace MugEngine.Physics
 		/// <summary>
 		/// Add a kinematic collider
 		/// </summary>
-		public void AddKinematic(MGameObject sender, Rectangle rectangle, Vector2 velocity)
+		public void AddKinematic(MGameObject sender, Rectangle localBounds, Vector2 velocity)
 		{
-			MColliderPoolID colliderID = mColliderPool.AddCollider(rectangle, MColliderMask.Kinematic);
+			// Transform local bounds into world
+			localBounds.Location += MugMath.VecToPoint(sender.GetPos());
+			MColliderPoolID colliderID = mColliderPool.AddCollider(localBounds, MColliderMask.Kinematic);
 
-			mKinematicSubmissions.Add(new MGameObjectSubmission(colliderID, velocity, sender));
+			mKinematicSubmissions.Add(new MKinematicSubmission(colliderID, velocity, sender));
 		}
 
 
@@ -260,11 +406,15 @@ namespace MugEngine.Physics
 		/// <summary>
 		/// Add an actor's collider
 		/// </summary>
-		public void AddActor(MGameObject sender, Rectangle rectangle, Vector2 velocity)
+		public void AddActor(MGameObject sender, Rectangle localBounds, Vector2 velocity)
 		{
-			MColliderPoolID colliderID = mColliderPool.AddCollider(rectangle, MColliderMask.Actor);
+			// Transform local bounds into world
+			localBounds.Location += MugMath.VecToPoint(sender.GetPos());
+			MColliderPoolID colliderID = mColliderPool.AddCollider(localBounds, MColliderMask.Actor);
 
-			mActorSubmissions.Add(new MGameObjectSubmission(colliderID, velocity, sender));
+			mColliderIDToActorIdx.Add(colliderID, mActorSubmissions.Count);
+
+			mActorSubmissions.Add(new MActorSubmission(colliderID, velocity, sender));
 		}
 
 		#endregion rSubmitColliders

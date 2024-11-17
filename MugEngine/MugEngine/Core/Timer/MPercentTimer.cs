@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Timer that runs on a portion of time.
 	/// </summary>
-	class MPercentTimer : MTimer
+	public class MPercentTimer : MTimer
 	{
 		#region rMembers
 
