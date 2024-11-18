@@ -1,9 +1,6 @@
 [submodule "LDtkMonogame"]
 	path = LDtkMonogame
 	url = https://github.com/AugsEU/LDtkMonogame.git
-[submodule "Aether.Physics2D"]
-	path = Aether.Physics2D
-	url = https://github.com/AugsEU/Aether.Physics2D.git
 [submodule "TracyWrapper"]
 	path = TracyWrapper
 	url = https://github.com/AugsEU/TracyWrapper.git
