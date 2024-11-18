@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\TracyWrapper\TracyWrapper\TracyWrapper.csproj" />
     <ProjectReference Include="..\..\LDtkMonogame\LDtk\LDtk.csproj" />
   </ItemGroup>
 
