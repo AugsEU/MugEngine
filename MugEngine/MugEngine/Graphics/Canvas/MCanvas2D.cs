@@ -204,7 +204,7 @@ namespace MugEngine.Graphics
 			MugDebug.Assert(mLayerOffset < mDivLayerCount, "Too many objects have been drawn!");
 			MugDebug.Assert(0.0f < result && result < 1.0f, "Layer outside of clip bounds.");
 
-			return result + mLayerOffset;
+			return result;
 		}
 
 		#endregion rUtil
@@ -428,6 +428,16 @@ namespace MugEngine.Graphics
 			DrawTexture(sDummyTexture, rect2f.mMin, null, color, 0.0f, Vector2.Zero, rect2f.GetSize(), SpriteEffects.None, layer);
 		}
 
+
+		/// <summary>
+		/// Draw a simple rectangle. Used mostly for debugging
+		/// </summary>
+		public void DrawRect(Rectangle rect, Color color, int layer = 0)
+		{
+			Vector2 pos = new Vector2(rect.X, rect.Y);
+			Vector2 size = new Vector2(rect.Width, rect.Height);
+			DrawTexture(sDummyTexture, pos, null, color, 0.0f, Vector2.Zero, size, SpriteEffects.None, layer);
+		}
 
 
 		/// <summary>

@@ -7,7 +7,7 @@ namespace MugEngine.Scene
 	{
 		#region rMembers
 
-		MDelayDeleteList<MGameObject> mObjects;
+		MDelayChangeList<MGameObject> mObjects;
 
 		#endregion rMembers
 
@@ -22,7 +22,7 @@ namespace MugEngine.Scene
 		/// </summary>
 		public MGameObjectManager()
 		{
-			mObjects = new MDelayDeleteList<MGameObject>(new List<MGameObject>());
+			mObjects = new MDelayChangeList<MGameObject>(new List<MGameObject>());
 		}
 
 
@@ -52,7 +52,7 @@ namespace MugEngine.Scene
 				mObjects[i].Update(scene, info);
 			}
 
-			mObjects.ProcessDeletes();
+			mObjects.ProcessAddsDeletes();
 		}
 
 		#endregion rUpdate
@@ -88,6 +88,15 @@ namespace MugEngine.Scene
 		public void QueueDelete(MGameObject go)
 		{
 			mObjects.Remove(go);
+		}
+
+
+		/// <summary>
+		/// Queue an object to be deleted at the end of the frame.
+		/// </summary>
+		public void QueueAdd(MGameObject go)
+		{
+			mObjects.Add(go);
 		}
 
 		#endregion rUtil

@@ -10,7 +10,7 @@ namespace MugEngine.Scene
 	{
 		#region rMembers
 
-		Vector2 mPosition;
+		protected Vector2 mPosition;
 
 		#endregion rMembers
 
@@ -58,27 +58,86 @@ namespace MugEngine.Scene
 
 
 
+		 
+
+		#region rCollision
+
+		/// <summary>
+		/// Get bounding box for this entity.
+		/// </summary>
+		public virtual Rectangle LocalBounds()
+		{
+			return new Rectangle(0, 0, 1, 1);
+		}
+
+
+
+		/// <summary>
+		/// Get collider in world coordinates
+		/// </summary>
+		public Rectangle AbsoluteBounds()
+		{
+			Rectangle ret = LocalBounds();
+			ret.Location += MugMath.VecToPoint(mPosition);
+			return ret;
+		}
+
+
+
+		/// <summary>
+		/// React to a collision.
+		/// </summary>
+		public virtual void ReactToCollision(MCardDir normal)
+		{
+
+		}
+
+
+
+		/// <summary>
+		/// React to a collision.
+		/// </summary>
+		public virtual void ReactToSquish(MCardDir normal)
+		{
+
+		}
+
+
+
+		/// <summary>
+		/// Are we riding atop another game object?
+		/// </summary>
+		public virtual bool IsRiding(MGameObject other)
+		{
+			return false;
+		}
+
+		#endregion rCollision
+
+
+
 
 
 		#region rUtil
 
 		/// <summary>
-		/// Get collider for this entity.
+		/// Get a position
 		/// </summary>
-		/// <returns></returns>
-		public virtual MRect2f ColliderBounds()
+		public Vector2 GetPos()
 		{
-			return new MRect2f(mPosition, 1.0f, 1.0f);
+			return mPosition;
+		}
+
+
+
+		/// <summary>
+		/// Set the position of this game object
+		/// </summary>
+		public void SetPos(Vector2 pos)
+		{
+			mPosition = pos;
 		}
 
 		#endregion rUtil
-
-
-
-
-
-		#region rAccess
-
-		#endregion rAccess
 	}
 }

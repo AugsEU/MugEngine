@@ -198,6 +198,8 @@ namespace MugEngine
 		/// </summary>
 		protected override void Update(GameTime gameTime)
 		{
+			MugProfile.HeartBeat();
+
 			MugCore.I.UpdateEngine(gameTime);
 			base.Update(gameTime);
 		}

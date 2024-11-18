@@ -1,4 +1,5 @@
 ﻿using MugEngine.Core;
+using MugEngine.Physics;
 using MugEngine.Types;
 
 namespace MugEngine.Scene
@@ -12,6 +13,7 @@ namespace MugEngine.Scene
 
 		Dictionary<Type, MEntity> mUniqueEntities;
 		List<MEntity> mEntities;
+		bool mEntityOrderDirty = true;
 
 		HashSet<MEntity> mDeletePool;
 
@@ -47,6 +49,11 @@ namespace MugEngine.Scene
 		/// </summary>
 		public void Update(MUpdateInfo info)
 		{
+			if(mEntityOrderDirty)
+			{
+				mEntities.Sort(new MEntityUpdateOrderComparer());
+			}
+
 			// Update entities in scene.
 			for (int i = 0; i < mEntities.Count; i++)
 			{
@@ -108,6 +115,8 @@ namespace MugEngine.Scene
 
 
 
+
+
 		#region rUtil
 
 		/// <summary>
@@ -117,6 +126,8 @@ namespace MugEngine.Scene
 		{
 			mEntities.Add(entity);
 			entity.OnSceneAdd(this);
+
+			mEntityOrderDirty = true;
 		}
 
 
@@ -149,6 +160,8 @@ namespace MugEngine.Scene
 
 
 
+
+
 		#region rAccess
 
 		/// <summary>
@@ -178,6 +191,27 @@ namespace MugEngine.Scene
 		{
 			return mEntities.Count;
 		}
+
+
+
+		/// <summary>
+		/// Get tile map
+		/// </summary>
+		public MTileMap TM { get { return Get<MTileMap>(); } }
+		
+		
+		
+		/// <summary>
+		/// Game game object manager.
+		/// </summary>
+		public MGameObjectManager GO { get { return Get<MGameObjectManager>(); } }
+
+
+
+		/// <summary>
+		/// Physics world
+		/// </summary>
+		public MPhysicsWorld PW { get { return Get<MPhysicsWorld>(); } }
 
 		#endregion rAccess
 	}

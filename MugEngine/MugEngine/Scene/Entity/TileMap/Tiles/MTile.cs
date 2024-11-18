@@ -12,7 +12,7 @@ namespace MugEngine.Scene
 		protected MTileAdjacency mAdjacency = MTileAdjacency.Ad0;
 		protected MCardDir mRotation;
 
-		private MRect2f mLocalBounds;
+		private Rectangle mLocalBounds;
 
 		#endregion rMembers
 
@@ -27,7 +27,7 @@ namespace MugEngine.Scene
 		/// </summary>
 		public MTile(Point tileSize)
 		{
-			mLocalBounds = new MRect2f(0.0f, 0.0f, tileSize.X, tileSize.Y);
+			mLocalBounds = new Rectangle(0, 0, tileSize.X, tileSize.Y);
 		}
 
 
@@ -124,9 +124,14 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Get bounds in coordinates relative to the tile.
 		/// </summary>
-		public MRect2f GetLocalBounds()
+		public Rectangle GetLocalBounds()
 		{
 			return mLocalBounds;
+		}
+
+		public virtual bool RegisterCollider()
+		{
+			return false;
 		}
 
 		#endregion rUtil
@@ -135,7 +140,7 @@ namespace MugEngine.Scene
 
 
 
-		#region rAccess
+		#region rUtil
 
 		/// <summary>
 		/// Is the tile enabled?
@@ -167,6 +172,6 @@ namespace MugEngine.Scene
 			return mAdjacency;
 		}
 
-		#endregion rAccess
+		#endregion rUtil
 	}
 }

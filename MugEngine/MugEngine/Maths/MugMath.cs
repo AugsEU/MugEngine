@@ -5,7 +5,7 @@ namespace MugEngine.Maths
 	/// <summary>
 	/// Math utility functions
 	/// </summary>
-	static class MugMath
+	public static class MugMath
 	{
 		#region rVector
 
@@ -16,8 +16,8 @@ namespace MugEngine.Maths
 		/// <returns>Point</returns>
 		public static Point VecToPoint(Vector2 vec)
 		{
-			int px = (int)MathF.Round(vec.X);
-			int py = (int)MathF.Round(vec.Y);
+			int px = (int)MathF.Round(vec.X, MidpointRounding.ToZero);
+			int py = (int)MathF.Round(vec.Y, MidpointRounding.ToZero);
 
 			return new Point(px, py);
 		}

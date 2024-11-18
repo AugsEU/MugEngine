@@ -27,21 +27,14 @@ namespace MugEngine.Core
 		#region rInit
 
 		/// <summary>
-		/// Init data
-		/// </summary>
-		public MData()
-		{
-			mAnimationDataCache = new Dictionary<string, MAnimationData>();
-			mActiveThemes = new List<MDataTheme>();
-		}
-
-
-		/// <summary>
 		/// Initialise the data manager.
 		/// </summary>
 		public void Init(ContentManager content)
 		{
 			mContentManager = content;
+
+			mAnimationDataCache = new Dictionary<string, MAnimationData>();
+			mActiveThemes = new List<MDataTheme>();
 
 			// To do: try to populate animation cache.
 		}

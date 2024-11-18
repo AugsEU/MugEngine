@@ -5,7 +5,7 @@ namespace MugEngine.Core
 	/// <summary>
 	/// Simple timer/stopwatch class.
 	/// </summary>
-	class MTimer : IMUpdate
+	public class MTimer : IMUpdate
 	{
 		#region rMembers
 

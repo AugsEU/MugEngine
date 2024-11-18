@@ -18,12 +18,28 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Called every frame to update the state.
 		/// </summary>
-		public abstract void Update(MScene scene, MUpdateInfo info);
+		public virtual void Update(MScene scene, MUpdateInfo info)
+		{
+
+		}
 
 
 		/// <summary>
 		/// Called every frame draw the entity.
 		/// </summary>
-		public abstract void Draw(MScene scene, MDrawInfo info);
+		public virtual void Draw(MScene scene, MDrawInfo info)
+		{
+
+		}
+
+
+		/// <summary>
+		/// Gets order of updates.
+		/// Higher is later.
+		/// </summary>
+		public virtual int UpdateOrder()
+		{
+			return MEntityUpdateOrder.DEFAULT_ORDER;
+		}
 	}
 }

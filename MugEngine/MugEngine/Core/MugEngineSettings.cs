@@ -28,6 +28,7 @@ namespace MugEngine.Core
 		public int mFPS;
 		public Point mResolution;
 		public int mNumLayers;
+		public int mInputHistorySize;
 
 		public MugEngineSettings()
 		{
@@ -39,6 +40,8 @@ namespace MugEngine.Core
 			mFPS = 60;
 			mResolution = new Point(640, 360);
 			mNumLayers = 1;
+
+			mInputHistorySize = 180; // About 3 seconds
 		}
 	}
 
