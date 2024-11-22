@@ -5,6 +5,7 @@ using MugEngine.Maths;
 using MugEngine.Physics.Submission;
 using MugEngine.Scene;
 using MugEngine.Types;
+using TracyWrapper;
 
 namespace MugEngine.Physics
 {
@@ -71,6 +72,8 @@ namespace MugEngine.Physics
 		/// </summary>
 		public override void Update(MScene scene, MUpdateInfo info)
 		{
+			Profiler.PushProfileZone("Physics update", ZoneC.BLUE_VIOLET);
+
 			// The three phases of physics.
 			// First we move actors such as the player, making sure to not intersect kinematic and static colliders.
 			MoveActors(info);
@@ -88,6 +91,8 @@ namespace MugEngine.Physics
 			mKinematicSubmissions.Clear();
 			mTriggerSubmissions.Clear();
 			mColliderIDToActorIdx.Clear();
+
+			Profiler.PopProfileZone();
 		}
 
 		public override int UpdateOrder()

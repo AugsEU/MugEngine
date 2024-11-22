@@ -2,6 +2,7 @@
 using MugEngine.Graphics;
 using MugEngine.Maths;
 using MugEngine.Types;
+using TracyWrapper;
 
 namespace MugEngine.Scene
 {
@@ -141,6 +142,8 @@ namespace MugEngine.Scene
 
 		public override void Update(MScene scene, MUpdateInfo info)
 		{
+			Profiler.PushProfileZone("Update Tiles");
+
 			for (int x = 0; x < mTileMap.GetLength(0); x++)
 			{
 				for (int y = 0; y < mTileMap.GetLength(1); y++)
@@ -155,6 +158,8 @@ namespace MugEngine.Scene
 					}
 				}
 			}
+
+			Profiler.PopProfileZone();
 		}
 
 		#endregion rUpdate

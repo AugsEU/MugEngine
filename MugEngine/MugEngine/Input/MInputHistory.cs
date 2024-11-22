@@ -43,12 +43,16 @@ namespace MugEngine.Input
 		/// </summary>
 		public void PollInputs(TimeSpan timeStamp)
 		{
+			TracyWrapper.Profiler.PushProfileZone("PollInputs", System.Drawing.Color.Green);
+
 			if (mHistory.Count > mMaxHistorySize)
 			{
 				mHistory.RemoveFromBack();
 			}
 
 			mHistory.AddToFront(new MInputSnapshot(timeStamp));
+
+			TracyWrapper.Profiler.PopProfileZone();
 		}
 
 		#endregion rPoll

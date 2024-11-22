@@ -17,6 +17,8 @@ namespace MugEngine
 		private Rectangle mPrevWindowedSize;
 		private MugEngineSettings mSettings;
 
+		private Thread mDebugThread;
+
 		#endregion rRegion
 
 
@@ -40,14 +42,32 @@ namespace MugEngine
 			sSelf = this;
 		}
 
+		private void ThreadTask()
+		{
+			TracyWrapper.Profiler.InitThread();
+			List<byte[]> sillyList = new List<byte[]>();
+			while (true)
+			{
+				for(int i = 0; i < 100; i++) sillyList.Add(new byte[10000]);
+
+				TracyWrapper.Profiler.PushProfileZone("Thread Wait");
+				Thread.Sleep(1);
+				TracyWrapper.Profiler.PopProfileZone();
+				if( sillyList.Count > 200)
+				{
+					sillyList.Clear();
+				}
+			}
+		}
 
 
 		/// <summary>
 		/// Initialise the engine. Must be called.
 		/// </summary>
-		/// <param name="settings"></param>
 		protected override void Initialize()
 		{
+			TracyWrapper.Profiler.InitThread();
+
 			MugEngineInitParams initParams = new MugEngineInitParams(mGraphics, Content);
 			MugCore.I.InitEngine(mSettings, initParams);
 
@@ -58,6 +78,10 @@ namespace MugEngine
 			Window.ClientSizeChanged += OnResize;
 
 			mPrevWindowedSize = GraphicsDevice.PresentationParameters.Bounds;
+
+			mDebugThread = new Thread(ThreadTask);
+			mDebugThread.Name = "DebugThread";
+			mDebugThread.Start();
 		}
 
 		#endregion rInit
@@ -198,7 +222,7 @@ namespace MugEngine
 		/// </summary>
 		protected override void Update(GameTime gameTime)
 		{
-			MugProfile.HeartBeat();
+			TracyWrapper.Profiler.HeartBeat();
 
 			MugCore.I.UpdateEngine(gameTime);
 			base.Update(gameTime);
