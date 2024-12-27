@@ -1,5 +1,4 @@
-﻿using MugEngine.Core.Types;
-using MugEngine.Data;
+﻿using MugEngine.Data;
 using MugEngine.Graphics;
 using MugEngine.Input;
 using MugEngine.Library;

@@ -1,6 +1,6 @@
 ﻿using MugEngine.Graphics;
 
-namespace MugEngine.Core.Types
+namespace MugEngine.Core
 {
 	/// <summary>
 	/// Info needed to draw

@@ -1,7 +1,5 @@
 ﻿using MugEngine.Data;
 using MugEngine.Graphics;
-using MugEngine.Library.Maths;
-using MugEngine.Types;
 using System.Globalization;
 using System.Xml;
 

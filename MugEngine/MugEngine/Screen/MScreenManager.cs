@@ -1,5 +1,4 @@
 ﻿using MugEngine.Core;
-using MugEngine.Core.Types;
 using MugEngine.Library;
 
 namespace MugEngine.Screen

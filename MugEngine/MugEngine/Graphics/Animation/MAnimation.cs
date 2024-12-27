@@ -1,4 +1,4 @@
-﻿using MugEngine.Core.Types;
+﻿using MugEngine.Core;
 
 namespace MugEngine.Graphics
 {

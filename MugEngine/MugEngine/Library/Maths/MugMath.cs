@@ -1,6 +1,4 @@
-﻿using MugEngine.Types;
-
-namespace MugEngine.Library.Maths
+﻿namespace MugEngine
 {
 	/// <summary>
 	/// Math utility functions

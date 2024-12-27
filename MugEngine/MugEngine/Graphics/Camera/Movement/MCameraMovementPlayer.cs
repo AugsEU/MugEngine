@@ -1,5 +1,5 @@
-﻿using MugEngine.Core.Types;
-using MugEngine.Library.Timer;
+﻿using MugEngine.Core;
+using MugEngine.Library;
 
 namespace MugEngine.Graphics
 {

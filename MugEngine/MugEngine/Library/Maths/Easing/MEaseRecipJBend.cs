@@ -1,4 +1,4 @@
-﻿namespace MugEngine.Library.Maths.Easing
+﻿namespace MugEngine.Library
 {
 	/// <summary>
 	/// Reciprocal function that creates a J bend.

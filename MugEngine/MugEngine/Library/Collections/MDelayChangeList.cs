@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace MugEngine.Library.Collections
+namespace MugEngine.Library
 {
 	/// <summary>
 	/// A list that only adds or deletes when update is called.

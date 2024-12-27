@@ -1,5 +1,4 @@
 ﻿using MugEngine.Core;
-using MugEngine.Core.Types;
 
 namespace MugEngine.Scene
 {

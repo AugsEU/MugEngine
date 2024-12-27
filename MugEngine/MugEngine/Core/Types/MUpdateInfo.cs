@@ -1,4 +1,4 @@
-﻿namespace MugEngine.Core.Types
+﻿namespace MugEngine.Core
 {
 	/// <summary>
 	/// Contains all information needed to update.

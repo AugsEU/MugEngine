@@ -1,6 +1,5 @@
-﻿using MugEngine.Core.Types;
-using MugEngine.Library.Maths;
-using MugEngine.Types;
+﻿using MugEngine.Core;
+using MugEngine.Library;
 
 namespace MugEngine.Scene
 {

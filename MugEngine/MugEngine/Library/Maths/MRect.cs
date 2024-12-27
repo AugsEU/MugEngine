@@ -1,4 +1,4 @@
-﻿namespace MugEngine.Library.Maths
+﻿namespace MugEngine
 {
 	/// <summary>
 	/// Rectangle in world space used for colliders

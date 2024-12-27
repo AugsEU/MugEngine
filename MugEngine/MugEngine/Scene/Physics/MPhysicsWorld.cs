@@ -1,9 +1,6 @@
 ﻿#define DRAW_PHYSICS_OFF
 
-using MugEngine.Core.Types;
-using MugEngine.Library.Collections;
-using MugEngine.Library.Maths;
-using MugEngine.Types;
+using MugEngine.Core;
 using TracyWrapper;
 
 namespace MugEngine.Scene

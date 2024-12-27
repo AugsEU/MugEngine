@@ -1,4 +1,4 @@
-﻿namespace MugEngine.Library.Timer
+﻿namespace MugEngine.Library
 {
 	/// <summary>
 	/// Timer that runs on a portion of time.

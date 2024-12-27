@@ -1,4 +1,4 @@
-﻿namespace MugEngine.Library.Maths.Easing
+﻿namespace MugEngine.Library
 {
 	/// <summary>
 	/// Contains many easing functions.

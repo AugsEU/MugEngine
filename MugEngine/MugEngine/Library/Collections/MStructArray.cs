@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace MugEngine.Library.Collections
+namespace MugEngine.Library
 {
 	/// <summary>
 	/// Array designed to hold a lot of information.

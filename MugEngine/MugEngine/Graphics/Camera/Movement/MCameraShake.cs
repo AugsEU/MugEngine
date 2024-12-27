@@ -1,4 +1,4 @@
-﻿using MugEngine.Library.Maths.Easing;
+﻿using MugEngine.Library;
 
 namespace MugEngine.Graphics
 {

@@ -1,6 +1,6 @@
-﻿using MugEngine.Core.Types;
+﻿using MugEngine.Core;
 
-namespace MugEngine.Library.Timer
+namespace MugEngine.Library
 {
 	/// <summary>
 	/// Simple timer/stopwatch class.

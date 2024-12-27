@@ -1,7 +1,6 @@
-﻿using MugEngine.Library.Maths;
-using System.Reflection;
+﻿using System.Reflection;
 
-namespace MugEngine.Types
+namespace MugEngine.Library
 {
 	/// <summary>
 	/// Reprents a direction in 1 of 4 directions.
