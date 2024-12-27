@@ -1,4 +1,5 @@
-﻿namespace MugEngine.Scene
+﻿#if MUG_PHYSICS
+namespace MugEngine.Scene
 {
 	struct MTriggerSubmission
 	{
@@ -12,3 +13,4 @@
 		}
 	}
 }
+#endif

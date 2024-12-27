@@ -1,4 +1,5 @@
-﻿namespace MugEngine.Scene
+﻿#if MUG_PHYSICS
+namespace MugEngine.Scene
 {
 	/// <summary>
 	/// Represents a thing that can collide.
@@ -14,3 +15,4 @@
 		public MColliderMask GetMask();
 	}
 }
+#endif

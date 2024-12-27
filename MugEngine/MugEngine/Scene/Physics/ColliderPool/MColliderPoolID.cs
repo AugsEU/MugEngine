@@ -1,4 +1,5 @@
-﻿namespace MugEngine.Scene
+﻿#if MUG_PHYSICS
+namespace MugEngine.Scene
 {
 	/// <summary>
 	/// An ID for a collider pool
@@ -41,3 +42,4 @@
 		}
 	}
 }
+#endif

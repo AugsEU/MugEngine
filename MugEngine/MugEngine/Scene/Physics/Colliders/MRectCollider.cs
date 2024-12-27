@@ -1,4 +1,5 @@
-﻿namespace MugEngine.Scene
+﻿#if MUG_PHYSICS
+namespace MugEngine.Scene
 {
 	public struct MRectCollider : IMCollider
 	{
@@ -44,3 +45,4 @@
 		}
 	}
 }
+#endif

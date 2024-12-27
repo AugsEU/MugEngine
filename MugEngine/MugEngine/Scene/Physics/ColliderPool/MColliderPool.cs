@@ -1,4 +1,5 @@
-﻿using MugEngine.Core;
+﻿#if MUG_PHYSICS
+using MugEngine.Core;
 using MugEngine.Library;
 
 namespace MugEngine.Scene
@@ -342,3 +343,4 @@ namespace MugEngine.Scene
 		#endregion rDebug
 	}
 }
+#endif

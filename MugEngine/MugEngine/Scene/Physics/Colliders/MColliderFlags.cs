@@ -1,4 +1,5 @@
-﻿namespace MugEngine.Scene
+﻿#if MUG_PHYSICS
+namespace MugEngine.Scene
 {
 	enum MColliderType : byte
 	{
@@ -16,3 +17,4 @@
 		Trigger = 0b1000            // Contains "trigger" colliders that can trigger things for gameobjects.
 	}
 }
+#endif

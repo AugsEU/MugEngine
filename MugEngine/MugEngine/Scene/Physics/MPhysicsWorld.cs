@@ -1,5 +1,6 @@
 ﻿#define DRAW_PHYSICS_OFF
 
+#if MUG_PHYSICS
 using MugEngine.Core;
 using TracyWrapper;
 
@@ -421,3 +422,4 @@ namespace MugEngine.Scene
 		#endregion rSubmitColliders
 	}
 }
+#endif
