@@ -1,8 +1,9 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using MugEngine.Core.Types;
+using MugEngine.Data;
 using MugEngine.Graphics;
 using MugEngine.Input;
+using MugEngine.Library;
 using MugEngine.Screen;
-using MugEngine.Types;
 
 namespace MugEngine.Core
 {

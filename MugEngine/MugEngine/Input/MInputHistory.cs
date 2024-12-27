@@ -66,16 +66,16 @@ namespace MugEngine.Input
 		/// </summary>
 		public MInputSnapshot SnapshotFromTime(TimeSpan timeStamp)
 		{
-			if(mHistory.Count < 0)
+			if (mHistory.Count < 0)
 			{
 				return MInputSnapshot.Default;
 			}
 
 			int snapIdx = 0;
 			TimeSpan frontTime = mHistory[0].mTimeStamp;
-			for(int i = 1; i < mHistory.Count; i++)
+			for (int i = 1; i < mHistory.Count; i++)
 			{
-				if(frontTime - mHistory[i].mTimeStamp < TimeSpan.Zero)
+				if (frontTime - mHistory[i].mTimeStamp < TimeSpan.Zero)
 				{
 					snapIdx = i;
 					break;

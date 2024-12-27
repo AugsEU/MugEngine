@@ -1,5 +1,5 @@
-﻿using MugEngine.Graphics;
-using MugEngine.Types;
+﻿using MugEngine.Core.Types;
+using MugEngine.Graphics;
 
 namespace MugEngine
 {

@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-
-namespace MugEngine.Input
+﻿namespace MugEngine.Input
 {
 	/// <summary>
 	/// Represnets the same button across all gamepads.
@@ -17,9 +15,9 @@ namespace MugEngine.Input
 
 		public override bool IsPressed(ref MInputSnapshot inputSnapshot)
 		{
-			for(int i = 0; i < inputSnapshot.mGamepadStates.Length; i++)
+			for (int i = 0; i < inputSnapshot.mGamepadStates.Length; i++)
 			{
-				if(inputSnapshot.mGamepadStates[i].IsButtonDown(mButton))
+				if (inputSnapshot.mGamepadStates[i].IsButtonDown(mButton))
 				{
 					return true;
 				}

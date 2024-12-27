@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework.Input;
-
-namespace MugEngine.Input
+﻿namespace MugEngine.Input
 {
 	/// <summary>
 	/// All the data for a single frame of inputs
@@ -29,7 +27,7 @@ namespace MugEngine.Input
 			int numGamepads = GamePad.MaximumGamePadCount;
 
 			mGamepadStates = new GamePadState[numGamepads];
-			for(int i = 0; i < numGamepads; i++)
+			for (int i = 0; i < numGamepads; i++)
 			{
 				mGamepadStates[i] = GamePad.GetState(i);
 			}

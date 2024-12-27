@@ -1,6 +1,5 @@
 ﻿using MugEngine.Core;
-using MugEngine.Physics;
-using MugEngine.Types;
+using MugEngine.Core.Types;
 
 namespace MugEngine.Scene
 {
@@ -11,11 +10,11 @@ namespace MugEngine.Scene
 	{
 		#region rMembers
 
-		Dictionary<Type, MEntity> mUniqueEntities;
-		List<MEntity> mEntities;
+		Dictionary<Type, MComponent> mUniqueEntities;
+		List<MComponent> mEntities;
 		bool mEntityOrderDirty = true;
 
-		HashSet<MEntity> mDeletePool;
+		HashSet<MComponent> mDeletePool;
 
 		#endregion rMembers
 
@@ -30,10 +29,10 @@ namespace MugEngine.Scene
 		/// </summary>
 		public MScene()
 		{
-			mUniqueEntities = new Dictionary<Type, MEntity>();
-			mEntities = new List<MEntity>();
+			mUniqueEntities = new Dictionary<Type, MComponent>();
+			mEntities = new List<MComponent>();
 
-			mDeletePool = new HashSet<MEntity>();
+			mDeletePool = new HashSet<MComponent>();
 		}
 
 		#endregion rInit
@@ -49,7 +48,7 @@ namespace MugEngine.Scene
 		/// </summary>
 		public void Update(MUpdateInfo info)
 		{
-			if(mEntityOrderDirty)
+			if (mEntityOrderDirty)
 			{
 				mEntities.Sort(new MEntityUpdateOrderComparer());
 			}
@@ -72,7 +71,7 @@ namespace MugEngine.Scene
 		{
 			for (int i = 0; i < mEntities.Count && mDeletePool.Count > 0; i++)
 			{
-				MEntity entity = mEntities[i];
+				MComponent entity = mEntities[i];
 				if (mDeletePool.Contains(entity))
 				{
 					mDeletePool.Remove(entity);
@@ -122,7 +121,7 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Add an entity to the scene.
 		/// </summary>
-		public void AddEntity(MEntity entity)
+		public void AddEntity(MComponent entity)
 		{
 			mEntities.Add(entity);
 			entity.OnSceneAdd(this);
@@ -135,7 +134,7 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Add a unique entity.
 		/// </summary>
-		public void AddUnique(MEntity entity)
+		public void AddUnique(MComponent entity)
 		{
 			Type entType = entity.GetType();
 			MugDebug.Assert(!mUniqueEntities.ContainsKey(entType), "Cannot add unique entity of type more than once.");
@@ -151,7 +150,7 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Prepare entity for deletion.
 		/// </summary>
-		public void QueueRemove(MEntity entity)
+		public void QueueRemove(MComponent entity)
 		{
 			mDeletePool.Add(entity);
 		}
@@ -167,7 +166,7 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Get a unique entity.
 		/// </summary>
-		public T Get<T>() where T : MEntity
+		public T Get<T>() where T : MComponent
 		{
 			return (T)mUniqueEntities.GetValueOrDefault(typeof(T), default(T));
 		}
@@ -177,7 +176,7 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Get an entity
 		/// </summary>
-		public MEntity Get(int index)
+		public MComponent Get(int index)
 		{
 			return mEntities[index];
 		}
@@ -198,9 +197,9 @@ namespace MugEngine.Scene
 		/// Get tile map
 		/// </summary>
 		public MTileMap TM { get { return Get<MTileMap>(); } }
-		
-		
-		
+
+
+
 		/// <summary>
 		/// Game game object manager.
 		/// </summary>

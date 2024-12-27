@@ -1,4 +1,4 @@
-﻿using MugEngine.Types;
+﻿using MugEngine.Core.Types;
 
 namespace MugEngine.Graphics
 {
@@ -52,7 +52,7 @@ namespace MugEngine.Graphics
 		float mTotalDuration = 0.0f;
 		float mPlayHead = 0.0f;
 		float mPlayDirection = 1.0f;
-		
+
 		bool mPlaying = true;
 
 		#endregion rMembers
@@ -135,7 +135,7 @@ namespace MugEngine.Graphics
 			{
 				UpdatePlayhead(info);
 
-				if(mNumRepeats != 0 && mRepeatsRemaining == 0)
+				if (mNumRepeats != 0 && mRepeatsRemaining == 0)
 				{
 					Stop();
 				}

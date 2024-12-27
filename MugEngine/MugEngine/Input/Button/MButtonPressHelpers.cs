@@ -1,4 +1,4 @@
-﻿using MugEngine.Types;
+﻿using MugEngine.Library;
 
 namespace MugEngine.Input
 {

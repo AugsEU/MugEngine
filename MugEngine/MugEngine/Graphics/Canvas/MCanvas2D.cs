@@ -1,6 +1,6 @@
 ﻿using MugEngine.Core;
-using MugEngine.Maths;
-using MugEngine.Types;
+using MugEngine.Core.Types;
+using MugEngine.Library.Maths;
 
 namespace MugEngine.Graphics
 {

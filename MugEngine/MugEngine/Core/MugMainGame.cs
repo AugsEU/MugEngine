@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using MugEngine.Core;
-using System.Runtime;
+﻿using MugEngine.Core;
 
 namespace MugEngine
 {
@@ -48,12 +46,12 @@ namespace MugEngine
 			List<byte[]> sillyList = new List<byte[]>();
 			while (true)
 			{
-				for(int i = 0; i < 100; i++) sillyList.Add(new byte[10000]);
+				for (int i = 0; i < 100; i++) sillyList.Add(new byte[10000]);
 
 				TracyWrapper.Profiler.PushProfileZone("Thread Wait");
 				Thread.Sleep(1);
 				TracyWrapper.Profiler.PopProfileZone();
-				if( sillyList.Count > 200)
+				if (sillyList.Count > 200)
 				{
 					sillyList.Clear();
 				}
@@ -114,9 +112,9 @@ namespace MugEngine
 
 			mGraphics.ApplyChanges();
 		}
-		
-		
-		
+
+
+
 		/// <summary>
 		/// Callback for re-sizing the screen
 		/// </summary>

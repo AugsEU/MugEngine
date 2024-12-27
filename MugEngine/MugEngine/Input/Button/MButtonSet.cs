@@ -16,7 +16,7 @@
 		{
 			foreach (MButton button in mButtons)
 			{
-				if(button.IsPressed(ref shapshot))
+				if (button.IsPressed(ref shapshot))
 				{
 					return true;
 				}
