@@ -1,6 +1,6 @@
 ﻿namespace MugEngine.Scene
 {
-	public abstract class MTile
+	public abstract class MTile : IMCollisionQueryable, IMBounds
 	{
 		#region rMembers
 
@@ -8,7 +8,7 @@
 		protected MTileAdjacency mAdjacency = MTileAdjacency.Ad0;
 		protected MCardDir mRotation;
 
-		private Rectangle mLocalBounds;
+		Rectangle mBoundingBox;
 
 		#endregion rMembers
 
@@ -21,10 +21,21 @@
 		/// <summary>
 		/// Create a tile with default bounds.
 		/// </summary>
-		public MTile(Point tileSize)
+		public MTile()
 		{
-			mLocalBounds = new Rectangle(0, 0, tileSize.X, tileSize.Y);
 		}
+
+
+
+		/// <summary>
+		/// Inform tile is at this position.
+		/// This should not change.
+		/// </summary>
+		public virtual void PlaceAt(Point pos, Point size)
+		{
+			mBoundingBox = new Rectangle(pos, size);
+		}
+
 
 
 		/// <summary>
@@ -115,22 +126,23 @@
 
 
 
-		#region rUtil
+		#region rCollision
 
 		/// <summary>
-		/// Get bounds in coordinates relative to the tile.
+		/// Query collision
 		/// </summary>
-		public Rectangle GetLocalBounds()
-		{
-			return mLocalBounds;
-		}
-
-		public virtual bool RegisterCollider()
+		public virtual bool QueryCollides(Rectangle bounds, MCardDir travelDir)
 		{
 			return false;
 		}
 
-		#endregion rUtil
+
+		public Rectangle BoundsRect()
+		{
+			return mBoundingBox;
+		}
+
+		#endregion rCollision
 
 
 

@@ -41,6 +41,7 @@ namespace MugEngine.Scene
 			{
 				int sign = Math.Sign(move);
 				Vector2 normal = Vector2.UnitX * sign;
+				MCardDir dir = sign < 0 ? MCardDir.Left : MCardDir.Right;
 
 				while (move != 0)
 				{
@@ -48,7 +49,7 @@ namespace MugEngine.Scene
 					move -= sign;
 					mPosition.X += sign;
 
-					if (CollidesWithAnySolid())
+					if (CollidesWithAnySolid(dir))
 					{
 						// Hit something, move back and do callback.
 						mPosition.X -= sign;
@@ -80,6 +81,7 @@ namespace MugEngine.Scene
 			{
 				int sign = Math.Sign(move);
 				Vector2 normal = Vector2.UnitY * sign;
+				MCardDir dir = sign < 0 ? MCardDir.Up : MCardDir.Down;
 
 				while (move != 0)
 				{
@@ -87,7 +89,7 @@ namespace MugEngine.Scene
 					move -= sign;
 					mPosition.Y += sign;
 
-					if (CollidesWithAnySolid())
+					if (CollidesWithAnySolid(dir))
 					{
 						// Hit something, move back and do callback.
 						mPosition.Y -= sign;
@@ -109,7 +111,7 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Simple collision check.
 		/// </summary>
-		public bool CollidesWithAnySolid()
+		public bool CollidesWithAnySolid(MCardDir dir)
 		{
 			Rectangle bounds = BoundsRect();
 
@@ -126,7 +128,9 @@ namespace MugEngine.Scene
 				}
 			}
 
-			return false;
+			bool levelCollides = GO().GetLevel().QueryCollides(bounds, dir);
+
+			return levelCollides;
 		}
 
 
@@ -154,6 +158,7 @@ namespace MugEngine.Scene
 		public virtual void OnHitSolid(Vector2 normal)
 		{
 		}
+
 
 
 		/// <summary>

@@ -193,7 +193,7 @@
 		/// <summary>
 		/// Get tile map
 		/// </summary>
-		public MTileMap TM { get { return Get<MTileMap>(); } }
+		public MLevel LVL { get { return Get<MGameObjectManager>().GetLevel(); } }
 
 
 

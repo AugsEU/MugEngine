@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace MugEngine.Core
 {
-	static class MugDebug
+	public static class MugDebug
 	{
 		struct DebugRect
 		{
@@ -13,6 +13,7 @@ namespace MugEngine.Core
 		}
 
 		private static List<DebugRect> mDebugRectToDraw = new List<DebugRect>();
+
 		public static bool mConsoleAlloc = false;
 		public static bool mDebugFlag1 = false;
 		static uint mLogLineNum = 0;
@@ -76,6 +77,36 @@ namespace MugEngine.Core
 				string errorMsg = string.Format(msg, args);
 				throw new Exception(errorMsg);
 			}
+#endif
+		}
+
+
+		public static void AddDebugRect(Rectangle rect, Color color)
+		{
+#if DEBUG
+			DebugRect debugRect;
+			debugRect.mRectangle = rect;
+			debugRect.mColor = color;
+
+			mDebugRectToDraw.Add(debugRect);
+#endif
+		}
+
+		public static void AddDebugPoint(Vector2 pos, Color color)
+		{
+#if DEBUG
+			AddDebugRect(new Rectangle(MugMath.VecToPoint(pos), new Point(2, 2)), color);
+#endif
+		}
+
+		public static void DrawDebugRects(MDrawInfo info, int layer)
+		{
+#if DEBUG
+			foreach (DebugRect debugRect in mDebugRectToDraw)
+			{
+				info.mCanvas.DrawRect(debugRect.mRectangle, debugRect.mColor, layer);
+			}
+			mDebugRectToDraw.Clear();
 #endif
 		}
 	}

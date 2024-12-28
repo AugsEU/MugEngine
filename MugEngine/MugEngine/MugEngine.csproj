@@ -22,9 +22,5 @@
     <Using Include="Microsoft.Xna.Framework.Graphics" />
     <Using Include="Microsoft.Xna.Framework.Input" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Scene\World\" />
-  </ItemGroup>
   
 </Project>

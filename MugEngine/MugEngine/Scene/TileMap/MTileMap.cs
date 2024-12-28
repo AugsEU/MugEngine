@@ -6,7 +6,7 @@ namespace MugEngine.Scene
 	/// <summary>
 	/// Represents a map of square tiles.
 	/// </summary>
-	public class MTileMap : MComponent
+	public class MTileMap : IMCollisionQueryable, IMSceneDraw, IMSceneUpdate
 	{
 		#region rMembers
 
@@ -42,6 +42,14 @@ namespace MugEngine.Scene
 		/// </summary>
 		private void CalculateTileAdjacency()
 		{
+			for (int x = 0; x < mTileMap.GetLength(0); x++)
+			{
+				for (int y = 0; y < mTileMap.GetLength(1); y++)
+				{
+					mTileMap[x, y].ClearAdjacent();
+				}
+			}
+
 			for (int x = 0; x < mTileMap.GetLength(0); x++)
 			{
 				for (int y = 0; y < mTileMap.GetLength(1); y++)
@@ -113,16 +121,24 @@ namespace MugEngine.Scene
 		{
 			mBasePosition = basePosition;
 
-			mDummyTile = factory.GenerateDummyTile(mTileSize);
+			mDummyTile = factory.GenerateDummyTile();
 
 			mTileMap = new MTile[types.GetLength(0), types.GetLength(1)];
+
+			Point basePt = MugMath.VecToPoint(mBasePosition);
 
 			for (int x = 0; x < mTileMap.GetLength(0); x++)
 			{
 				for (int y = 0; y < mTileMap.GetLength(1); y++)
 				{
-					mTileMap[x, y] = factory.GenerateTile(mTileSize, types[x, y], rot[x, y], param[x, y]);
-					mTileMap[x, y].ClearAdjacent();
+					Point tilePos = new Point(x * mTileSize.X, y * mTileSize.Y) + basePt;
+					MTile newTile = factory.GenerateTile(types[x, y], rot[x, y], param[x, y]);
+
+					if (newTile is not null)
+					{
+						newTile.PlaceAt(tilePos, mTileSize);
+						mTileMap[x, y] = newTile;
+					}
 				}
 			}
 
@@ -137,7 +153,7 @@ namespace MugEngine.Scene
 
 		#region rUpdate
 
-		public override void Update(MUpdateInfo info)
+		public void Update(MScene scene, MUpdateInfo info)
 		{
 			Profiler.PushProfileZone("Update Tiles");
 
@@ -145,14 +161,7 @@ namespace MugEngine.Scene
 			{
 				for (int y = 0; y < mTileMap.GetLength(1); y++)
 				{
-					mTileMap[x, y].Update(GetParent(), info);
-
-					if (mTileMap[x, y].RegisterCollider())
-					{
-						// Debug.
-						// Point tilePos = new Point((int)mBasePosition.X + mTileSize.X * x, (int)mBasePosition.Y + mTileSize.Y * y);
-						// scene.PW.AddStatic(new Rectangle(tilePos, mTileSize));
-					}
+					mTileMap[x, y].Update(scene, info);
 				}
 			}
 
@@ -170,7 +179,7 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Draw the tilemap.
 		/// </summary>
-		public override void Draw(MDrawInfo info)
+		public void Draw(MScene scene, MDrawInfo info)
 		{
 			for (int x = 0; x < mTileMap.GetLength(0); x++)
 			{
@@ -206,9 +215,57 @@ namespace MugEngine.Scene
 
 
 
-		#region rUtil
+		#region rCollision
 
-		#endregion rUtil
+		/// <summary>
+		/// Does this collide?
+		/// </summary>
+		public bool QueryCollides(Rectangle bounds, MCardDir dir)
+		{
+			Rectangle tileBounds = PossibleIntersectTiles(bounds);
+
+			for (int x = tileBounds.X; x <= tileBounds.X + tileBounds.Width; x++)
+			{
+				for (int y = tileBounds.Y; y <= tileBounds.Y + tileBounds.Height; y++)
+				{
+					// Rectangle debugRect = new Rectangle(x * mTileSize.X, y * mTileSize.Y, mTileSize.X, mTileSize.Y);
+					// MugDebug.AddDebugRect(debugRect, Color.Red);
+
+					if (mTileMap[x, y].QueryCollides(bounds, dir))
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+
+
+		/// <summary>
+		/// Find rectangle of tile coordinates that a box will lie in
+		/// </summary>
+		/// <param name="box">Box to check</param>
+		/// <returns>Rectangle of indices to tiles</returns>
+		public Rectangle PossibleIntersectTiles(Rectangle bounds)
+		{
+			Vector2 min = new Vector2(bounds.X, bounds.Y) - mBasePosition;
+			Vector2 max = new Vector2(bounds.Right, bounds.Bottom) - mBasePosition;
+
+			min.X /= mTileSize.X;
+			min.Y /= mTileSize.Y;
+
+			max.X /= mTileSize.X;
+			max.Y /= mTileSize.Y;
+
+			Point rMin = new Point(Math.Max((int)min.X - 1, 0), Math.Max((int)min.Y - 1, 0));
+			Point rMax = new Point(Math.Min((int)max.X + 2, mTileMap.GetLength(0) - 1), Math.Min((int)max.Y + 2, mTileMap.GetLength(1) - 1));
+
+			return new Rectangle(rMin, rMax - rMin);
+		}
+
+		#endregion rCollision
 
 
 
@@ -318,6 +375,7 @@ namespace MugEngine.Scene
 
 			return GetTile(coord.X + dx, coord.Y + dy);
 		}
+
 
 
 		/// <summary>

@@ -4,7 +4,7 @@
 	{
 		MAnimation mAnim;
 
-		public MAnimatedTile(Point tileSize, string animPath) : base(tileSize)
+		public MAnimatedTile(string animPath)
 		{
 			mAnim = MData.I.LoadAnimation(animPath);
 		}

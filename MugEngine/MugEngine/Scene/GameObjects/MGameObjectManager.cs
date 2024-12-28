@@ -5,6 +5,7 @@
 		#region rMembers
 
 		MDelayChangeList<MGameObject> mObjects;
+		MLevel mLevel;
 
 		#endregion rMembers
 
@@ -35,6 +36,8 @@
 		/// </summary>
 		public override void Update(MUpdateInfo info)
 		{
+			mLevel.Update(GetParent(), info);
+
 			for (int i = 0; i < mObjects.Count; i++)
 			{
 				mObjects[i].Update(info);
@@ -56,6 +59,8 @@
 		/// </summary>
 		public override void Draw(MDrawInfo info)
 		{
+			mLevel.Draw(GetParent(), info);
+
 			for (int i = 0; i < mObjects.Count; i++)
 			{
 				mObjects[i].Draw(info);
@@ -174,6 +179,26 @@
 			return ActiveObjects(layers).Where(o => (o.BoundsRect().Intersects(rect)));
 		}
 
+
+
+		/// <summary>
+		/// Add some terrain that things can collide with.
+		/// </summary>
+		public void SetLevel(MLevel level)
+		{
+			level.BeginLevel();
+			mLevel = level;
+		}
+
+
+		/// <summary>
+		/// Get terrain things collide with
+		/// </summary>
+		public MLevel GetLevel()
+		{
+			return mLevel;
+		}
+
 		#endregion rAccess
 
 
@@ -181,6 +206,21 @@
 
 
 		#region rCollision
+
+		/// <summary>
+		/// Query for collision with the level
+		/// </summary>
+		public bool QueryLevelCollision(Rectangle rect, MCardDir direction)
+		{
+			if (mLevel is null)
+			{
+				return false;
+			}
+
+			return mLevel.QueryCollides(rect, direction);
+		}
+
+
 
 		/// <summary>
 		/// Does the given go collide with the bounds of any other entity?
