@@ -1,7 +1,4 @@
-﻿using MugEngine.Core;
-using MugEngine.Graphics;
-
-namespace MugEngine
+﻿namespace MugEngine
 {
 	public abstract class MScreen : IMUpdate, IMDraw
 	{

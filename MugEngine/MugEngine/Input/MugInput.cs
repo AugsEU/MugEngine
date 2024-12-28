@@ -1,6 +1,4 @@
-﻿using MugEngine.Library;
-
-namespace MugEngine.Input
+﻿namespace MugEngine.Input
 {
 	public partial class MugInput : MSingleton<MugInput>
 	{

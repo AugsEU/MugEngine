@@ -1,9 +1,6 @@
-﻿using MugEngine.Core;
-using MugEngine.Graphics;
-
-namespace MugEngine.Scene
+﻿namespace MugEngine.Scene
 {
-	public abstract class MTile : IMSceneUpdate
+	public abstract class MTile
 	{
 		#region rMembers
 
@@ -157,7 +154,7 @@ namespace MugEngine.Scene
 		/// <returns>Rotation in radians</returns>
 		public virtual float GetRotation()
 		{
-			return MugEnum.GetRotation(mRotation);
+			return mRotation.ToAngle();
 		}
 
 

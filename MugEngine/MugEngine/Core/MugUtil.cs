@@ -10,7 +10,7 @@
 		/// </summary>
 		static public float ToDelta(GameTime gameTime)
 		{
-			return (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+			return (float)gameTime.ElapsedGameTime.TotalSeconds;
 		}
 	}
 }

@@ -1,6 +1,4 @@
-﻿using MugEngine.Core;
-using MugEngine.Graphics;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Xml;
 using static MugEngine.Graphics.MAnimation;
 
@@ -96,14 +94,14 @@ namespace MugEngine.Data
 
 		public MAnimation GenerateAnimation()
 		{
-			AnimationFrame[] animationFrames = new AnimationFrame[mFrameData.Length];
+			Frame[] animationFrames = new Frame[mFrameData.Length];
 
 			// Special case for 1 frame, means we loaded from a texture not a .max file.
 			if (mFrameData.Length == 1 && mFrameData[0].mRect == Rectangle.Empty)
 			{
 				Texture2D texture = MData.I.Load<Texture2D>(mFrameData[0].mTexturePath);
 				MTexturePart texPart = new MTexturePart(texture);
-				animationFrames[0] = new AnimationFrame(texPart, mFrameData[0].mDuration);
+				animationFrames[0] = new Frame(texPart, mFrameData[0].mDuration);
 			}
 			else
 			{
@@ -111,7 +109,7 @@ namespace MugEngine.Data
 				{
 					Texture2D texture = MData.I.Load<Texture2D>(mFrameData[i].mTexturePath);
 					MTexturePart texPart = new MTexturePart(texture, mFrameData[i].mRect);
-					animationFrames[i] = new AnimationFrame(texPart, mFrameData[i].mDuration);
+					animationFrames[i] = new Frame(texPart, mFrameData[i].mDuration);
 				}
 			}
 

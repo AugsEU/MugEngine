@@ -1,6 +1,4 @@
-﻿using MugEngine.Core;
-
-namespace MugEngine
+﻿namespace MugEngine
 {
 	/// <summary>
 	/// Class that contains utilities for a game.

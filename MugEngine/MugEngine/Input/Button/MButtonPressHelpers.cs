@@ -1,6 +1,4 @@
-﻿using MugEngine.Library;
-
-namespace MugEngine.Input
+﻿namespace MugEngine.Input
 {
 	/// <summary>
 	/// Button press methods for MugInput

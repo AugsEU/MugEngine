@@ -1,7 +1,4 @@
-﻿using MugEngine.Core;
-using MugEngine.Library;
-
-namespace MugEngine.Graphics
+﻿namespace MugEngine.Graphics
 {
 	/// <summary>
 	/// Class that handles playing camera movement

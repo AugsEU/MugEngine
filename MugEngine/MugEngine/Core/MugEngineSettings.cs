@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework.Content;
-
-namespace MugEngine.Core
+﻿namespace MugEngine.Core
 {
 	public enum MScreenFit
 	{

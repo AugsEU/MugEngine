@@ -1,7 +1,4 @@
-﻿using MugEngine.Core;
-using MugEngine.Library;
-
-namespace MugEngine.Screen
+﻿namespace MugEngine.Screen
 {
 	/// <summary>
 	/// Class that manages all screens

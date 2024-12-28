@@ -1,6 +1,4 @@
-﻿using MugEngine.Core;
-
-namespace MugEngine.Data
+﻿namespace MugEngine.Data
 {
 	public class MDataTheme
 	{

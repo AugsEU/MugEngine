@@ -1,6 +1,4 @@
-﻿using MugEngine.Core;
-
-namespace MugEngine.Graphics
+﻿namespace MugEngine.Graphics
 {
 	public class MAnimation : IMUpdate
 	{
@@ -9,9 +7,9 @@ namespace MugEngine.Graphics
 		/// <summary>
 		/// Frame of animation
 		/// </summary>
-		public struct AnimationFrame
+		public struct Frame
 		{
-			public AnimationFrame(MTexturePart tex, float t)
+			public Frame(MTexturePart tex, float t)
 			{
 				mTexture = tex;
 				mDuration = t;
@@ -42,7 +40,7 @@ namespace MugEngine.Graphics
 
 		#region rMembers
 
-		AnimationFrame[] mFrames = null;
+		Frame[] mFrames = null;
 
 		PlayType mPlayType = PlayType.Forward;
 
@@ -67,7 +65,7 @@ namespace MugEngine.Graphics
 		/// Animation constructor
 		/// </summary>
 		/// <param name="playType">Play mode.(See enum for details)</param>
-		public MAnimation(PlayType playType, int numRepeats, AnimationFrame[] frameData)
+		public MAnimation(PlayType playType, int numRepeats, Frame[] frameData)
 		{
 			mPlayType = playType;
 
@@ -86,8 +84,8 @@ namespace MugEngine.Graphics
 		/// <param name="playType">Play mode.(See enum for details)</param>
 		public MAnimation(MTexturePart tex)
 		{
-			AnimationFrame frame = new AnimationFrame(tex, 1.0f);
-			mFrames = new AnimationFrame[] { frame };
+			Frame frame = new Frame(tex, 1.0f);
+			mFrames = new Frame[] { frame };
 
 			CalcTotalDuration();
 		}
@@ -100,8 +98,8 @@ namespace MugEngine.Graphics
 		/// <param name="playType">Play mode.(See enum for details)</param>
 		public MAnimation(Texture2D tex)
 		{
-			AnimationFrame frame = new AnimationFrame(new MTexturePart(tex), 1.0f);
-			mFrames = new AnimationFrame[] { frame };
+			Frame frame = new Frame(new MTexturePart(tex), 1.0f);
+			mFrames = new Frame[] { frame };
 			CalcTotalDuration();
 		}
 

@@ -1,6 +1,4 @@
-﻿using MugEngine.Core;
-
-namespace MugEngine.Graphics
+﻿namespace MugEngine.Graphics
 {
 	/// <summary>
 	/// Camera class. Handles all camera positioning.

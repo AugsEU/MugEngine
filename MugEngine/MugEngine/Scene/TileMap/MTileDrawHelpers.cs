@@ -1,6 +1,4 @@
-﻿using MugEngine.Graphics;
-
-namespace MugEngine.Scene
+﻿namespace MugEngine.Scene
 {
 	struct TileTexDrawInfo
 	{

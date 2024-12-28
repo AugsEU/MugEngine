@@ -1,5 +1,4 @@
 ﻿using LDtk;
-using MugEngine.Graphics;
 using TracyWrapper;
 
 namespace MugEngine.Scene
@@ -138,7 +137,7 @@ namespace MugEngine.Scene
 
 		#region rUpdate
 
-		public override void Update(MScene scene, MUpdateInfo info)
+		public override void Update(MUpdateInfo info)
 		{
 			Profiler.PushProfileZone("Update Tiles");
 
@@ -146,13 +145,13 @@ namespace MugEngine.Scene
 			{
 				for (int y = 0; y < mTileMap.GetLength(1); y++)
 				{
-					mTileMap[x, y].Update(scene, info);
+					mTileMap[x, y].Update(GetParent(), info);
 
 					if (mTileMap[x, y].RegisterCollider())
 					{
 						// Debug.
-						Point tilePos = new Point((int)mBasePosition.X + mTileSize.X * x, (int)mBasePosition.Y + mTileSize.Y * y);
-						scene.PW.AddStatic(new Rectangle(tilePos, mTileSize));
+						// Point tilePos = new Point((int)mBasePosition.X + mTileSize.X * x, (int)mBasePosition.Y + mTileSize.Y * y);
+						// scene.PW.AddStatic(new Rectangle(tilePos, mTileSize));
 					}
 				}
 			}
@@ -171,7 +170,7 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Draw the tilemap.
 		/// </summary>
-		public override void Draw(MScene scene, MDrawInfo info)
+		public override void Draw(MDrawInfo info)
 		{
 			for (int x = 0; x < mTileMap.GetLength(0); x++)
 			{

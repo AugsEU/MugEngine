@@ -1,10 +1,4 @@
-﻿using MugEngine.Data;
-using MugEngine.Graphics;
-using MugEngine.Input;
-using MugEngine.Library;
-using MugEngine.Screen;
-
-namespace MugEngine.Core
+﻿namespace MugEngine.Core
 {
 	public class MugCore : MSingleton<MugCore>
 	{

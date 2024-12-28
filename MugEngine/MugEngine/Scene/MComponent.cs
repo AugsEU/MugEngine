@@ -1,35 +1,46 @@
-﻿using MugEngine.Core;
-
-namespace MugEngine.Scene
+﻿namespace MugEngine.Scene
 {
 	/// <summary>
 	/// An entity is a thing managed by the scene.
 	/// </summary>
-	public abstract class MComponent : IMSceneUpdate, IMSceneDraw
+	public abstract class MComponent : IMUpdate, IMDraw
 	{
-		/// <summary>
-		/// Callled when added to the scene.
-		/// </summary>
-		public virtual void OnSceneAdd(MScene scene)
-		{
+		MScene mParent = null;
 
+		/// <summary>
+		/// Add this component to the scene.
+		/// </summary>
+		public void SetScene(MScene parent)
+		{
+			mParent = parent;
 		}
+
+
+
+		/// <summary>
+		/// Get the parent.
+		/// </summary>
+		public MScene GetParent()
+		{
+			MugDebug.Assert(mParent != null);
+			return mParent;
+		}
+
+
 
 		/// <summary>
 		/// Called every frame to update the state.
 		/// </summary>
-		public virtual void Update(MScene scene, MUpdateInfo info)
+		public virtual void Update(MUpdateInfo info)
 		{
-
 		}
 
 
 		/// <summary>
 		/// Called every frame draw the entity.
 		/// </summary>
-		public virtual void Draw(MScene scene, MDrawInfo info)
+		public virtual void Draw(MDrawInfo info)
 		{
-
 		}
 
 

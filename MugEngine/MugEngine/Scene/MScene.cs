@@ -1,6 +1,4 @@
-﻿using MugEngine.Core;
-
-namespace MugEngine.Scene
+﻿namespace MugEngine.Scene
 {
 	/// <summary>
 	/// A collection of things that make up our game.
@@ -55,7 +53,7 @@ namespace MugEngine.Scene
 			// Update entities in scene.
 			for (int i = 0; i < mEntities.Count; i++)
 			{
-				mEntities[i].Update(this, info);
+				mEntities[i].Update(info);
 			}
 
 			ResolveDeleteQueue();
@@ -105,7 +103,7 @@ namespace MugEngine.Scene
 		{
 			for (int i = 0; i < mEntities.Count; i++)
 			{
-				mEntities[i].Draw(this, info);
+				mEntities[i].Draw(info);
 			}
 		}
 
@@ -123,7 +121,7 @@ namespace MugEngine.Scene
 		public void AddEntity(MComponent entity)
 		{
 			mEntities.Add(entity);
-			entity.OnSceneAdd(this);
+			entity.SetScene(this);
 
 			mEntityOrderDirty = true;
 		}
@@ -205,11 +203,12 @@ namespace MugEngine.Scene
 		public MGameObjectManager GO { get { return Get<MGameObjectManager>(); } }
 
 
-
+#if MUG_PHYSICS
 		/// <summary>
 		/// Physics world
 		/// </summary>
 		public MPhysicsWorld PW { get { return Get<MPhysicsWorld>(); } }
+#endif
 
 		#endregion rAccess
 	}

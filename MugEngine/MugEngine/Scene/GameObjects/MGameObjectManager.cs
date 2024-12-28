@@ -1,7 +1,4 @@
-﻿using MugEngine.Core;
-using MugEngine.Library;
-
-namespace MugEngine.Scene
+﻿namespace MugEngine.Scene
 {
 	public class MGameObjectManager : MComponent
 	{
@@ -25,15 +22,6 @@ namespace MugEngine.Scene
 			mObjects = new MDelayChangeList<MGameObject>(new List<MGameObject>());
 		}
 
-
-
-		/// <summary>
-		/// Called when added to the scene.
-		/// </summary>
-		public override void OnSceneAdd(MScene scene)
-		{
-		}
-
 		#endregion rInit
 
 
@@ -45,11 +33,11 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Update game objects
 		/// </summary>
-		public override void Update(MScene scene, MUpdateInfo info)
+		public override void Update(MUpdateInfo info)
 		{
 			for (int i = 0; i < mObjects.Count; i++)
 			{
-				mObjects[i].Update(scene, info);
+				mObjects[i].Update(info);
 			}
 
 			mObjects.ProcessAddsDeletes();
@@ -66,11 +54,11 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Draw all the game objects
 		/// </summary>
-		public override void Draw(MScene scene, MDrawInfo info)
+		public override void Draw(MDrawInfo info)
 		{
 			for (int i = 0; i < mObjects.Count; i++)
 			{
-				mObjects[i].Draw(scene, info);
+				mObjects[i].Draw(info);
 			}
 		}
 
@@ -97,6 +85,7 @@ namespace MugEngine.Scene
 		public void QueueAdd(MGameObject go)
 		{
 			mObjects.Add(go);
+			go.SetScene(GetParent());
 		}
 
 		#endregion rUtil
@@ -128,19 +117,21 @@ namespace MugEngine.Scene
 
 
 		/// <summary>
-		/// Get the first game object of a certain type.
+		/// Get iterator over active objects.
 		/// </summary>
-		public MGameObject GetFirst<T>()
+		public IEnumerable<MGameObject> ActiveObjects()
 		{
-			foreach (MGameObject go in mObjects)
-			{
-				if (go.GetType() == typeof(T))
-				{
-					return go;
-				}
-			}
+			return mObjects.Where(e => e.IsEnabled());
+		}
 
-			throw new Exception("Could not find game object of type.");
+
+
+		/// <summary>
+		/// Get iterator over active objects on a layer.
+		/// </summary>
+		public IEnumerable<MGameObject> ActiveObjects(MLayerMask mask)
+		{
+			return mObjects.Where(e => e.IsEnabled() && e.InteractsWith(mask));
 		}
 
 
@@ -148,21 +139,74 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Get the first game object of a certain type.
 		/// </summary>
-		public List<MGameObject> GetAll<T>()
+		public MGameObject GetFirst<T>()
 		{
-			List<MGameObject> list = new List<MGameObject>();
+			return ActiveObjects().FirstOrDefault(go => go.GetType() == typeof(T));
+		}
 
-			foreach (MGameObject go in mObjects)
-			{
-				if (go is T)
-				{
-					list.Add(go);
-				}
-			}
 
-			return list;
+
+		/// <summary>
+		/// Get all game objects of a certain type.
+		/// </summary>
+		public IEnumerable<MGameObject> GetAll<T>()
+		{
+			return ActiveObjects().Where(o => o is T);
+		}
+
+
+
+		/// <summary>
+		/// Get all game objects in a rectangle.
+		/// </summary>
+		public IEnumerable<MGameObject> GetInRect(Rectangle rect)
+		{
+			return ActiveObjects().Where(o => o.BoundsRect().Intersects(rect));
+		}
+
+
+
+		/// <summary>
+		/// Get all game objects in a rectangle.
+		/// </summary>
+		public IEnumerable<MGameObject> GetInRect(Rectangle rect, MLayerMask layers)
+		{
+			return ActiveObjects(layers).Where(o => (o.BoundsRect().Intersects(rect)));
 		}
 
 		#endregion rAccess
+
+
+
+
+
+		#region rCollision
+
+		/// <summary>
+		/// Does the given go collide with the bounds of any other entity?
+		/// </summary>
+		public bool CheckBoundsCollision(MGameObject go)
+		{
+			Rectangle goBounds = go.BoundsRect();
+
+			// Check entity v entity
+			foreach (MGameObject goOther in GetInRect(goBounds, go.GetLayerMask()))
+			{
+				if (ReferenceEquals(goOther, go))
+				{
+					continue;
+				}
+
+				if (goOther.BoundsRect().Intersects(goBounds))
+				{
+					return true;
+				}
+			}
+
+			// None of the tests hit so we are good.
+			return false;
+		}
+
+		#endregion rCollision
 	}
 }

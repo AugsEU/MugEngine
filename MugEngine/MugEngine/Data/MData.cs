@@ -1,8 +1,4 @@
 ﻿using LDtk;
-using Microsoft.Xna.Framework.Content;
-using MugEngine.Core;
-using MugEngine.Graphics;
-using MugEngine.Library;
 
 namespace MugEngine.Data
 {

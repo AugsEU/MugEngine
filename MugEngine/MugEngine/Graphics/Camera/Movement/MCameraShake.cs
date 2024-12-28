@@ -1,6 +1,4 @@
-﻿using MugEngine.Library;
-
-namespace MugEngine.Graphics
+﻿namespace MugEngine.Graphics
 {
 	public class MCameraShake : MCameraMovement
 	{

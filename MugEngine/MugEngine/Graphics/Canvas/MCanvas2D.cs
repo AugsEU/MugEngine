@@ -1,6 +1,4 @@
-﻿using MugEngine.Core;
-
-namespace MugEngine.Graphics
+﻿namespace MugEngine.Graphics
 {
 	/// <summary>
 	/// A canvas is the context in which things are drawn. It handles layers, effects, and render targets.
