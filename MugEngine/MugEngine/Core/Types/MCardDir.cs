@@ -1,6 +1,4 @@
-﻿using MugEngine.Core.Types;
-
-namespace MugEngine.Core
+﻿namespace MugEngine.Core
 {
 	/// <summary>
 	/// Reprents a direction in 1 of 4 directions.

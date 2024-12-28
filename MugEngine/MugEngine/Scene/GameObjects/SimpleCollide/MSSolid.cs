@@ -21,15 +21,6 @@ namespace MugEngine.Scene
 
 
 		/// <summary>
-		/// Create solid at position with size.
-		/// </summary>
-		public MSSolid(Vector2 position, Point size) : base(position, size)
-		{
-		}
-
-
-
-		/// <summary>
 		/// Move by an amount, pushing actors along the way.
 		/// </summary>
 		public void Move(Vector2 delta)

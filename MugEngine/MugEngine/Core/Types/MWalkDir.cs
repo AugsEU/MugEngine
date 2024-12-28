@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MugEngine.Core.Types
+﻿namespace MugEngine.Core
 {
 	/// <summary>
 	/// A direction we can walk in.
@@ -60,6 +54,15 @@ namespace MugEngine.Core.Types
 			}
 
 			throw new NotImplementedException();
+		}
+
+
+		/// <summary>
+		/// Convert a walk direction to a cardinal direction
+		/// </summary>
+		public static Vector2 ToVec(this MWalkDir walk, MCardDir gravity = MCardDir.Down)
+		{
+			return walk.ToCardDir(gravity).ToVec();
 		}
 	}
 }

@@ -34,17 +34,6 @@ namespace MugEngine.Scene
 			mSize = new Point(1, 1);
 		}
 
-
-
-		/// <summary>
-		/// Create game object at position.
-		/// </summary>
-		public MGameObject(Vector2 position, Point size)
-		{
-			mPosition = position;
-			mSize = size;
-		}
-
 		#endregion rInit
 
 
@@ -264,6 +253,25 @@ namespace MugEngine.Scene
 		public void SetPos(Vector2 pos)
 		{
 			mPosition = pos;
+		}
+
+
+
+		/// <summary>
+		/// Get the size
+		/// </summary>
+		public Point GetSize()
+		{
+			return mSize;
+		}
+
+
+		/// <summary>
+		/// Set the size.
+		/// </summary>
+		public void SetSize(Point size)
+		{
+			mSize = size;
 		}
 
 		#endregion rUtil

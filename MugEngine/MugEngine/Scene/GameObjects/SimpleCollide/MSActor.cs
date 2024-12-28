@@ -20,15 +20,6 @@ namespace MugEngine.Scene
 
 
 		/// <summary>
-		/// Create simple actor at position with size.
-		/// </summary>
-		public MSActor(Vector2 position, Point size) : base(position, size)
-		{
-		}
-
-
-
-		/// <summary>
 		/// Move by an X amount with collision checks.
 		/// </summary>
 		public void MoveX(float amount, bool isPush)
@@ -40,7 +31,6 @@ namespace MugEngine.Scene
 			if (move != 0)
 			{
 				int sign = Math.Sign(move);
-				Vector2 normal = Vector2.UnitX * sign;
 				MCardDir dir = sign < 0 ? MCardDir.Left : MCardDir.Right;
 
 				while (move != 0)
@@ -53,11 +43,8 @@ namespace MugEngine.Scene
 					{
 						// Hit something, move back and do callback.
 						mPosition.X -= sign;
-						ResolveHitSolid(normal, isPush);
+						ResolveHitSolid(dir.Inverted(), isPush);
 						return;
-					}
-					else
-					{
 					}
 				}
 			}
@@ -80,7 +67,6 @@ namespace MugEngine.Scene
 			if (move != 0)
 			{
 				int sign = Math.Sign(move);
-				Vector2 normal = Vector2.UnitY * sign;
 				MCardDir dir = sign < 0 ? MCardDir.Up : MCardDir.Down;
 
 				while (move != 0)
@@ -93,11 +79,8 @@ namespace MugEngine.Scene
 					{
 						// Hit something, move back and do callback.
 						mPosition.Y -= sign;
-						ResolveHitSolid(normal, isPush);
+						ResolveHitSolid(dir.Inverted(), isPush);
 						return;
-					}
-					else
-					{
 					}
 				}
 			}
@@ -138,7 +121,7 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Dispatch hit solid event to relevent function
 		/// </summary>
-		void ResolveHitSolid(Vector2 normal, bool isPush)
+		void ResolveHitSolid(MCardDir normal, bool isPush)
 		{
 			if (isPush)
 			{
@@ -155,7 +138,7 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Called every time a solid stops us from moving.
 		/// </summary>
-		public virtual void OnHitSolid(Vector2 normal)
+		public virtual void OnHitSolid(MCardDir normal)
 		{
 		}
 
@@ -165,7 +148,7 @@ namespace MugEngine.Scene
 		/// Called every time something pushes us into a another solid.
 		/// Usually we should just die.
 		/// </summary>
-		public virtual void Squish(Vector2 normal)
+		public virtual void Squish(MCardDir normal)
 		{
 			Kill();
 		}

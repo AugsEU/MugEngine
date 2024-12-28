@@ -7,14 +7,9 @@ namespace MugEngine.Scene
 		protected Vector2 mVelocity = Vector2.Zero;
 
 		protected MCardDir mGravityDir = MCardDir.Down;
-		protected float mGravityStrength = -9.8f;
+		protected float mGravityStrength = 0.0f;
 
 		public MSPhysicalActor(Vector2 position) : base(position)
-		{
-
-		}
-
-		public MSPhysicalActor(Vector2 position, Point size) : base(position, size)
 		{
 		}
 
