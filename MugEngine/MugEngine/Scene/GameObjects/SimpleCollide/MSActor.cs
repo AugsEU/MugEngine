@@ -100,14 +100,14 @@ namespace MugEngine.Scene
 
 			foreach (MGameObject other in GO().GetInRect(bounds, GetLayerMask()))
 			{
-				if (other is not MSSolid || ReferenceEquals(other, this))
+				if (ReferenceEquals(other, this))
 				{
 					continue;
 				}
 
-				if (other.BoundsRect().Intersects(bounds))
+				if (other is MSSolid solid)
 				{
-					return true;
+					return solid.QueryCollides(bounds, dir);
 				}
 			}
 

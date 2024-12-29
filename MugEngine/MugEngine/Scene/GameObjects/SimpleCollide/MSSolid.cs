@@ -9,7 +9,7 @@ namespace MugEngine.Scene
 	/// Does not collide with anything. But it can move
 	/// and push other MSActors
 	/// </summary>
-	public abstract class MSSolid : MGameObject
+	public abstract class MSSolid : MGameObject, IMCollisionQueryable
 	{
 		/// <summary>
 		/// Create solid at position
@@ -47,15 +47,19 @@ namespace MugEngine.Scene
 					// The rectangle which we will end up at.
 					Rectangle xMovedRect = BoundsRect();
 					xMovedRect.X += moveX;
+					mPosition.X = destPos.X;
 
 					List<MSActor> pushedX = new List<MSActor>();
 
 					foreach (MSActor actor in GO().GetInRect(xMovedRect).OfType<MSActor>())
 					{
-						float moveDist = (float)GetPushDistance(xMovedRect, actor, dirX);
-						actor.MoveX(moveDist, true);
+						if (QueryCollides(actor.BoundsRect(), dirX.Inverted()))
+						{
+							float moveDist = (float)GetPushDistance(xMovedRect, actor, dirX);
+							actor.MoveX(moveDist, true);
 
-						pushedX.Add(actor);
+							pushedX.Add(actor);
+						}
 					}
 
 					// Loop over riders not already pushed.
@@ -64,7 +68,7 @@ namespace MugEngine.Scene
 						rider.MoveX(moveX, false);
 					}
 
-					mPosition.X = destPos.X;
+					
 				}
 
 				if (moveY != 0)
@@ -75,14 +79,19 @@ namespace MugEngine.Scene
 					Rectangle yMovedRect = BoundsRect();
 					yMovedRect.Y += moveY;
 
+					mPosition.Y = destPos.Y;
+
 					List<MSActor> pushedY = new List<MSActor>();
 
 					foreach (MSActor actor in GO().GetInRect(yMovedRect).OfType<MSActor>())
 					{
-						float moveDist = (float)GetPushDistance(yMovedRect, actor, dirY);
-						actor.MoveY(moveDist, true);
+						if (QueryCollides(actor.BoundsRect(), dirY.Inverted()))
+						{
+							float moveDist = (float)GetPushDistance(yMovedRect, actor, dirY);
+							actor.MoveY(moveDist, true);
 
-						pushedY.Add(actor);
+							pushedY.Add(actor);
+						}
 					}
 
 					// Loop over riders not already pushed.
@@ -91,7 +100,6 @@ namespace MugEngine.Scene
 						rider.MoveY(moveY, false);
 					}
 
-					mPosition.Y = destPos.Y;
 				}
 			}
 
@@ -99,6 +107,16 @@ namespace MugEngine.Scene
 			SetEnabled(origEnabled);
 
 			mPosition = destPos;
+		}
+
+
+
+		/// <summary>
+		/// Query collides
+		/// </summary>
+		public virtual bool QueryCollides(Rectangle bounds, MCardDir travelDir)
+		{
+			return BoundsRect().Intersects(bounds);
 		}
 
 

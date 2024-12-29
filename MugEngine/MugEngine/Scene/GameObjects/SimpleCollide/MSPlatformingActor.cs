@@ -59,11 +59,8 @@ namespace MugEngine.Scene
 		{
 			Rectangle myShiftedBounds = BoundsRect();
 			myShiftedBounds.Location += mGravityDir.ToPoint();
-			myShiftedBounds.Location += mGravityDir.ToPoint();
-			myShiftedBounds.Location += mGravityDir.ToPoint();
-			myShiftedBounds.Location += mGravityDir.ToPoint();
 
-			if (solid.BoundsRect().Intersects(myShiftedBounds))
+			if (solid.QueryCollides(myShiftedBounds, mGravityDir))
 			{
 				return true;
 			}
