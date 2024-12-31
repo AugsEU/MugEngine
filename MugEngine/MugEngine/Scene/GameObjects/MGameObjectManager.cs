@@ -207,9 +207,28 @@
 		/// </summary>
 		public void LoadLevel(MLevel level)
 		{
+			// Unload previous level.
+			UnloadLevel();
+
+			// Start new level
 			level.BeginLevel(this);
 			mLevel = level;
 		}
+
+
+
+		/// <summary>
+		/// Stop a level
+		/// </summary>
+		public void UnloadLevel()
+		{
+			if (mLevel is not null)
+			{
+				mLevel.EndLevel(this);
+				mLevel = null;
+			}
+		}
+
 
 
 		/// <summary>
