@@ -1,6 +1,9 @@
-﻿namespace MugEngine.Data
+﻿using System.Xml;
+using MugEngine.Core;
+
+namespace MugEngine.Data
 {
-	public class MDataTheme
+	public class MDataTheme : IMFromXMLNode<MDataTheme>
 	{
 		string mID;
 		Dictionary<string, string> mAliasToPathMap;
@@ -9,6 +12,24 @@
 		{
 			mID = id;
 			mAliasToPathMap = new Dictionary<string, string>();
+		}
+
+		public static MDataTheme FromNode(XmlNode node)
+		{
+			string id = MugXML.GetString(node["id"]);
+
+			MDataTheme newTheme = new MDataTheme(id);
+
+			XmlNodeList aliasNodes = node.SelectNodes("map");
+			foreach (XmlNode aliasNode in aliasNodes)
+			{
+				string from = aliasNode.Attributes["from"].Value;
+				string to = aliasNode.InnerText;
+
+				newTheme.MapAliasToPath(from, to);
+			}
+
+			return newTheme;
 		}
 
 		public void MapAliasToPath(string alias, string value)

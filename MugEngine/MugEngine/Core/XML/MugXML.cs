@@ -6,7 +6,7 @@ namespace MugEngine.Core
 	/// <summary>
 	/// Utility to parse simple types from XML
 	/// </summary>
-	public static class MugParse
+	public static class MugXML
 	{
 		/// <summary>
 		/// Parse float from xml node. Default = Zero
@@ -40,14 +40,14 @@ namespace MugEngine.Core
 		/// <summary>
 		/// Parse UInt64 from xml node. Default = Zero
 		/// </summary>
-		static public UInt64 GetUInt64(XmlNode node, UInt64 defaultVal = 0u)
+		static public ulong GetUInt64(XmlNode node, ulong defaultVal = 0u)
 		{
 			if (node is null)
 			{
 				return defaultVal;
 			}
 
-			return UInt64.Parse(node.InnerText, CultureInfo.InvariantCulture.NumberFormat);
+			return ulong.Parse(node.InnerText, CultureInfo.InvariantCulture.NumberFormat);
 		}
 
 
@@ -205,7 +205,7 @@ namespace MugEngine.Core
 		/// <summary>
 		/// Parse node as enum
 		/// </summary>
-		static public T GetEnum<T>(XmlNode node, T defaultValue = default(T))
+		static public T GetEnum<T>(XmlNode node, T defaultValue = default)
 		{
 			if (node is null)
 			{

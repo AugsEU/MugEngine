@@ -128,19 +128,23 @@ namespace MugEngine.Data
 		}
 
 
+
 		/// <summary>
 		/// Remove a theme of a certain ID.
 		/// </summary>
 		public void RemoveTheme(string id)
 		{
-			for (int i = 0; i < mActiveThemes.Count; i++)
-			{
-				if (mActiveThemes[i].GetID() == id)
-				{
-					mActiveThemes.RemoveAt(i);
-					break;
-				}
-			}
+			mActiveThemes.RemoveAll(t => t.GetID() == id);
+		}
+
+
+
+		/// <summary>
+		/// Remove a theme of a certain ID.
+		/// </summary>
+		public void RemoveTheme(MDataTheme theme)
+		{
+			mActiveThemes.RemoveAll(t => ReferenceEquals(t, theme));
 		}
 
 

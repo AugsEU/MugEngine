@@ -1,13 +1,14 @@
 ﻿using System.Globalization;
 using System.Xml;
+using MugEngine.Core;
 using static MugEngine.Graphics.MAnimation;
 
 namespace MugEngine.Data
 {
-	/// <summary>
-	/// Utility class for loading animations from data
-	/// </summary>
-	internal class MAnimationData
+    /// <summary>
+    /// Utility class for loading animations from data
+    /// </summary>
+    internal class MAnimationData
 	{
 		private struct FrameData
 		{
@@ -72,8 +73,8 @@ namespace MugEngine.Data
 			xmlDoc.Load(XMLPath);
 			XmlNode rootNode = xmlDoc.LastChild;
 
-			mPlayType = MugParse.GetEnum(rootNode["type"], PlayType.Forward);
-			mNumRepeats = MugParse.GetInt(rootNode["repeats"]);
+			mPlayType = MugXML.GetEnum(rootNode["type"], PlayType.Forward);
+			mNumRepeats = MugXML.GetInt(rootNode["repeats"]);
 
 			// Parse frames.
 			XmlNodeList frameNodes = rootNode.SelectNodes("frame");
@@ -81,12 +82,12 @@ namespace MugEngine.Data
 
 			foreach (XmlNode frameNode in frameNodes)
 			{
-				int idx = int.Parse(MugParse.GetStringAttrib(frameNode, "id"), CultureInfo.InvariantCulture);
+				int idx = int.Parse(MugXML.GetStringAttrib(frameNode, "id"), CultureInfo.InvariantCulture);
 
 				FrameData frameData = new FrameData();
-				frameData.mTexturePath = MugParse.GetString(frameNode["texture"]);
-				frameData.mRect = MugParse.GetRectangle(frameNode);
-				frameData.mDuration = MugParse.GetFloat(frameNode["duration"]);
+				frameData.mTexturePath = MugXML.GetString(frameNode["texture"]);
+				frameData.mRect = MugXML.GetRectangle(frameNode);
+				frameData.mDuration = MugXML.GetFloat(frameNode["duration"]);
 
 				mFrameData[idx] = frameData;
 			}
