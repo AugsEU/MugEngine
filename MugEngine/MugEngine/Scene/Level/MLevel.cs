@@ -7,7 +7,7 @@
 	/// </summary>
 	public abstract class MLevel : IMSceneUpdate, IMSceneDraw
 	{
-		public virtual void BeginLevel()
+		public virtual void BeginLevel(MGameObjectManager gameObjects)
 		{
 		}
 

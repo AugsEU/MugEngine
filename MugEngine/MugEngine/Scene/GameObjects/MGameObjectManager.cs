@@ -36,7 +36,7 @@
 		/// </summary>
 		public override void Update(MUpdateInfo info)
 		{
-			mLevel.Update(GetParent(), info);
+			mLevel?.Update(GetParent(), info);
 
 			for (int i = 0; i < mObjects.Count; i++)
 			{
@@ -59,7 +59,7 @@
 		/// </summary>
 		public override void Draw(MDrawInfo info)
 		{
-			mLevel.Draw(GetParent(), info);
+			mLevel?.Draw(GetParent(), info);
 
 			for (int i = 0; i < mObjects.Count; i++)
 			{
@@ -84,6 +84,7 @@
 		}
 
 
+
 		/// <summary>
 		/// Queue an object to be deleted at the end of the frame.
 		/// </summary>
@@ -91,6 +92,26 @@
 		{
 			mObjects.Add(go);
 			go.SetScene(GetParent());
+		}
+
+
+
+		/// <summary>
+		/// Make sure queued entites get added immediately.
+		/// </summary>
+		public void FlushQueues()
+		{
+			mObjects.ProcessAddsDeletes();
+		}
+
+
+
+		/// <summary>
+		/// Deletes all game objects. Doesn't clear out level.
+		/// </summary>
+		public void ClearAllGameObjects()
+		{
+			mObjects.ForceClearAll();
 		}
 
 		#endregion rUtil
@@ -184,9 +205,9 @@
 		/// <summary>
 		/// Add some terrain that things can collide with.
 		/// </summary>
-		public void SetLevel(MLevel level)
+		public void LoadLevel(MLevel level)
 		{
-			level.BeginLevel();
+			level.BeginLevel(this);
 			mLevel = level;
 		}
 

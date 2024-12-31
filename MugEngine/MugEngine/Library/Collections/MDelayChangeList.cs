@@ -61,6 +61,13 @@ namespace MugEngine.Library
 			}
 		}
 
+		public void ForceClearAll()
+		{
+			mDeletePool.Clear();
+			mList.Clear();
+			mAddPool.Clear();
+		}
+
 		public bool Contains(T item)
 		{
 			return mList.Contains(item);

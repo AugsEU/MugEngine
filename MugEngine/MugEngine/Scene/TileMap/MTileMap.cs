@@ -101,13 +101,13 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Load tilemap from ldtk level.
 		/// </summary>
-		public void LoadFromLDtkLevel(LDtkLevel level, MTileFactory factory)
+		public void LoadFromLDtkLevel(LDtkLevel level, MTileFactory factory, bool loadPositionFromFile = false)
 		{
 			LDtkIntGrid typeGrid = level.GetIntGrid("Type");
 			LDtkIntGrid rotGrid = level.GetIntGrid("Rotation");
 			LDtkIntGrid paramGrid = level.GetIntGrid("Param");
 
-			Vector2 basePos = new Vector2(level.Position.X, level.Position.Y);
+			Vector2 basePos = loadPositionFromFile ? new Vector2(level.Position.X, level.Position.Y) : mBasePosition;
 
 			LoadFromIntGrids(factory, basePos, typeGrid.Get2DArray(), rotGrid.Get2DArray(), paramGrid.Get2DArray());
 		}

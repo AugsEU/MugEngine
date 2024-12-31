@@ -111,9 +111,9 @@ namespace MugEngine.Scene
 				}
 			}
 
-			bool levelCollides = GO().GetLevel().QueryCollides(bounds, dir);
+			bool? levelCollides = GO().GetLevel()?.QueryCollides(bounds, dir);
 
-			return levelCollides;
+			return levelCollides.HasValue && levelCollides.Value;
 		}
 
 
