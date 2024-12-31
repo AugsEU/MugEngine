@@ -11,6 +11,10 @@
 		{
 		}
 
+		public virtual void EndLevel(MGameObjectManager gameObjects)
+		{
+		}
+
 		public abstract void Update(MScene scene, MUpdateInfo info);
 
 		public abstract bool QueryCollides(Rectangle bounds, MCardDir travelDir);
