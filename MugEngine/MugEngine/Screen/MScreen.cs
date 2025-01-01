@@ -44,6 +44,7 @@
 
 		/// <summary>
 		/// Called when the screen is switched out for another.
+		/// This might not happen instantly since we could have an exit sequence that would require us to run a few frames.
 		/// </summary>
 		public virtual void BeginDeactivate()
 		{

@@ -20,7 +20,7 @@
 	{
 		// Screen
 		public Type[] mScreenTypes;
-		public Type mStartScreen;
+		public MScreenHandle mStartScreen;
 
 		// Settings
 		public int mFPS;

@@ -7,7 +7,7 @@
 	{
 		#region rMembers
 
-		Dictionary<Type, MScreen> mScreens = new Dictionary<Type, MScreen>();
+		Dictionary<MScreenHandle, MScreen> mScreens = new Dictionary<MScreenHandle, MScreen>();
 		MScreen mActiveScreen = null;
 		MScreen mNextScreen = null;
 
@@ -39,14 +39,14 @@
 					throw new Exception("Invalid screen type.");
 				}
 
-				MScreen? screen = Activator.CreateInstance(type, resolution) as MScreen;
+				MScreen screen = Activator.CreateInstance(type, resolution) as MScreen;
 
 				if (screen is null)
 				{
 					throw new Exception(string.Format("Failed to create {0}", type.ToString()));
 				}
 
-				mScreens.Add(type, screen);
+				mScreens.Add(new MScreenHandle(type), screen);
 			}
 		}
 
@@ -55,7 +55,7 @@
 		/// <summary>
 		/// Do final init for screens.
 		/// </summary>
-		public void LoadScreens(Type startScreen)
+		public void LoadScreens(MScreenHandle startScreen)
 		{
 			foreach (MScreen screen in mScreens.Values)
 			{
@@ -79,6 +79,8 @@
 		/// </summary>
 		public void Update(MUpdateInfo updateInfo)
 		{
+			mActiveScreen.Update(updateInfo);
+
 			if (mNextScreen is not null)
 			{
 				if (mActiveScreen.AllowQuit())
@@ -88,11 +90,11 @@
 					mActiveScreen.OnActivate();
 				}
 			}
-
-			mActiveScreen.Update(updateInfo);
 		}
 
 		#endregion rUpdate
+
+
 
 
 
@@ -178,17 +180,17 @@
 
 
 
+
+
 		#region rUtility
 
 		/// <summary>
-		/// Get a screen of a certain type
+		/// Get screen from handle
 		/// </summary>
-		/// <param name="type">Screen type you want to find.</param>
-		/// <returns>Screen of that type, null if that type doesn't exist</returns>
-		public MScreen GetScreen<T>() where T : MScreen
+		public MScreen GetScreen(MScreenHandle handle)
 		{
-			MScreen? retScreen = null;
-			if (mScreens.TryGetValue(typeof(T), out retScreen))
+			MScreen retScreen = null;
+			if (mScreens.TryGetValue(handle, out retScreen))
 			{
 				return retScreen;
 			}
@@ -212,14 +214,15 @@
 		/// <summary>
 		/// Activates a screen of a certain type
 		/// </summary>
-		public void ActivateScreen<T>() where T : MScreen
+		public void ActivateScreen(MScreenHandle handle)
 		{
 			if (mNextScreen is null)
 			{
 				// Only do this if we haven't already started.
 				mActiveScreen.BeginDeactivate();
 			}
-			mNextScreen = GetScreen<T>();
+
+			mNextScreen = GetScreen(handle);
 		}
 
 		#endregion rUtility
