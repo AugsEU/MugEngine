@@ -1,5 +1,6 @@
 ﻿
 using MugEngine.Core;
+using TracyWrapper;
 
 namespace MugEngine.Scene
 {
@@ -96,6 +97,8 @@ namespace MugEngine.Scene
 		/// </summary>
 		public bool CollidesWithAnySolid(MCardDir dir)
 		{
+			Profiler.PushProfileZone("Collides");
+
 			Rectangle bounds = BoundsRect();
 
 			foreach (MGameObject other in GO().GetInRect(bounds, GetLayerMask()))
@@ -110,6 +113,7 @@ namespace MugEngine.Scene
 					bool collides = solid.QueryCollides(bounds, dir);
 					if (collides)
 					{
+						Profiler.PopProfileZone();
 						return true;
 					}
 				}
@@ -117,6 +121,7 @@ namespace MugEngine.Scene
 
 			bool? levelCollides = GO().GetLevel()?.QueryCollides(bounds, dir);
 
+			Profiler.PopProfileZone();
 			return levelCollides.HasValue && levelCollides.Value;
 		}
 

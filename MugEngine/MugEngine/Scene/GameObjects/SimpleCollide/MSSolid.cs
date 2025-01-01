@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using TracyWrapper;
 
 namespace MugEngine.Scene
 {
@@ -25,6 +26,7 @@ namespace MugEngine.Scene
 		/// </summary>
 		public void Move(Vector2 delta)
 		{
+			Profiler.PushProfileZone("Solid move");
 			Vector2 destPos = mPosition + delta;
 			
 			int moveX = (int)destPos.X - (int)mPosition.X;
@@ -63,12 +65,12 @@ namespace MugEngine.Scene
 					}
 
 					// Loop over riders not already pushed.
-					MugDebug.Log("Pushing riders {0}", riding.Count);
 					foreach (MSActor rider in riding.Where(r => !pushedX.Contains(r)))
 					{
-						MugDebug.Log("    Moving x {0}", moveX);
 						rider.MoveX(moveX, false);
 					}
+
+
 				}
 
 				if (moveY != 0)
@@ -107,6 +109,7 @@ namespace MugEngine.Scene
 			SetEnabled(origEnabled);
 
 			mPosition = destPos;
+			Profiler.PopProfileZone();
 		}
 
 
@@ -126,10 +129,16 @@ namespace MugEngine.Scene
 		/// </summary>
 		List<MSActor> GetAllRidingActors()
 		{
-			return GO().ActiveObjects(GetLayerMask())
-						.OfType<MSActor>()
-						.Where(a => a.IsRiding(this))
-						.ToList();
+			Profiler.PushProfileZone("Get riders");
+
+			List<MSActor> result = GO().ActiveObjects(GetLayerMask())
+										.OfType<MSActor>()
+										.Where(a => a.IsRiding(this))
+										.ToList();
+
+			Profiler.PopProfileZone();
+
+			return result;
 		}
 
 
