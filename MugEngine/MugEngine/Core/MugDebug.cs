@@ -1,5 +1,7 @@
 ﻿#define FAIL_ON_ASSERT
+#define USE_SEPARATE_CONSOLE_OFF
 
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace MugEngine.Core
@@ -24,14 +26,20 @@ namespace MugEngine.Core
 		public static void Log(string msg, params object[] args)
 		{
 #if DEBUG
+#if USE_SEPARATE_CONSOLE
 			if (!mConsoleAlloc)
 			{
 				AllocConsole();
 				mConsoleAlloc = true;
+
 			}
 			mLogLineNum++;
 			string format = string.Format("[{0}]: {1}", mLogLineNum.ToString("X4"), msg);
+			
 			Console.WriteLine(format, args);
+#else
+			Debug.WriteLine(msg, args);
+#endif
 #endif
 		}
 
@@ -95,7 +103,7 @@ namespace MugEngine.Core
 		public static void AddDebugPoint(Vector2 pos, Color color)
 		{
 #if DEBUG
-			AddDebugRect(new Rectangle(MugMath.VecToPoint(pos), new Point(2, 2)), color);
+			AddDebugRect(new Rectangle(MugMath.ToPoint(pos), new Point(2, 2)), color);
 #endif
 		}
 
