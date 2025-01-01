@@ -13,8 +13,6 @@
 		private Rectangle mPrevWindowedSize;
 		private MugEngineSettings mSettings;
 
-		private Thread mDebugThread;
-
 		#endregion rRegion
 
 
@@ -38,25 +36,6 @@
 			sSelf = this;
 		}
 
-		private void ThreadTask()
-		{
-			TracyWrapper.Profiler.InitThread();
-			List<byte[]> sillyList = new List<byte[]>();
-			while (true)
-			{
-				for (int i = 0; i < 100; i++) sillyList.Add(new byte[10000]);
-
-				TracyWrapper.Profiler.PushProfileZone("Thread Wait");
-				Thread.Sleep(1);
-				TracyWrapper.Profiler.PopProfileZone();
-				if (sillyList.Count > 200)
-				{
-					sillyList.Clear();
-				}
-			}
-		}
-
-
 		/// <summary>
 		/// Initialise the engine. Must be called.
 		/// </summary>
@@ -74,10 +53,6 @@
 			Window.ClientSizeChanged += OnResize;
 
 			mPrevWindowedSize = GraphicsDevice.PresentationParameters.Bounds;
-
-			mDebugThread = new Thread(ThreadTask);
-			mDebugThread.Name = "DebugThread";
-			mDebugThread.Start();
 		}
 
 		#endregion rInit
