@@ -25,6 +25,7 @@ namespace MugEngine.Library
 		public void ProcessAddsDeletes()
 		{
 			// Handle deletes
+			mDeletePool.Sort((a, b) => b.CompareTo(a)); // Must delete elements at the end of the array first otherwise the indeces become invalid.
 			for (int i = 0; i < mDeletePool.Count; i++)
 			{
 				int idx = mDeletePool[i];
