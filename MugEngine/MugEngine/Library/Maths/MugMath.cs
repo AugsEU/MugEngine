@@ -12,7 +12,7 @@
 		/// </summary>
 		/// <param name="vec">Vector to convert</param>
 		/// <returns>Point</returns>
-		public static Point VecToPoint(Vector2 vec)
+		public static Point ToPoint(this Vector2 vec)
 		{
 			int px = (int)MathF.Round(vec.X, MidpointRounding.ToZero);
 			int py = (int)MathF.Round(vec.Y, MidpointRounding.ToZero);
@@ -27,7 +27,7 @@
 		/// </summary>
 		/// <param name="point">Point to convert</param>
 		/// <returns>Vector</returns>
-		public static Vector2 PointToVec(Point point)
+		public static Vector2 ToVec(this Point point)
 		{
 			return new Vector2(point.X, point.Y);
 		}
@@ -52,7 +52,7 @@
 		/// </summary>
 		/// <param name="a">Input vector</param>
 		/// <returns>Clockwise perpendicular vector</returns>
-		public static Vector2 Perpendicular(Vector2 a)
+		public static Vector2 Perpendicular(this Vector2 a)
 		{
 			return new Vector2(a.Y, -a.X);
 		}

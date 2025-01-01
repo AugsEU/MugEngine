@@ -107,7 +107,11 @@ namespace MugEngine.Scene
 
 				if (other is MSSolid solid)
 				{
-					return solid.QueryCollides(bounds, dir);
+					bool collides = solid.QueryCollides(bounds, dir);
+					if (collides)
+					{
+						return true;
+					}
 				}
 			}
 

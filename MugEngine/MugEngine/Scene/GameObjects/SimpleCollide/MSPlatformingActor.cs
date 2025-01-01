@@ -47,7 +47,7 @@ namespace MugEngine.Scene
 		/// </summary>
 		public override void Update(MUpdateInfo info)
 		{
-			mOnGround = false;
+			mOnGround = GroundCheck();
 			base.Update(info);
 		}
 
@@ -66,6 +66,35 @@ namespace MugEngine.Scene
 			}
 
 			return false;
+		}
+
+
+
+		/// <summary>
+		/// Check if we are on the ground.
+		/// Run only once per frame then cached.
+		/// </summary>
+		public bool GroundCheck()
+		{
+			Rectangle myShiftedBounds = BoundsRect();
+			myShiftedBounds.Location += mGravityDir.ToPoint();
+
+			foreach (MGameObject other in GO().GetInRect(myShiftedBounds, GetLayerMask()))
+			{
+				if (ReferenceEquals(other, this))
+				{
+					continue;
+				}
+
+				if (other is MSSolid solid && solid.QueryCollides(myShiftedBounds, mGravityDir))
+				{
+					return true;
+				}
+			}
+
+			bool? levelCollides = GO().GetLevel()?.QueryCollides(myShiftedBounds, mGravityDir);
+
+			return levelCollides.HasValue && levelCollides.Value;
 		}
 
 
@@ -91,10 +120,38 @@ namespace MugEngine.Scene
 
 			mVelocity = mVelocity - componentInWalkVec + walkVec * speed;
 
-			mFacingDir = dir;
+			if (dir != MWalkDir.None)
+			{
+				mFacingDir = dir;
+			}
 		}
 
 		#endregion rUpdate
+
+
+
+
+
+		#region rDraw
+
+
+		/// <summary>
+		/// Draw a platformer with the correct position with regard to the bounds.
+		/// </summary>
+		public void DrawPlatformer(MDrawInfo info, MTexturePart texture, int layer)
+		{
+			MugDebug.Log("OnGround {0} {1}", OnGround(), mVelocity.ToString());
+			Rectangle bounds = BoundsRect();
+
+			Vector2 footPoint = new Vector2((bounds.Left + bounds.Right) / 2, bounds.Bottom);
+			Vector2 texTopLeft = footPoint - new Vector2(texture.mUV.Width / 2, texture.mUV.Height);
+
+			SpriteEffects spriteFlip = mFacingDir == MWalkDir.Right ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+			info.mCanvas.DrawTexture(texture, texTopLeft, spriteFlip, layer);
+		}
+
+		#endregion rDraw
 
 
 
@@ -110,7 +167,6 @@ namespace MugEngine.Scene
 		{
 			if (normal == MCardDir.Up)
 			{
-				mOnGround = true;
 				mVelocity.Y = 0;
 			}
 

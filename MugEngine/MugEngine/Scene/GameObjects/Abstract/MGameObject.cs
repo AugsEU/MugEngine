@@ -131,7 +131,7 @@ namespace MugEngine.Scene
 		/// </summary>
 		public Rectangle BoundsRect()
 		{
-			return new Rectangle(MugMath.VecToPoint(mPosition), BoundsSize());
+			return new Rectangle(MugMath.ToPoint(mPosition), BoundsSize());
 		}
 
 		#endregion rCollision
