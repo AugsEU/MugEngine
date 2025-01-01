@@ -16,6 +16,7 @@ namespace MugEngine.Scene
 		#region rMembers
 
 		MWalkDir mFacingDir;
+		MSSolid mOnlyStandingSolid = null;
 		bool mOnGround;
 
 		#endregion rMembers
@@ -47,6 +48,7 @@ namespace MugEngine.Scene
 		/// </summary>
 		public override void Update(MUpdateInfo info)
 		{
+			mOnlyStandingSolid = null;
 			mOnGround = GroundCheck();
 			base.Update(info);
 		}
@@ -57,13 +59,20 @@ namespace MugEngine.Scene
 		/// </summary>
 		public override bool IsRiding(MSSolid solid)
 		{
-			Rectangle myShiftedBounds = BoundsRect();
-			myShiftedBounds.Location += mGravityDir.ToPoint();
-
-			if (solid.QueryCollides(myShiftedBounds, mGravityDir))
+			if (mOnlyStandingSolid == null)
 			{
-				return true;
+				Rectangle myShiftedBounds = BoundsRect();
+				myShiftedBounds.Location += mGravityDir.ToPoint();
+
+				if (solid.QueryCollides(myShiftedBounds, mGravityDir))
+				{
+					mOnlyStandingSolid = solid;
+					return true;
+				}
 			}
+
+
+
 
 			return false;
 		}
@@ -140,7 +149,6 @@ namespace MugEngine.Scene
 		/// </summary>
 		public void DrawPlatformer(MDrawInfo info, MTexturePart texture, int layer)
 		{
-			MugDebug.Log("OnGround {0} {1}", OnGround(), mVelocity.ToString());
 			Rectangle bounds = BoundsRect();
 
 			Vector2 footPoint = new Vector2((bounds.Left + bounds.Right) / 2, bounds.Bottom);

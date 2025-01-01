@@ -63,12 +63,12 @@ namespace MugEngine.Scene
 					}
 
 					// Loop over riders not already pushed.
+					MugDebug.Log("Pushing riders {0}", riding.Count);
 					foreach (MSActor rider in riding.Where(r => !pushedX.Contains(r)))
 					{
+						MugDebug.Log("    Moving x {0}", moveX);
 						rider.MoveX(moveX, false);
 					}
-
-					
 				}
 
 				if (moveY != 0)
