@@ -168,5 +168,59 @@ namespace MugEngine.Scene
 		/// Are we riding this solid?
 		/// </summary>
 		public abstract bool IsRiding(MSSolid solid);
+
+
+
+		/// <summary>
+		/// Try and leave collisions
+		/// </summary>
+		protected bool TryPushOutOfCollision(MCardDir dir, int maxIterations = 50)
+		{
+			Vector2 originalPos = mPosition;
+			int i = 0;
+			while(CollidesWithAnySolid(dir))
+			{
+				if (i > maxIterations)
+				{
+					mPosition = originalPos;
+					return false;
+				}
+
+				mPosition += dir.ToVec();
+				i++;
+			}
+
+			return true;
+		}
+
+
+
+		/// <summary>
+		/// Go in direction until we hit something.
+		/// </summary>
+		protected bool TryPushIntoCollision(MCardDir dir, int maxIterations = 50)
+		{
+			Vector2 originalPos = mPosition;
+			int i = 0;
+			while (true)
+			{
+				if (i > maxIterations)
+				{
+					mPosition = originalPos;
+					return false;
+				}
+
+				mPosition += dir.ToVec();
+				i++;
+
+				if (CollidesWithAnySolid(dir))
+				{
+					mPosition -= dir.ToVec();
+					break;
+				}
+			}
+
+			return true;
+		}
 	}
 }

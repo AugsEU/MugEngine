@@ -71,6 +71,15 @@ namespace MugEngine.Scene
 			return mParent;
 		}
 
+
+		/// <summary>
+		/// Called once the object is fully constructed
+		/// </summary>
+		public virtual void PostInitSetup()
+		{
+
+		}
+
 		#endregion rScene
 
 

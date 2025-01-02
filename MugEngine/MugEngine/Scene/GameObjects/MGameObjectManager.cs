@@ -92,6 +92,7 @@
 		{
 			mObjects.Add(go);
 			go.SetScene(GetParent());
+			go.PostInitSetup();
 		}
 
 
@@ -211,8 +212,8 @@
 			UnloadLevel();
 
 			// Start new level
-			level.BeginLevel(this);
 			mLevel = level;
+			level.BeginLevel(this);
 		}
 
 

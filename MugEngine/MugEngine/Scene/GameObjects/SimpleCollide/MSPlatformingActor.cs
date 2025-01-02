@@ -35,6 +35,17 @@ namespace MugEngine.Scene
 			mGravityStrength = DEFAULT_GRAVITY;
 		}
 
+
+
+		/// <summary>
+		/// Called after the object is fully constructed.
+		/// </summary>
+		public override void PostInitSetup()
+		{
+			PushUntilOnGround();
+			base.PostInitSetup();
+		}
+
 		#endregion rInit
 
 
@@ -70,9 +81,6 @@ namespace MugEngine.Scene
 					return true;
 				}
 			}
-
-
-
 
 			return false;
 		}
@@ -189,6 +197,20 @@ namespace MugEngine.Scene
 		public bool OnGround()
 		{
 			return mOnGround;
+		}
+
+
+
+		/// <summary>
+		/// Makes sure thing is seated on ground.
+		/// </summary>
+		public void PushUntilOnGround()
+		{
+			bool success = TryPushOutOfCollision(mGravityDir.Inverted());
+			MugDebug.Assert(success);
+
+			success = TryPushIntoCollision(mGravityDir);
+			MugDebug.Assert(success);
 		}
 
 		#endregion rCollision
