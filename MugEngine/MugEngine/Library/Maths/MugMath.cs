@@ -94,7 +94,7 @@
 		/// <summary>
 		/// Project V2 to V3
 		/// </summary>
-		public static Vector3 ToVec3(Vector2 vec)
+		public static Vector3 ToVec3(this Vector2 vec)
 		{
 			return new Vector3(vec, 0.0f);
 		}
@@ -117,7 +117,7 @@
 		/// <summary>
 		/// Round a float to an int.
 		/// </summary>
-		public static Vector2 Round(Vector2 v)
+		public static Vector2 Round(this Vector2 v)
 		{
 			return new Vector2(MathF.Round(v.X), MathF.Round(v.Y));
 		}
@@ -148,7 +148,7 @@
 		/// <summary>
 		/// Truncate annoying float stuff
 		/// </summary>
-		public static Vector2 TruncateSmall(Vector2 a)
+		public static Vector2 TruncateSmall(this Vector2 a)
 		{
 			const float THRESH = 0.000001f;
 			if (-THRESH < a.X && a.X < THRESH)
@@ -320,58 +320,6 @@
 
 
 
-
-		#region rLerp MOVE THIS TO EASING FOLDER.
-
-		/// <summary>
-		/// Sine-wave like function that goes from 0 to 1 and repeats every unit. Starts at 0
-		/// </summary>
-		public static float UnitWave(float t)
-		{
-			t *= 4.0f;
-			t += 1.0f;
-			t %= 4.0f;
-			t -= 2.0f;
-			t *= 2.0f - MathF.Abs(t);
-			t += 1.0f;
-			t *= 0.5f;
-			return t;
-		}
-
-
-
-		/// <summary>
-		/// Function that goes smoothly from 0 to 1
-		/// </summary>
-		public static float SmoothZeroToOne(float t)
-		{
-			t *= 2.0f;
-			t -= 1.0f;
-			t *= 2.0f - MathF.Abs(t);
-			t += 1.0f;
-			t *= 0.5f;
-			return t;
-		}
-
-
-
-		/// <summary>
-		/// Goes from 0 to 1, but starts sharp.
-		/// </summary>
-		public static float LeapZeroToSmoothOne(float t)
-		{
-			t -= 1.0f;
-			t *= -t;
-			t += 1.0f;
-			return t;
-		}
-
-		#endregion rLerp
-
-
-
-
-
 		#region rBits
 
 		/// <summary>
@@ -386,9 +334,6 @@
 		}
 
 		#endregion rBits
-
-
-
 
 
 

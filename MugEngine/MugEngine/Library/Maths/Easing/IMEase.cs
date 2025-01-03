@@ -10,7 +10,7 @@
 	{
 		#region rClass
 
-		public float Func(float t);
+		public float Eval(float t);
 
 		#endregion rClass
 	}

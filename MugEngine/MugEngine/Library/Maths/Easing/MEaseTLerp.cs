@@ -1,25 +1,31 @@
 ﻿namespace MugEngine.Library
 {
 	/// <summary>
-	/// Reciprocal function that creates a J bend.
+	/// Reciprocal function that creates a T bend.
+	/// 
+	/// |     @@@@@@@
+	/// |   @
+	/// | @
+	/// |@
+	/// -------------
 	/// </summary>
-	internal class MEaseRecipJBend : IMEase
+	public class MEaseTLerp
 	{
 		float mBendValue;
 
-		public MEaseRecipJBend(float bendValue)
+		public MEaseTLerp(float bendValue)
 		{
 			mBendValue = bendValue;
 		}
 
-		public float Func(float t)
+		public float Eval(float t)
 		{
 			return Func(t, mBendValue);
 		}
 
 		public static float Func(float t, float bend)
 		{
-			bend -= 1.0f;
+			bend = -bend;
 			t -= bend;
 			t = bend * (bend - 1.0f) / t;
 			t += bend;
