@@ -10,7 +10,7 @@
 		{
 			mAmplitude = amplitude;
 			mAngularSpeed = speed * 10.0f;
-			mDiminishFunc = new MEaseRecipJBend(10.0f);
+			mDiminishFunc = new MEaseJLerp(10.0f);
 		}
 
 		public MCameraShake(Vector2 amplitude, float speed, IMEase diminishFunc) : base()
@@ -25,7 +25,7 @@
 			MCameraSpec spec = new MCameraSpec();
 
 			float angle = mAngularSpeed * time * MathF.Tau;
-			float diminish = 1.0f - mDiminishFunc.Func(time);
+			float diminish = 1.0f - mDiminishFunc.Eval(time);
 
 			(float s, float c) = MathF.SinCos(angle);
 

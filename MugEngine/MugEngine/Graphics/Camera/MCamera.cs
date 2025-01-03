@@ -9,7 +9,9 @@
 
 		MCameraSpec mCurrentSpec;
 		Vector2 mViewPortSize;
+		MAnchorType mCameraAnchor;
 
+		MCameraFocus mFocus;
 		List<MCameraMovementPlayer> mMovements;
 
 		#endregion rMembers
@@ -27,6 +29,7 @@
 		{
 			mCurrentSpec = new MCameraSpec();
 			mViewPortSize = viewportSize;
+			mCameraAnchor = MAnchorType.Centre;
 
 			mMovements = new List<MCameraMovementPlayer>();
 		}
@@ -55,6 +58,11 @@
 		/// </summary>
 		public void Update(MUpdateInfo info)
 		{
+			if (mFocus is not null)
+			{
+				mCurrentSpec = mFocus.UpdateFocusPoint(info, mCurrentSpec);
+			}
+
 			for (int i = 0; i < mMovements.Count; i++)
 			{
 				MCameraMovementPlayer movement = mMovements[i];
@@ -76,6 +84,17 @@
 		public void StartMovement(MCameraMovement movement, float time)
 		{
 			mMovements.Add(new MCameraMovementPlayer(movement, time));
+		}
+
+
+
+		/// <summary>
+		/// Focus the camera on something.
+		/// </summary>
+		public void SetFocus(MCameraFocus focus)
+		{
+			focus.StartFocus(mCurrentSpec);
+			mFocus = focus;
 		}
 
 		#endregion rUpdate
@@ -100,7 +119,11 @@
 
 			Vector3 centrePoint3 = new Vector3(mViewPortSize / 2.0f, 0.0f);
 
-			Vector3 initDelta = new Vector3(-(int)ourSpec.mPosition.X, -(int)ourSpec.mPosition.Y, 0) - centrePoint3;
+			MAnchorVector2 ancVec = new MAnchorVector2(ourSpec.mPosition, mCameraAnchor);
+
+			Vector2 cameraTopLeft = ancVec.ToVec(mViewPortSize, MAnchorType.TopLeft);
+
+			Vector3 initDelta = new Vector3(-(int)cameraTopLeft.X, -(int)cameraTopLeft.Y, 0) - centrePoint3;
 
 			return Matrix.CreateTranslation(initDelta) *
 				   Matrix.CreateRotationZ(ourSpec.mRotation) *

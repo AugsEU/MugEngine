@@ -143,6 +143,16 @@ namespace MugEngine.Scene
 			return new Rectangle(MugMath.ToPoint(mPosition), BoundsSize());
 		}
 
+
+
+		/// <summary>
+		/// Centre of mass
+		/// </summary>
+		public Vector2 GetCentreOfMass()
+		{
+			return BoundsRect().Center.ToVec();
+		}
+
 		#endregion rCollision
 
 

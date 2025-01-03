@@ -32,5 +32,10 @@ namespace MugEngine.Scene
 		{
 			mGravityDir = dir;
 		}
+
+		public Vector2 GetVelocity()
+		{
+			return mVelocity;
+		}
 	}
 }

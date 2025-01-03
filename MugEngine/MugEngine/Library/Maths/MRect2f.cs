@@ -1,4 +1,6 @@
-﻿namespace MugEngine
+﻿using System.Runtime.CompilerServices;
+
+namespace MugEngine.Library
 {
 	/// <summary>
 	/// Rectangle in world space used for colliders
@@ -37,21 +39,17 @@
 
 		public float GetWidth()
 		{
-			return Math.Abs(mMax.X - mMin.X);
+			return mMax.X - mMin.X;
 		}
 
 		public float GetHeight()
 		{
-			return Math.Abs(mMax.Y - mMin.Y);
+			return mMax.Y - mMin.Y;
 		}
 
 		public Vector2 GetSize()
 		{
-			Vector2 size = mMax - mMin;
-			size.X = MathF.Abs(size.X);
-			size.Y = MathF.Abs(size.Y);
-
-			return size;
+			return mMax - mMin;
 		}
 
 		public Vector2 GetCentre()
@@ -87,5 +85,13 @@
 
 		public Vector2 mMin;
 		public Vector2 mMax;
+	}
+
+	static class MRect2fImpl
+	{
+		public static MRect2f ToRect2f(this Rectangle rect)
+		{
+			return new MRect2f(rect.Location.ToVec(), (rect.Location + rect.Size).ToVec());
+		}
 	}
 }

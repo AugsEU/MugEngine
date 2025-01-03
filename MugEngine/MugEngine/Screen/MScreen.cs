@@ -62,7 +62,10 @@
 		/// <summary>
 		/// Update screen.
 		/// </summary>
-		public abstract void Update(MUpdateInfo info);
+		public virtual void Update(MUpdateInfo info)
+		{
+			mCanvas.Update(info);
+		}
 
 
 

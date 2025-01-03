@@ -22,7 +22,7 @@
 		RenderTarget2D mRenderTarget;
 
 		MCamera mCamera;
-		Matrix mCurrentViewport;
+		Matrix mCamMatrixCache;
 		SpriteBatch mBatcher;
 		MSpriteBatchOptions mCurrentOptions;
 
@@ -130,10 +130,10 @@
 			device.SetRenderTarget(mRenderTarget);
 			device.Clear(Color.Black);
 
-			mCurrentViewport = mCamera.CalculateMatrix();
+			mCamMatrixCache = mCamera.CalculateMatrix();
 			mLayerOffset = 0.0f;
 
-			mBatcher.MugStartSpriteBatch(mCurrentOptions, mCurrentViewport);
+			mBatcher.MugStartSpriteBatch(mCurrentOptions, mCamMatrixCache);
 			sCurrentlyDrawing = true;
 
 			return thisInfo;
@@ -190,6 +190,16 @@
 
 
 		/// <summary>
+		/// Get camera
+		/// </summary>
+		public MCamera GetCamera()
+		{
+			return mCamera;
+		}
+
+
+
+		/// <summary>
 		/// Get depth float between 0 and 1
 		/// </summary>
 		float GetDepth(int layer)
@@ -222,7 +232,7 @@
 			if (sCurrentlyDrawing)
 			{
 				mBatcher.End();
-				mBatcher.MugStartSpriteBatch(mCurrentOptions, mCurrentViewport);
+				mBatcher.MugStartSpriteBatch(mCurrentOptions, mCamMatrixCache);
 			}
 		}
 
@@ -239,7 +249,7 @@
 			if (sCurrentlyDrawing)
 			{
 				mBatcher.End();
-				mBatcher.MugStartSpriteBatch(mCurrentOptions, mCurrentViewport);
+				mBatcher.MugStartSpriteBatch(mCurrentOptions, mCamMatrixCache);
 			}
 		}
 

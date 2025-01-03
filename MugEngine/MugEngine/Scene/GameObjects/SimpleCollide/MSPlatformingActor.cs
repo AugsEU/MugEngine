@@ -221,6 +221,14 @@ namespace MugEngine.Scene
 
 		#region rUtil
 
+		/// <summary>
+		/// Get direction actor is facing.
+		/// </summary>
+		public MWalkDir GetFacingDir()
+		{
+			return mFacingDir;
+		}
+
 		#endregion rUtil
 
 

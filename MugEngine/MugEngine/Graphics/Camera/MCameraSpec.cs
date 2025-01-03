@@ -5,6 +5,8 @@
 	/// </summary>
 	public struct MCameraSpec
 	{
+		public static MCameraSpec Zero { get { return new MCameraSpec(); } }
+
 		public Vector2 mPosition;
 		public float mRotation;
 		public float mZoom;
