@@ -5,14 +5,18 @@ namespace MugEngine.Graphics
 	public class MSPlatformerFocus : MSmoothPointFocus
 	{
 		MSPlatformingActor mActor;
-		Vector2 mGroundFollowSpeed;
-		Vector2 mAirFollowSpeed;
+		Vector4 mGroundFollowSpeed;
+		Vector4 mAirFollowSpeed;
+
+		MRollingVector2 mRollingTargetWindow;
 
 		public MSPlatformerFocus(MSPlatformingActor actor)
 		{
 			mActor = actor;
-			mGroundFollowSpeed = new Vector2(4.5f, 4.2f);
-			mAirFollowSpeed = new Vector2(4.5f, 2.9f);
+			mGroundFollowSpeed = new Vector4(4.5f, 4.2f, 4.5f, 6.2f);
+			mAirFollowSpeed = new Vector4(4.5f, 12.0f, 4.5f, 2.9f);
+
+			mRollingTargetWindow = new MRollingVector2(4);
 		}
 
 		public override MCameraSpec UpdateFocusPoint(MUpdateInfo info, MCameraSpec curr)
@@ -36,11 +40,12 @@ namespace MugEngine.Graphics
 			targetPoint += mActor.GetVelocity() / 10.0f;
 
 			Vector2 lookAhead = mActor.GetFacingDir().ToVec(mActor.GetGravityDir());
-			lookAhead *= 20.0f;
+			lookAhead *= 18.0f;
 
 			targetPoint += lookAhead;
 
-			return targetPoint;
+			mRollingTargetWindow.Add(targetPoint);
+			return mRollingTargetWindow.GetAverage();
 		}
 	}
 }

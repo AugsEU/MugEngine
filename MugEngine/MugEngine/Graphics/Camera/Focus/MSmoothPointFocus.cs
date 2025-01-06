@@ -18,7 +18,7 @@ namespace MugEngine.Graphics
 
 		#region rMembers
 
-		public Vector2 pSpeed { get; set; }
+		public Vector4 pSpeed { get; set; }
 
 		MRollingVector2 mPositionStack = new MRollingVector2(3);
 
@@ -36,7 +36,7 @@ namespace MugEngine.Graphics
 		/// </summary>
 		public MSmoothPointFocus()
 		{
-			pSpeed = new Vector2(1.0f, 1.0f);
+			pSpeed = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 
 		#endregion rInit
@@ -64,7 +64,10 @@ namespace MugEngine.Graphics
 			}
 			else
 			{
-				Vector2 dtDamp = new Vector2(1.0f - MathF.Exp(-pSpeed.X * info.mDelta), 1.0f - MathF.Exp(-pSpeed.Y * info.mDelta));
+				float speedX = toTarget.X > 0.0f ? pSpeed.X : pSpeed.Z;
+				float speedY = toTarget.Y > 0.0f ? pSpeed.Y : pSpeed.W;
+
+				Vector2 dtDamp = new Vector2(1.0f - MathF.Exp(-speedX * info.mDelta), 1.0f - MathF.Exp(-speedY * info.mDelta));
 
 				curr.mPosition += (overshootTarget - curr.mPosition) * dtDamp;
 

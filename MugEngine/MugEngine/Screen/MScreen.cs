@@ -1,10 +1,9 @@
-﻿namespace MugEngine
+﻿namespace MugEngine.Screen
 {
 	public abstract class MScreen : IMUpdate, IMDraw
 	{
 		#region rMembers
 
-		Point mResolution;
 		protected MCanvas2D mCanvas;
 
 		#endregion rMembers

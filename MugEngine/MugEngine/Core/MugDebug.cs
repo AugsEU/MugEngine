@@ -1,9 +1,11 @@
 ﻿#define FAIL_ON_ASSERT
+
 #define USE_SEPARATE_CONSOLE_OFF
+#define USE_BUFFERED_LOG
 
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TracyWrapper;
+using System.Text;
 
 namespace MugEngine.Core
 {
@@ -17,9 +19,14 @@ namespace MugEngine.Core
 
 		private static List<DebugRect> mDebugRectToDraw = new List<DebugRect>();
 
-		public static bool mConsoleAlloc = false;
-		public static bool mDebugFlag1 = false;
 		static uint mLogLineNum = 0;
+
+#if USE_SEPARATE_CONSOLE
+		static bool mConsoleAlloc = false;
+#elif USE_BUFFERED_LOG
+		static StringBuilder mMessageBuffer = new StringBuilder();
+#endif
+
 
 		/// <summary>
 		/// Log message to console. Only if debug is on.
@@ -27,6 +34,9 @@ namespace MugEngine.Core
 		public static void Log(string msg, params object[] args)
 		{
 #if DEBUG
+			string format = string.Format("[{0}]: {1}", mLogLineNum.ToString("X4"), msg);
+			mLogLineNum++;
+
 #if USE_SEPARATE_CONSOLE
 			if (!mConsoleAlloc)
 			{
@@ -34,12 +44,13 @@ namespace MugEngine.Core
 				mConsoleAlloc = true;
 
 			}
-			mLogLineNum++;
-			string format = string.Format("[{0}]: {1}", mLogLineNum.ToString("X4"), msg);
 			
 			Console.WriteLine(format, args);
+#elif USE_BUFFERED_LOG
+			string output = string.Format(format, args);
+			mMessageBuffer.AppendLine(output);
 #else
-			Debug.WriteLine(msg, args);
+			Debug.WriteLine(format, args);
 #endif
 #endif
 		}
@@ -108,7 +119,7 @@ namespace MugEngine.Core
 #endif
 		}
 
-		public static void DrawDebugRects(MDrawInfo info, int layer)
+		public static void FinalizeDebug(MDrawInfo info, int layer)
 		{
 #if DEBUG
 			foreach (DebugRect debugRect in mDebugRectToDraw)
@@ -116,6 +127,12 @@ namespace MugEngine.Core
 				info.mCanvas.DrawRect(debugRect.mRectangle, debugRect.mColor, layer);
 			}
 			mDebugRectToDraw.Clear();
+
+#if USE_BUFFERED_LOG
+			string allMessages = mMessageBuffer.ToString();
+			Debug.WriteLine(allMessages);
+			mMessageBuffer.Clear();
+#endif
 #endif
 		}
 	}

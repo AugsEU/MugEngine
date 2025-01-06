@@ -3,7 +3,6 @@
 	public abstract class MCameraFocus
 	{
 		MCameraSpec mStartSpec;
-		MCameraSpec mCurrSpec;
 
 		public void StartFocus(MCameraSpec startSpec)
 		{
@@ -15,11 +14,6 @@
 		public MCameraSpec GetStartSpec()
 		{
 			return mStartSpec;
-		}
-
-		public MCameraSpec GetSpec()
-		{
-			return mCurrSpec;
 		}
 	}
 }
