@@ -125,7 +125,7 @@ namespace MugEngine.Scene
 
 			mTileMap = new MTile[types.GetLength(0), types.GetLength(1)];
 
-			Point basePt = MugMath.ToPoint(mBasePosition);
+			Point basePt = mBasePosition.ToPoint();
 
 			for (int x = 0; x < mTileMap.GetLength(0); x++)
 			{

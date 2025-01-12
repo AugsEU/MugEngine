@@ -91,7 +91,7 @@ namespace MugEngine.Library
 	{
 		public static MRect2f ToRect2f(this Rectangle rect)
 		{
-			return new MRect2f(rect.Location.ToVec(), (rect.Location + rect.Size).ToVec());
+			return new MRect2f(rect.Location.ToVector2(), (rect.Location + rect.Size).ToVector2());
 		}
 	}
 }

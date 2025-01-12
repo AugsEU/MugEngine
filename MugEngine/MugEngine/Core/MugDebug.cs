@@ -115,7 +115,7 @@ namespace MugEngine.Core
 		public static void AddDebugPoint(Vector2 pos, Color color)
 		{
 #if DEBUG
-			AddDebugRect(new Rectangle(MugMath.ToPoint(pos), new Point(2, 2)), color);
+			AddDebugRect(new Rectangle(pos.ToPoint(), new Point(2, 2)), color);
 #endif
 		}
 

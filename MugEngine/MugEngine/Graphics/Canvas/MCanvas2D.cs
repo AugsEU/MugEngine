@@ -46,7 +46,7 @@
 			GraphicsDevice device = MugCore.I.GetDevice();
 
 			mRenderTarget = new RenderTarget2D(device, resolution.X, resolution.Y);
-			mCamera = new MCamera(MugMath.ToVec(resolution));
+			mCamera = new MCamera(resolution.ToVector2());
 
 			InitCanvas(device);
 		}

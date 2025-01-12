@@ -15,7 +15,7 @@
 
 		public Vector2 ToVec(Point size, MAnchorType baseAnchor = MAnchorType.TopLeft)
 		{
-			Vector2 sizeVec = size.ToVec();
+			Vector2 sizeVec = size.ToVector2();
 			return ToVec(sizeVec, baseAnchor);
 		}
 

@@ -140,7 +140,7 @@ namespace MugEngine.Scene
 		/// </summary>
 		public Rectangle BoundsRect()
 		{
-			return new Rectangle(MugMath.ToPoint(mPosition), BoundsSize());
+			return new Rectangle(mPosition.ToPoint(), BoundsSize());
 		}
 
 
@@ -150,7 +150,7 @@ namespace MugEngine.Scene
 		/// </summary>
 		public Vector2 GetCentreOfMass()
 		{
-			return BoundsRect().Center.ToVec();
+			return BoundsRect().Center.ToVector2();
 		}
 
 		#endregion rCollision

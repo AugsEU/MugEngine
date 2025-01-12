@@ -9,7 +9,7 @@ namespace MugEngine.Graphics
 		#region rConstants
 
 		const float OVERSHOOT_DIST = 8.0f;
-		const float SNAP_TO_DIST = 0.05f;
+		const float SNAP_TO_DIST = 1.5f;
 
 		#endregion rConstants
 
