@@ -30,6 +30,19 @@ namespace MugEngine.Library
 
 
 		/// <summary>
+		/// Get iterator over enum
+		/// </summary>
+		static public IEnumerable<T> EnumIter<T>() where T : Enum
+		{
+			foreach (T value in Enum.GetValues(typeof(T)))
+			{
+				yield return value;
+			}
+		}
+
+
+
+		/// <summary>
 		/// Get file path attribute
 		/// </summary>
 		public static string GetFilePath(this Enum value)

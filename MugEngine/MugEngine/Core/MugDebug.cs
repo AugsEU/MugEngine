@@ -130,7 +130,11 @@ namespace MugEngine.Core
 
 #if USE_BUFFERED_LOG
 			string allMessages = mMessageBuffer.ToString();
-			Debug.WriteLine(allMessages);
+
+			if (allMessages.Length > 0)
+			{
+				Debug.WriteLine(allMessages);
+			}
 			mMessageBuffer.Clear();
 #endif
 #endif
