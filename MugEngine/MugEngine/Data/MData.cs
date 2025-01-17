@@ -100,7 +100,7 @@ namespace MugEngine.Data
 		{
 			string realPath = GetRemappedPath(alias);
 
-			return LDtkFile.FromFile(GetRemappedPath(alias), mContentManager);
+			return LDtkFile.FromFile(GetRemappedPath(alias));
 		}
 
 		#endregion rLoadUnload

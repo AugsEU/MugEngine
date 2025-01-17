@@ -1,14 +1,15 @@
 ﻿namespace MugEngine.Scene
 {
-	public abstract class MTile : IMCollisionQueryable, IMBounds
+	public struct MTile : IMCollisionQueryable, IMBounds
 	{
 		#region rMembers
 
-		protected bool mEnabled = true;
-		protected MTileAdjacency mAdjacency = MTileAdjacency.Ad0;
-		protected MCardDir mRotation;
-
-		Rectangle mBoundingBox;
+		public MTileAdjacency mAdjacency = MTileAdjacency.Ad0;
+		public MCardDir mRotation;
+		public Rectangle mBoundingBox;
+		public MAnimation mAnimation;
+		public ulong mFlags = 0;
+		public int mType;
 
 		#endregion rMembers
 
@@ -21,7 +22,7 @@
 		/// <summary>
 		/// Create a tile with default bounds.
 		/// </summary>
-		public MTile()
+		public MTile(int type)
 		{
 		}
 
@@ -31,7 +32,7 @@
 		/// Inform tile is at this position.
 		/// This should not change.
 		/// </summary>
-		public virtual void PlaceAt(Point pos, Point size)
+		public void PlaceAt(Point pos, Point size)
 		{
 			mBoundingBox = new Rectangle(pos, size);
 		}
@@ -47,6 +48,7 @@
 		}
 
 
+
 		/// <summary>
 		/// Inform that a neighbour is to the X of this tile.
 		/// </summary>
@@ -57,16 +59,6 @@
 
 			//I'm to the left of my neighbour
 			neighbour.mAdjacency |= MTileAdjacencyHelper.InvertDir(adj);
-		}
-
-
-
-		/// <summary>
-		/// Is this tile the same type as us?
-		/// </summary>
-		public virtual bool IsSameType(MTile neighbour)
-		{
-			return neighbour.GetType() == GetType();
 		}
 
 		#endregion rInit
@@ -80,8 +72,9 @@
 		/// <summary>
 		/// Called once per frame to update the tile.
 		/// </summary>
-		public virtual void Update(MScene scene, MUpdateInfo info)
+		public void Update(MScene scene, MUpdateInfo info)
 		{
+			// TO DO: Remove this?
 		}
 
 		#endregion rUpdate
@@ -93,11 +86,15 @@
 		#region rDraw
 
 		/// <summary>
-		/// Get texture we want to draw.
+		/// Get animated texture of tile
 		/// </summary>
-		public virtual MTexturePart GetTexture()
+		public MTexturePart GetTexture()
 		{
-			return MTexturePart.Empty;
+			if (mAnimation is null)
+			{
+				return MTexturePart.Empty;
+			}
+			return mAnimation.GetCurrentTexture();
 		}
 
 
@@ -106,7 +103,7 @@
 		/// Sprite effects can mirror or flip a tile when drawing.
 		/// </summary>
 		/// <returns>Sprite effect</returns>
-		public virtual SpriteEffects GetEffect()
+		public SpriteEffects GetEffect()
 		{
 			// Flipping the tile keeps light direction consistent
 			switch (mRotation)
@@ -131,12 +128,16 @@
 		/// <summary>
 		/// Query collision
 		/// </summary>
-		public virtual bool QueryCollides(Rectangle bounds, MCardDir travelDir)
+		public bool QueryCollides(Rectangle bounds, MCardDir travelDir)
 		{
-			return false;
+			return mBoundingBox.Intersects(bounds);
 		}
 
 
+
+		/// <summary>
+		/// Get bounding box of this tile
+		/// </summary>
 		public Rectangle BoundsRect()
 		{
 			return mBoundingBox;
@@ -151,20 +152,10 @@
 		#region rUtil
 
 		/// <summary>
-		/// Is the tile enabled?
-		/// </summary>
-		public bool IsEnabled()
-		{
-			return mEnabled;
-		}
-
-
-
-		/// <summary>
 		/// Get rotation of tile. E.g. platforms can be rotated
 		/// </summary>
 		/// <returns>Rotation in radians</returns>
-		public virtual float GetRotation()
+		public float GetRotation()
 		{
 			return mRotation.ToAngle();
 		}

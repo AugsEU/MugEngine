@@ -43,16 +43,12 @@ namespace MugEngine.Input
 		/// </summary>
 		public void PollInputs(TimeSpan timeStamp)
 		{
-			TracyWrapper.Profiler.PushProfileZone("PollInputs", System.Drawing.Color.Green);
-
 			if (mHistory.Count > mMaxHistorySize)
 			{
 				mHistory.RemoveFromBack();
 			}
 
 			mHistory.AddToFront(new MInputSnapshot(timeStamp));
-
-			TracyWrapper.Profiler.PopProfileZone();
 		}
 
 		#endregion rPoll
@@ -98,6 +94,21 @@ namespace MugEngine.Input
 			}
 
 			return mHistory[frames];
+		}
+
+
+
+		/// <summary>
+		/// Get most recent input poll
+		/// </summary>
+		public MInputSnapshot Now()
+		{
+			if (mHistory.Count == 0)
+			{
+				return MInputSnapshot.Default;
+			}
+
+			return mHistory[0];
 		}
 
 		#endregion rAccess

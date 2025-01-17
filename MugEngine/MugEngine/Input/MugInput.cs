@@ -6,6 +6,7 @@
 
 		MInputHistory mHistory;
 		Dictionary<int, MButtonSet> mButtonBindings;
+		Dictionary<int, MInputAxis> mAxisBindings;
 
 		#endregion rMembers
 
@@ -19,6 +20,7 @@
 		public void Init(int historySize)
 		{
 			mButtonBindings = new Dictionary<int, MButtonSet>();
+			mAxisBindings = new Dictionary<int, MInputAxis>();
 			mHistory = new MInputHistory(historySize);
 		}
 
@@ -32,6 +34,18 @@
 			int idx = Convert.ToInt32(id);
 
 			mButtonBindings[idx] = new MButtonSet(buttons);
+		}
+
+
+
+		/// <summary>
+		/// Add a new button binding or replace existing one.
+		/// </summary>
+		public void BindAxis<T>(T id, MInputAxis axis) where T : Enum
+		{
+			int idx = Convert.ToInt32(id);
+
+			mAxisBindings[idx] = axis;
 		}
 
 		#endregion rInit
@@ -76,6 +90,16 @@
 		#region rUtil
 
 		/// <summary>
+		/// Get the current input state
+		/// </summary>
+		public MInputSnapshot GetCurrState()
+		{
+			return mHistory.Now();
+		}
+
+
+
+		/// <summary>
 		/// Get a button set from an Enum id
 		/// </summary>
 		private MButtonSet GetButtonSet<T>(T id) where T : Enum
@@ -85,6 +109,22 @@
 			MButtonSet retVal = null;
 
 			mButtonBindings.TryGetValue(idx, out retVal);
+
+			return retVal;
+		}
+
+
+
+		/// <summary>
+		/// Get a button set from an Enum id
+		/// </summary>
+		private MInputAxis GetInputAxis<T>(T id) where T : Enum
+		{
+			int idx = Convert.ToInt32(id);
+
+			MInputAxis retVal = null;
+
+			mAxisBindings.TryGetValue(idx, out retVal);
 
 			return retVal;
 		}

@@ -1,4 +1,5 @@
 ﻿using LDtk;
+using System.Runtime.CompilerServices;
 using TracyWrapper;
 
 namespace MugEngine.Scene
@@ -14,6 +15,7 @@ namespace MugEngine.Scene
 		Point mTileSize;
 		MTile[,] mTileMap;
 		MTile mDummyTile;
+		Dictionary<string, MAnimation> mTileAnimations;
 		int mDrawLayer;
 
 		#endregion rMembers
@@ -33,6 +35,8 @@ namespace MugEngine.Scene
 			mBasePosition = tileMapPos;
 			mDrawLayer = drawLayer;
 			mTileMap = null;
+
+			mTileAnimations = new();
 		}
 
 
@@ -56,14 +60,14 @@ namespace MugEngine.Scene
 				{
 					if (x + 1 < mTileMap.GetLength(0))
 					{
-						if (mTileMap[x, y].IsSameType(mTileMap[x + 1, y]))
+						if (mTileMap[x, y].mType == mTileMap[x + 1, y].mType)
 						{
 							mTileMap[x, y].InformAdjacent(mTileMap[x + 1, y], MTileAdjacency.Ad6);
 						}
 
 						if (y + 1 < mTileMap.GetLength(1))
 						{
-							if (mTileMap[x, y].IsSameType(mTileMap[x + 1, y + 1]))
+							if (mTileMap[x, y].mType == mTileMap[x + 1, y + 1].mType)
 							{
 								mTileMap[x, y].InformAdjacent(mTileMap[x + 1, y + 1], MTileAdjacency.Ad3);
 							}
@@ -71,7 +75,7 @@ namespace MugEngine.Scene
 
 						if (y - 1 >= 0)
 						{
-							if (mTileMap[x, y].IsSameType(mTileMap[x + 1, y - 1]))
+							if (mTileMap[x, y].mType == mTileMap[x + 1, y - 1].mType)
 							{
 								mTileMap[x, y].InformAdjacent(mTileMap[x + 1, y - 1], MTileAdjacency.Ad9);
 							}
@@ -81,7 +85,7 @@ namespace MugEngine.Scene
 
 					if (y + 1 < mTileMap.GetLength(1))
 					{
-						if (mTileMap[x, y].IsSameType(mTileMap[x, y + 1]))
+						if (mTileMap[x, y].mType == mTileMap[x, y + 1].mType)
 						{
 							mTileMap[x, y].InformAdjacent(mTileMap[x, y + 1], MTileAdjacency.Ad2);
 						}
@@ -101,7 +105,7 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Load tilemap from ldtk level.
 		/// </summary>
-		public void LoadFromLDtkLevel(LDtkLevel level, MTileFactory factory, bool loadPositionFromFile = false)
+		public void LoadFromLDtkLevel(LDtkLevel level, IMTileFactory factory, bool loadPositionFromFile = false)
 		{
 			LDtkIntGrid typeGrid = level.GetIntGrid("Type");
 			LDtkIntGrid rotGrid = level.GetIntGrid("Rotation");
@@ -117,7 +121,7 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Load from int grids
 		/// </summary>
-		public void LoadFromIntGrids(MTileFactory factory, Vector2 basePosition, int[,] types, int[,] rot, int[,] param)
+		public void LoadFromIntGrids(IMTileFactory factory, Vector2 basePosition, int[,] types, int[,] rot, int[,] param)
 		{
 			mBasePosition = basePosition;
 
@@ -132,13 +136,17 @@ namespace MugEngine.Scene
 				for (int y = 0; y < mTileMap.GetLength(1); y++)
 				{
 					Point tilePos = new Point(x * mTileSize.X, y * mTileSize.Y) + basePt;
-					MTile newTile = factory.GenerateTile(types[x, y], rot[x, y], param[x, y]);
+					(MTile newTile, string animPath) = factory.GenerateTile(types[x, y], rot[x, y], param[x, y]);
 
-					if (newTile is not null)
+					if (!mTileAnimations.ContainsKey(animPath))
 					{
-						newTile.PlaceAt(tilePos, mTileSize);
-						mTileMap[x, y] = newTile;
+						MAnimation anim = animPath == "" ? null : MData.I.LoadAnimation(animPath);
+						mTileAnimations[animPath] = anim;
 					}
+
+					newTile.PlaceAt(tilePos, mTileSize);
+					newTile.mAnimation = mTileAnimations[animPath];
+					mTileMap[x, y] = newTile;
 				}
 			}
 
@@ -155,17 +163,15 @@ namespace MugEngine.Scene
 
 		public void Update(MScene scene, MUpdateInfo info)
 		{
-			Profiler.PushProfileZone("Update Tiles");
-
 			for (int x = 0; x < mTileMap.GetLength(0); x++)
 			{
 				for (int y = 0; y < mTileMap.GetLength(1); y++)
 				{
+					Profiler.PushProfileZone("Update Tiles");
 					mTileMap[x, y].Update(scene, info);
+					Profiler.PopProfileZone();
 				}
 			}
-
-			Profiler.PopProfileZone();
 		}
 
 		#endregion rUpdate
@@ -186,11 +192,6 @@ namespace MugEngine.Scene
 				for (int y = 0; y < mTileMap.GetLength(1); y++)
 				{
 					MTile tile = mTileMap[x, y];
-
-					if (!tile.IsEnabled())
-					{
-						continue;
-					}
 
 					Vector2 tilePos = mBasePosition + new Vector2(x * mTileSize.X, y * mTileSize.Y);
 
@@ -322,29 +323,6 @@ namespace MugEngine.Scene
 			}
 
 			return mDummyTile;
-		}
-
-
-
-		/// <summary>
-		/// Gets the first tile of type T.
-		/// </summary>
-		public T GetTile<T>() where T : MTile
-		{
-			Type tileType = typeof(T);
-			for (int x = 0; x < mTileMap.GetLength(0); x++)
-			{
-				for (int y = 0; y < mTileMap.GetLength(1); y++)
-				{
-					MTile myTile = mTileMap[x, y];
-					if (myTile.GetType() == tileType)
-					{
-						return (T)myTile;
-					}
-				}
-			}
-
-			return (T)mDummyTile;
 		}
 
 

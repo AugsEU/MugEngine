@@ -97,6 +97,15 @@
 			mFocus = focus;
 		}
 
+
+		/// <summary>
+		/// Focus the camera on something.
+		/// </summary>
+		public MCameraFocus GetFocus()
+		{
+			return mFocus;
+		}
+
 		#endregion rUpdate
 
 

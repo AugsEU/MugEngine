@@ -28,5 +28,36 @@
 
 			return set.IsPressed(ref snapShotNow) && !set.IsPressed(ref snapShotBefore);
 		}
+
+
+
+		/// <summary>
+		/// Creates non-normalised vector based on 4 directional buttons
+		/// </summary>
+		public Vector2 DPadToVector<T>(T up, T down, T left, T right) where T : Enum
+		{
+			Vector2 result = Vector2.Zero;
+			if (ButtonDown(up))
+			{
+				result.Y -= 1.0f;
+			}
+
+			if (ButtonDown(down))
+			{
+				result.Y += 1.0f;
+			}
+
+			if (ButtonDown(left))
+			{
+				result.X -= 1.0f;
+			}
+
+			if (ButtonDown(right))
+			{
+				result.X += 1.0f;
+			}
+
+			return result;
+		}
 	}
 }

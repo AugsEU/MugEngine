@@ -6,6 +6,7 @@
 	public class MScene : IMUpdate, IMDraw
 	{
 		#region rMembers
+ 
 
 		Dictionary<Type, MComponent> mUniqueEntities;
 		List<MComponent> mEntities;
@@ -47,7 +48,7 @@
 		{
 			if (mEntityOrderDirty)
 			{
-				mEntities.Sort(new MEntityUpdateOrderComparer());
+				//mEntities.Sort(new MEntityUpdateOrderComparer());
 			}
 
 			// Update entities in scene.
