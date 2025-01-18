@@ -7,10 +7,8 @@
 	{
 		#region rConstants
 
-		private const int A = 16807;
-		private const int M = 2147483647;
-		private const int Q = 127773;
-		private const int R = 2836;
+		private const int A = 1664525;
+		private const int C = 1013904223;
 
 		#endregion rConstants
 
@@ -93,22 +91,30 @@
 		/// <returns>Pseudo-random number</returns>
 		public int Next()
 		{
-			int hi = mSeed / Q;
-			int lo = mSeed % Q;
-
-			mSeed = (A * lo) - (R * hi);
-
-			if (mSeed < 0)
-			{
-				mSeed = mSeed + M;
-			}
-
-			if (mSeed == 0)
-			{
-				mSeed = 1;
-			}
+			mSeed = NextRng(mSeed);
 
 			return mSeed;
+		}
+
+
+
+		/// <summary>
+		/// A seed
+		/// </summary>
+		public static int NextRng(int seed)
+		{
+			seed ^= 0xAAAAAAA;
+			seed = A * seed + C; // Modulus by 2^32 happens because of C#
+			seed ^= 0x5555555;
+			seed = A * seed + C;
+			seed ^= 0x3333333;
+
+			if (seed < 0)
+			{
+				seed = seed + int.MaxValue;
+			}
+
+			return seed;
 		}
 
 		#endregion rSeedConfig
@@ -143,7 +149,7 @@
 		{
 			int num = Next();
 
-			return (num * 1.0f) / M;
+			return num / (float)int.MaxValue;
 		}
 
 
