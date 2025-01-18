@@ -198,7 +198,40 @@
 		/// <returns>Texture that is currently showing</returns>
 		public MTexturePart GetCurrentTexture()
 		{
-			float timeLeft = mPlayHead;
+			return GetTextureAt(mPlayHead);
+		}
+
+
+
+		/// <summary>
+		/// Get texture that is currently showing
+		/// </summary>
+		/// <param name="percentOffset">Percent offset to advance the playhead.</param>
+		/// <returns>Texture that is currently showing</returns>
+		public MTexturePart GetCurrentTexture(float percentOffset)
+		{
+			float newPlayHead = mPlayHead + percentOffset * mTotalDuration;
+			if (newPlayHead > mTotalDuration)
+			{
+				newPlayHead -= mTotalDuration;
+			}
+			else if(newPlayHead < 0.0f)
+			{
+				newPlayHead += mTotalDuration;
+			}
+
+			return GetTextureAt(newPlayHead);
+		}
+
+
+
+		/// <summary>
+		/// Get texture that is currently showing
+		/// </summary>
+		/// <returns>Texture that is currently showing</returns>
+		private MTexturePart GetTextureAt(float playhead)
+		{
+			float timeLeft = playhead;
 			int i = 0;
 			for (; i < mFrames.Length; i++)
 			{

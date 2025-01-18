@@ -1,15 +1,31 @@
-﻿namespace MugEngine.Scene
+﻿using System.Collections.Generic;
+
+namespace MugEngine.Scene
 {
-	public struct MTile : IMCollisionQueryable, IMBounds
+	public struct MTile : IMCollisionQueryable
 	{
+		#region rConstants
+
+		/// <summary>
+		/// These define how mFlags is used.
+		/// </summary>
+		const ulong ROTATION_MASK        = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000011u;
+		const ulong ANIM_OFFSET_MASK     = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000100u;
+
+		#endregion rConstants
+
+
+
+
+
 		#region rMembers
 
 		public MTileAdjacency mAdjacency = MTileAdjacency.Ad0;
-		public MCardDir mRotation;
+		public ushort mType;
+
 		public Rectangle mBoundingBox;
-		public MAnimation mAnimation;
 		public ulong mFlags = 0;
-		public int mType;
+		public MAnimation mAnimation;
 
 		#endregion rMembers
 
@@ -24,6 +40,9 @@
 		/// </summary>
 		public MTile(int type)
 		{
+			mType = (ushort)type;
+
+			mFlags |= ANIM_OFFSET_MASK; // I think we always want this but maybe one day we want to toggle it.
 		}
 
 
@@ -40,19 +59,9 @@
 
 
 		/// <summary>
-		/// Clear adjacency info.
-		/// </summary>
-		public void ClearAdjacent()
-		{
-			mAdjacency = MTileAdjacency.Ad0;
-		}
-
-
-
-		/// <summary>
 		/// Inform that a neighbour is to the X of this tile.
 		/// </summary>
-		public void InformAdjacent(MTile neighbour, MTileAdjacency adj)
+		public void InformAdjacent(ref MTile neighbour, MTileAdjacency adj)
 		{
 			//My neighbour is to the right of me
 			mAdjacency |= adj;
@@ -67,37 +76,7 @@
 
 
 
-		#region rUpdate
-
-		/// <summary>
-		/// Called once per frame to update the tile.
-		/// </summary>
-		public void Update(MScene scene, MUpdateInfo info)
-		{
-			// TO DO: Remove this?
-		}
-
-		#endregion rUpdate
-
-
-
-
-
 		#region rDraw
-
-		/// <summary>
-		/// Get animated texture of tile
-		/// </summary>
-		public MTexturePart GetTexture()
-		{
-			if (mAnimation is null)
-			{
-				return MTexturePart.Empty;
-			}
-			return mAnimation.GetCurrentTexture();
-		}
-
-
 
 		/// <summary>
 		/// Sprite effects can mirror or flip a tile when drawing.
@@ -106,7 +85,7 @@
 		public SpriteEffects GetEffect()
 		{
 			// Flipping the tile keeps light direction consistent
-			switch (mRotation)
+			switch (GetRotDir())
 			{
 				case MCardDir.Down:
 				case MCardDir.Left:
@@ -115,6 +94,24 @@
 					break;
 			}
 			return SpriteEffects.None;
+		}
+
+
+		/// <summary>
+		/// Get animation offset
+		/// </summary>
+		public float GetAnimOffset()
+		{
+			bool useAnimOffset = (mFlags & ANIM_OFFSET_MASK) != 0;
+
+			if (!useAnimOffset)
+			{
+				return 0.0f;
+			}
+
+			int bigNum = mBoundingBox.Location.X + 240257 * mBoundingBox.Location.Y;
+
+			return MRandom.NextRng(bigNum) / 2147483647.0f;
 		}
 
 		#endregion rDraw
@@ -133,16 +130,6 @@
 			return mBoundingBox.Intersects(bounds);
 		}
 
-
-
-		/// <summary>
-		/// Get bounding box of this tile
-		/// </summary>
-		public Rectangle BoundsRect()
-		{
-			return mBoundingBox;
-		}
-
 		#endregion rCollision
 
 
@@ -157,18 +144,43 @@
 		/// <returns>Rotation in radians</returns>
 		public float GetRotation()
 		{
-			return mRotation.ToAngle();
+			return GetRotDir().ToAngle();
+		}
+
+
+
+
+		/// <summary>
+		/// Get cardinal direction
+		/// </summary>
+		public MCardDir GetRotDir()
+		{
+			return (MCardDir)(mFlags & ROTATION_MASK);
 		}
 
 
 
 		/// <summary>
-		/// Get type of tile adjacency.
+		/// Set cardinal rotation
 		/// </summary>
-		/// <returns>Tile adjacency</returns>
-		public MTileAdjacency GetAdjacency()
+		public void SetRotDir(MCardDir dir)
 		{
-			return mAdjacency;
+			mFlags &= ~ROTATION_MASK;
+			switch (dir)
+			{
+				case MCardDir.Up:
+					mFlags |= (0b00000000);
+					break;
+				case MCardDir.Right:
+					mFlags |= (0b00000001);
+					break;
+				case MCardDir.Down:
+					mFlags |= (0b00000010);
+					break;
+				case MCardDir.Left:
+					mFlags |= (0b00000011);
+					break;
+			}
 		}
 
 		#endregion rUtil

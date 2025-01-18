@@ -50,7 +50,7 @@ namespace MugEngine.Scene
 			{
 				for (int y = 0; y < mTileMap.GetLength(1); y++)
 				{
-					mTileMap[x, y].ClearAdjacent();
+					mTileMap[x, y].mAdjacency = MTileAdjacency.Ad0;
 				}
 			}
 
@@ -62,14 +62,14 @@ namespace MugEngine.Scene
 					{
 						if (mTileMap[x, y].mType == mTileMap[x + 1, y].mType)
 						{
-							mTileMap[x, y].InformAdjacent(mTileMap[x + 1, y], MTileAdjacency.Ad6);
+							mTileMap[x, y].InformAdjacent(ref mTileMap[x + 1, y], MTileAdjacency.Ad6);
 						}
 
 						if (y + 1 < mTileMap.GetLength(1))
 						{
 							if (mTileMap[x, y].mType == mTileMap[x + 1, y + 1].mType)
 							{
-								mTileMap[x, y].InformAdjacent(mTileMap[x + 1, y + 1], MTileAdjacency.Ad3);
+								mTileMap[x, y].InformAdjacent(ref mTileMap[x + 1, y + 1], MTileAdjacency.Ad3);
 							}
 						}
 
@@ -77,7 +77,7 @@ namespace MugEngine.Scene
 						{
 							if (mTileMap[x, y].mType == mTileMap[x + 1, y - 1].mType)
 							{
-								mTileMap[x, y].InformAdjacent(mTileMap[x + 1, y - 1], MTileAdjacency.Ad9);
+								mTileMap[x, y].InformAdjacent(ref mTileMap[x + 1, y - 1], MTileAdjacency.Ad9);
 							}
 						}
 
@@ -87,7 +87,7 @@ namespace MugEngine.Scene
 					{
 						if (mTileMap[x, y].mType == mTileMap[x, y + 1].mType)
 						{
-							mTileMap[x, y].InformAdjacent(mTileMap[x, y + 1], MTileAdjacency.Ad2);
+							mTileMap[x, y].InformAdjacent(ref mTileMap[x, y + 1], MTileAdjacency.Ad2);
 						}
 					}
 				}
@@ -138,14 +138,15 @@ namespace MugEngine.Scene
 					Point tilePos = new Point(x * mTileSize.X, y * mTileSize.Y) + basePt;
 					(MTile newTile, string animPath) = factory.GenerateTile(types[x, y], rot[x, y], param[x, y]);
 
-					if (!mTileAnimations.ContainsKey(animPath))
+					MAnimation anim = null;
+					if (animPath != "" && !mTileAnimations.TryGetValue(animPath, out anim))
 					{
-						MAnimation anim = animPath == "" ? null : MData.I.LoadAnimation(animPath);
+						anim = MData.I.LoadAnimation(animPath);
 						mTileAnimations[animPath] = anim;
 					}
 
 					newTile.PlaceAt(tilePos, mTileSize);
-					newTile.mAnimation = mTileAnimations[animPath];
+					newTile.mAnimation = anim;
 					mTileMap[x, y] = newTile;
 				}
 			}
@@ -163,14 +164,9 @@ namespace MugEngine.Scene
 
 		public void Update(MScene scene, MUpdateInfo info)
 		{
-			for (int x = 0; x < mTileMap.GetLength(0); x++)
+			foreach(var kv in mTileAnimations)
 			{
-				for (int y = 0; y < mTileMap.GetLength(1); y++)
-				{
-					Profiler.PushProfileZone("Update Tiles");
-					mTileMap[x, y].Update(scene, info);
-					Profiler.PopProfileZone();
-				}
+				kv.Value.Update(info);
 			}
 		}
 
@@ -192,20 +188,18 @@ namespace MugEngine.Scene
 				for (int y = 0; y < mTileMap.GetLength(1); y++)
 				{
 					MTile tile = mTileMap[x, y];
-
 					Vector2 tilePos = mBasePosition + new Vector2(x * mTileSize.X, y * mTileSize.Y);
 
-					MTexturePart tileTexture = tile.GetTexture();
-
-					if (tileTexture.IsNull())
+					if(tile.mAnimation is null)
 					{
 						continue;
 					}
 
 					TileTexDrawInfo tileDrawInfo = MTileDrawHelpers.GetTileDrawInfo(this, tile);
-					Rectangle sourceRectangle = new Rectangle(tileTexture.mUV.Location + tileDrawInfo.mTileIndex * mTileSize, mTileSize);
 
-					info.mCanvas.DrawTexture(tileTexture.mTexture, tilePos, sourceRectangle, Color.White, tileDrawInfo.mRotation, Vector2.Zero, 1.0f, tileDrawInfo.mEffect, mDrawLayer);
+					Rectangle sourceRectangle = new Rectangle(tileDrawInfo.mTexturePart.mUV.Location + tileDrawInfo.mTileIndex * mTileSize, mTileSize);
+
+					info.mCanvas.DrawTexture(tileDrawInfo.mTexturePart.mTexture, tilePos, sourceRectangle, Color.White, tileDrawInfo.mRotation, Vector2.Zero, 1.0f, tileDrawInfo.mEffect, mDrawLayer);
 				}
 			}
 		}

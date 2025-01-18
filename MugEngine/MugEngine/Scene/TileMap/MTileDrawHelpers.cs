@@ -12,6 +12,7 @@
 		public Point mTileIndex;
 		public float mRotation;
 		public SpriteEffects mEffect;
+		public MTexturePart mTexturePart;
 	}
 
 	static class MTileDrawHelpers
@@ -21,8 +22,10 @@
 		/// </summary>
 		public static TileTexDrawInfo GetTileDrawInfo(this MTileMap tileMap, MTile tile)
 		{
+			MAnimation anim = tile.mAnimation;
+			MTexturePart tileTexture = anim.GetCurrentTexture(tile.GetAnimOffset()); // Cache this?
+
 			TileTexDrawInfo returnInfo;
-			MTexturePart tileTexture = tile.GetTexture();
 
 			int width = tileTexture.Width();
 			int height = tileTexture.Height();
@@ -40,24 +43,26 @@
 			else if (width == 6 * height)
 			{
 				// Needs rotating
-				returnInfo = SetupTileWithRotation(tile.GetAdjacency());
+				returnInfo = SetupTileWithRotation(tile.mAdjacency);
 			}
 			else if (width == 4 * height)
 			{
-				returnInfo = SetupTileNoRotation(tile.GetAdjacency());
+				returnInfo = SetupTileNoRotation(tile.mAdjacency);
 			}
 			else if (height == 47 * width)
 			{
-				returnInfo = SetupTileForBorderFill(tile.GetAdjacency());
+				returnInfo = SetupTileForBorderFill(tile.mAdjacency);
 			}
 			else if (height == 2 * width)
 			{
-				returnInfo = SetupTileForUpDown(tile.GetAdjacency());
+				returnInfo = SetupTileForUpDown(tile.mAdjacency);
 			}
 			else
 			{
 				throw new Exception("Unhandled texture dimensions");
 			}
+
+			returnInfo.mTexturePart = tileTexture;
 
 			return returnInfo;
 		}
