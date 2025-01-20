@@ -176,6 +176,30 @@
 			mCurrentSpec.mPosition = position;
 		}
 
+
+
+		/// <summary>
+		/// Get the viewport(extended a bit because of culling)
+		/// </summary>
+		public Rectangle GetViewportForCull()
+		{
+			const int CULL_PADDING = 32;
+
+			MAnchorVector2 ancVec = new MAnchorVector2(mCurrentSpec.mPosition, mCameraAnchor);
+			Vector2 topLeft = ancVec.ToVec(mViewPortSize);
+
+			Vector2 middle = topLeft + 0.5f * mViewPortSize;
+
+			float zoomScale = 1.0f / mCurrentSpec.mZoom;
+
+			topLeft = (topLeft - middle) * zoomScale + middle;
+
+			return new Rectangle((int)topLeft.X - CULL_PADDING,
+								(int)topLeft.Y - CULL_PADDING,
+								(int)(mViewPortSize.X * zoomScale) + 2 * CULL_PADDING,
+								(int)(mViewPortSize.Y * zoomScale) + 2 * CULL_PADDING);
+		}
+
 		#endregion rUtil
 	}
 }

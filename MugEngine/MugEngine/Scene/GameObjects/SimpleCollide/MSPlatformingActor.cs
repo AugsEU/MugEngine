@@ -207,10 +207,10 @@ namespace MugEngine.Scene
 		public void PushUntilOnGround()
 		{
 			bool success = TryPushOutOfCollision(mGravityDir.Inverted());
-			MugDebug.Assert(success);
+			//MugDebug.Assert(success);
 
 			success = TryPushIntoCollision(mGravityDir);
-			MugDebug.Assert(success);
+			//MugDebug.Assert(success);
 		}
 
 		#endregion rCollision

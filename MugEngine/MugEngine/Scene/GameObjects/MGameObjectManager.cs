@@ -148,7 +148,13 @@
 		/// </summary>
 		public IEnumerable<MGameObject> ActiveObjects()
 		{
-			return mObjects.Where(e => e.IsEnabled());
+			foreach(MGameObject go in mObjects)
+			{
+				if (go.IsEnabled())
+				{
+					yield return go;
+				}
+			}
 		}
 
 
@@ -158,7 +164,13 @@
 		/// </summary>
 		public IEnumerable<MGameObject> ActiveObjects(MLayerMask mask)
 		{
-			return mObjects.Where(e => e.IsEnabled() && e.InteractsWith(mask));
+			foreach (MGameObject go in mObjects)
+			{
+				if (go.IsEnabled() && go.InteractsWith(mask))
+				{
+					yield return go;
+				}
+			}
 		}
 
 
@@ -168,7 +180,15 @@
 		/// </summary>
 		public MGameObject GetFirst<T>()
 		{
-			return ActiveObjects().FirstOrDefault(go => go.GetType() == typeof(T));
+			foreach (MGameObject go in ActiveObjects())
+			{
+				if (go.GetType() == typeof(T))
+				{
+					return go;
+				}
+			}
+
+			return null;
 		}
 
 
@@ -178,7 +198,13 @@
 		/// </summary>
 		public IEnumerable<MGameObject> GetAll<T>()
 		{
-			return ActiveObjects().Where(o => o is T);
+			foreach (MGameObject go in ActiveObjects())
+			{
+				if (go is T)
+				{
+					yield return go;
+				}
+			}
 		}
 
 
@@ -188,7 +214,14 @@
 		/// </summary>
 		public IEnumerable<MGameObject> GetInRect(Rectangle rect)
 		{
-			return ActiveObjects().Where(o => o.BoundsRect().Intersects(rect));
+			// TO DO: Make this performant
+			foreach (MGameObject go in ActiveObjects())
+			{
+				if (go.BoundsRect().Intersects(rect))
+				{
+					yield return go;
+				}
+			}
 		}
 
 
@@ -198,7 +231,13 @@
 		/// </summary>
 		public IEnumerable<MGameObject> GetInRect(Rectangle rect, MLayerMask layers)
 		{
-			return ActiveObjects(layers).Where(o => (o.BoundsRect().Intersects(rect)));
+			foreach (MGameObject go in ActiveObjects(layers))
+			{
+				if (go.BoundsRect().Intersects(rect))
+				{
+					yield return go;
+				}
+			}
 		}
 
 

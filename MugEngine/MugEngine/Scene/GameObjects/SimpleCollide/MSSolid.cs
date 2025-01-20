@@ -65,12 +65,13 @@ namespace MugEngine.Scene
 					}
 
 					// Loop over riders not already pushed.
-					foreach (MSActor rider in riding.Where(r => !pushedX.Contains(r)))
+					foreach (MSActor rider in riding)
 					{
-						rider.MoveX(moveX, false);
+						if(!pushedX.Contains(rider))
+						{
+							rider.MoveX(moveX, false);
+						}
 					}
-
-
 				}
 
 				if (moveY != 0)
@@ -97,9 +98,12 @@ namespace MugEngine.Scene
 					}
 
 					// Loop over riders not already pushed.
-					foreach (MSActor rider in riding.Where(r => !pushedY.Contains(r)))
+					foreach (MSActor rider in riding)
 					{
-						rider.MoveY(moveY, false);
+						if (!pushedY.Contains(rider))
+						{
+							rider.MoveY(moveY, false);
+						}
 					}
 
 				}
@@ -131,10 +135,16 @@ namespace MugEngine.Scene
 		{
 			Profiler.PushProfileZone("Get riders");
 
-			List<MSActor> result = GO().ActiveObjects(GetLayerMask())
-										.OfType<MSActor>()
-										.Where(a => a.IsRiding(this))
-										.ToList();
+			List<MSActor> result = new(16);
+			
+			// TO DO: Make this more performant.
+			foreach (MGameObject go in GO().ActiveObjects(GetLayerMask()))
+			{
+				if (go is MSActor actor && actor.IsRiding(this))
+				{
+					result.Add(actor);
+				}
+			}
 
 			Profiler.PopProfileZone();
 

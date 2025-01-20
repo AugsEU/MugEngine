@@ -11,6 +11,9 @@ namespace MugEngine.Scene
 	/// </summary>
 	public abstract class MSActor : MGameObject
 	{
+		// Since we move per-pixel, the cost of moving is O(n). We want to limit this.
+		const float MAX_MOVE = 10.0f;
+
 		/// <summary>
 		/// Create simple actor at position.
 		/// </summary>
@@ -25,6 +28,7 @@ namespace MugEngine.Scene
 		/// </summary>
 		public void MoveX(float amount, bool isPush)
 		{
+			amount = MathF.Min(MAX_MOVE, amount);
 			Vector2 destPos = mPosition + Vector2.UnitX * amount;
 
 			int move = (int)destPos.X - (int)mPosition.X;
@@ -61,6 +65,7 @@ namespace MugEngine.Scene
 		/// </summary>
 		public void MoveY(float amount, bool isPush)
 		{
+			amount = MathF.Min(MAX_MOVE, amount);
 			Vector2 destPos = mPosition + Vector2.UnitY * amount;
 
 			int move = (int)destPos.Y - (int)mPosition.Y;

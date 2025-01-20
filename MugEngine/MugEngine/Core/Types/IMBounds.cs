@@ -1,6 +1,6 @@
 ﻿namespace MugEngine.Core
 {
-	interface IMBounds
+	public interface IMBounds
 	{
 		/// <summary>
 		/// Get collider in world coordinates

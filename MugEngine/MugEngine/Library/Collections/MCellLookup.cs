@@ -1,6 +1,6 @@
 ﻿namespace MugEngine.Library
 {
-	class MCellLookup<T> where T : class, IMBounds
+	public class MCellLookup<T> where T : class, IMBounds
 	{
 		#region rMembers
 
@@ -41,7 +41,7 @@
 		public void Insert(T item)
 		{
 			Rectangle bounds = item.BoundsRect();
-			List<Point> cells = new List<Point>();
+			List<Point> cells = GetCellsInRect(bounds);
 
 			mItemToCells.Add(item, cells);
 
@@ -154,6 +154,32 @@
 			}
 
 			return result;
+		}
+
+
+
+		/// <summary>
+		/// Find if any cell instersects this bounding box
+		/// </summary>
+		public bool QueryCollides(Rectangle bounds)
+		{
+			List<Point> cellsToCheck = GetCellsInRect(bounds);
+
+			foreach (Point cell in cellsToCheck)
+			{
+				if (mCellToItems.TryGetValue(cell, out List<T> items))
+				{
+					foreach (T item in items)
+					{
+						if (item.BoundsRect().Intersects(bounds))
+						{
+							return true;
+						}
+					}
+				}
+			}
+
+			return false;
 		}
 
 		#endregion rQuery

@@ -1,5 +1,6 @@
 ﻿using LDtk;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using TracyWrapper;
 
 namespace MugEngine.Scene
@@ -147,6 +148,14 @@ namespace MugEngine.Scene
 
 					newTile.PlaceAt(tilePos, mTileSize);
 					newTile.mAnimation = anim;
+
+					// HACK
+					if (newTile.mType == 0)
+					{
+						newTile.mBoundingBox.Width = 0;
+						newTile.mBoundingBox.Height = 0;
+					}
+
 					mTileMap[x, y] = newTile;
 				}
 			}
@@ -183,9 +192,14 @@ namespace MugEngine.Scene
 		/// </summary>
 		public void Draw(MScene scene, MDrawInfo info)
 		{
-			for (int x = 0; x < mTileMap.GetLength(0); x++)
+			Profiler.PushProfileZone("Tile Draw");
+
+			int width = mTileMap.GetLength(0);
+			int height = mTileMap.GetLength(1);
+
+			for (int x = 0; x < width; x++)
 			{
-				for (int y = 0; y < mTileMap.GetLength(1); y++)
+				for (int y = 0; y < height; y++)
 				{
 					MTile tile = mTileMap[x, y];
 					Vector2 tilePos = mBasePosition + new Vector2(x * mTileSize.X, y * mTileSize.Y);
@@ -202,6 +216,8 @@ namespace MugEngine.Scene
 					info.mCanvas.DrawTexture(tileDrawInfo.mTexturePart.mTexture, tilePos, sourceRectangle, Color.White, tileDrawInfo.mRotation, Vector2.Zero, 1.0f, tileDrawInfo.mEffect, mDrawLayer);
 				}
 			}
+
+			Profiler.PopProfileZone();
 		}
 
 		#endregion rDraw
@@ -226,7 +242,11 @@ namespace MugEngine.Scene
 					// Rectangle debugRect = new Rectangle(x * mTileSize.X, y * mTileSize.Y, mTileSize.X, mTileSize.Y);
 					// MugDebug.AddDebugRect(debugRect, Color.Red);
 
-					if (mTileMap[x, y].QueryCollides(bounds, dir))
+					ref MTile tile = ref mTileMap[x, y];
+
+					bool emptyTile = tile.mBoundingBox.Width == 0 && tile.mBoundingBox.Height == 0;
+
+					if (!emptyTile && tile.QueryCollides(bounds, dir))
 					{
 						return true;
 					}
@@ -507,6 +527,25 @@ namespace MugEngine.Scene
 		public float GetHeight()
 		{
 			return (mTileSize.Y * mTileMap.GetLength(1));
+		}
+
+
+
+		/// <summary>
+		/// Get bounds of the entire tilemap
+		/// </summary>
+		public Rectangle GetWholeBounds()
+		{
+			return new Rectangle((int)mBasePosition.X, (int)mBasePosition.Y, mTileSize.X * mTileMap.GetLength(0), mTileSize.Y * mTileMap.GetLength(1));
+		}
+
+
+		/// <summary>
+		/// Get approximate size in bytes of this map.
+		/// </summary>
+		public int GetApproxSize()
+		{
+			return 0;
 		}
 
 		#endregion rAccess
