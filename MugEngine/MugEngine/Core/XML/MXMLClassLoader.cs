@@ -6,7 +6,7 @@ namespace MugEngine.Core
 	{
 		public static T FromFile(string path)
 		{
-			path = Path.Join("Content", path);
+			path = Path.Join("@Data", path);
 			XmlDocument xmlDoc = new XmlDocument();
 			xmlDoc.Load(path);
 			XmlNode rootNode = xmlDoc.LastChild;

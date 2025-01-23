@@ -59,7 +59,7 @@ namespace MugEngine.Data
 				}
 				case ".max": // Mono Animation XML
 				{
-					LoadFromXML("Content/" + filePath);
+					LoadFromXML("@Data/" + filePath);
 					break;
 				}
 				default:

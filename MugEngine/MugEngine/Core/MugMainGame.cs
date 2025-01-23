@@ -27,7 +27,6 @@
 		public MugMainGame(MugEngineSettings settings)
 		{
 			mGraphics = new GraphicsDeviceManager(this);
-			Content.RootDirectory = "Content";
 			IsMouseVisible = true;
 
 			mSettings = settings;
@@ -35,6 +34,8 @@
 			MugDebug.Assert(sSelf is null, "Cannot create multiple copies of MugMainGame.");
 			sSelf = this;
 		}
+
+
 
 		/// <summary>
 		/// Initialise the engine. Must be called.
@@ -193,8 +194,6 @@
 		/// </summary>
 		protected override void Update(GameTime gameTime)
 		{
-			TracyWrapper.Profiler.HeartBeat();
-
 			MugCore.I.UpdateEngine(gameTime);
 			base.Update(gameTime);
 		}
@@ -214,6 +213,8 @@
 		{
 			MugCore.I.DrawEngine(gameTime);
 			base.Draw(gameTime);
+
+			TracyWrapper.Profiler.HeartBeat();
 		}
 
 		#endregion rRegion

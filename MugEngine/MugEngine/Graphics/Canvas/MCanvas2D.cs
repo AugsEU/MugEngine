@@ -1,4 +1,6 @@
-﻿namespace MugEngine.Graphics
+﻿using TracyWrapper;
+
+namespace MugEngine.Graphics
 {
 	/// <summary>
 	/// A canvas is the context in which things are drawn. It handles layers, effects, and render targets.
@@ -83,7 +85,6 @@
 				sDummyTexture.SetData(data);
 			}
 
-
 			mDivLayerCount = 1.0f / MugCore.I.GetNumLayers();
 			mLayerOffset = 0.0f;
 
@@ -147,9 +148,11 @@
 		/// </summary>
 		public void EndDraw()
 		{
+			Profiler.PushProfileZone("End Canvas Draw Dump");
 			MugDebug.Assert(sCurrentlyDrawing, "Ending draw before we started.");
 			mBatcher.End();
 			sCurrentlyDrawing = false;
+			Profiler.PopProfileZone();
 		}
 
 		#endregion rDraw
@@ -231,8 +234,10 @@
 
 			if (sCurrentlyDrawing)
 			{
+				Profiler.PushProfileZone("Restart Batcher Dump");
 				mBatcher.End();
 				mBatcher.MugStartSpriteBatch(mCurrentOptions, mCamMatrixCache);
+				Profiler.PopProfileZone();
 			}
 		}
 
@@ -248,8 +253,10 @@
 
 			if (sCurrentlyDrawing)
 			{
+				Profiler.PushProfileZone("Restart Batcher Dump");
 				mBatcher.End();
 				mBatcher.MugStartSpriteBatch(mCurrentOptions, mCamMatrixCache);
+				Profiler.PopProfileZone();
 			}
 		}
 

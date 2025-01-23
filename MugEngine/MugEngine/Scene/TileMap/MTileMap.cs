@@ -8,7 +8,7 @@ namespace MugEngine.Scene
 	/// <summary>
 	/// Represents a map of square tiles.
 	/// </summary>
-	public class MTileMap : IMCollisionQueryable, IMSceneDraw, IMSceneUpdate
+	public class MTileMap : IMCollisionQueryable, IMSceneUpdate, IMSceneDraw
 	{
 		#region rMembers
 
@@ -17,6 +17,7 @@ namespace MugEngine.Scene
 		MTile[,] mTileMap;
 		MTile mDummyTile;
 		Dictionary<string, MAnimation> mTileAnimations;
+		HashSet<ushort> mTileTypes;
 		int mDrawLayer;
 
 		#endregion rMembers
@@ -38,6 +39,7 @@ namespace MugEngine.Scene
 			mTileMap = null;
 
 			mTileAnimations = new();
+			mTileTypes = new();
 		}
 
 
@@ -149,6 +151,8 @@ namespace MugEngine.Scene
 					newTile.PlaceAt(tilePos, mTileSize);
 					newTile.mAnimation = anim;
 
+					mTileTypes.Add(newTile.mType);
+
 					// HACK
 					if (newTile.mType == 0)
 					{
@@ -171,6 +175,9 @@ namespace MugEngine.Scene
 
 		#region rUpdate
 
+		/// <summary>
+		/// Update all animations on tiles
+		/// </summary>
 		public void Update(MScene scene, MUpdateInfo info)
 		{
 			foreach(var kv in mTileAnimations)
@@ -188,11 +195,25 @@ namespace MugEngine.Scene
 		#region rDraw
 
 		/// <summary>
-		/// Draw the tilemap.
+		/// Draw info
 		/// </summary>
 		public void Draw(MScene scene, MDrawInfo info)
 		{
-			Profiler.PushProfileZone("Tile Draw");
+			// Draw by type for better batching
+			foreach (ushort type in mTileTypes)
+			{
+				Draw(scene, info, type);
+			}
+		}
+
+
+
+		/// <summary>
+		/// Draw the tilemap. Only draw 1 type of layer for better batching.
+		/// </summary>
+		public void Draw(MScene scene, MDrawInfo info, ushort tileType)
+		{
+			Profiler.PushProfileZone("Tile Draw layer");
 
 			int width = mTileMap.GetLength(0);
 			int height = mTileMap.GetLength(1);
@@ -202,15 +223,14 @@ namespace MugEngine.Scene
 				for (int y = 0; y < height; y++)
 				{
 					MTile tile = mTileMap[x, y];
-					Vector2 tilePos = mBasePosition + new Vector2(x * mTileSize.X, y * mTileSize.Y);
 
-					if(tile.mAnimation is null)
+					if(tile.mAnimation is null || tile.mType != tileType)
 					{
 						continue;
 					}
 
+					Vector2 tilePos = mBasePosition + new Vector2(x * mTileSize.X, y * mTileSize.Y);
 					TileTexDrawInfo tileDrawInfo = MTileDrawHelpers.GetTileDrawInfo(this, tile);
-
 					Rectangle sourceRectangle = new Rectangle(tileDrawInfo.mTexturePart.mUV.Location + tileDrawInfo.mTileIndex * mTileSize, mTileSize);
 
 					info.mCanvas.DrawTexture(tileDrawInfo.mTexturePart.mTexture, tilePos, sourceRectangle, Color.White, tileDrawInfo.mRotation, Vector2.Zero, 1.0f, tileDrawInfo.mEffect, mDrawLayer);

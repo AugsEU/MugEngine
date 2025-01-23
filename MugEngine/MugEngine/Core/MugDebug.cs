@@ -11,10 +11,11 @@ namespace MugEngine.Core
 {
 	public static class MugDebug
 	{
-		struct DebugRect
+		struct DebugRect(Rectangle rect, Color color, bool perm)
 		{
-			public Rectangle mRectangle;
-			public Color mColor;
+			public Rectangle mRectangle = rect;
+			public Color mColor = color;
+			public bool mPerm = perm;
 		}
 
 		private static List<DebugRect> mDebugRectToDraw = new List<DebugRect>();
@@ -101,21 +102,17 @@ namespace MugEngine.Core
 		}
 
 
-		public static void AddDebugRect(Rectangle rect, Color color)
+		public static void AddDebugRect(Rectangle rect, Color color, bool perm = false)
 		{
 #if DEBUG
-			DebugRect debugRect;
-			debugRect.mRectangle = rect;
-			debugRect.mColor = color;
-
-			mDebugRectToDraw.Add(debugRect);
+			mDebugRectToDraw.Add(new DebugRect(rect, color, perm));
 #endif
 		}
 
-		public static void AddDebugPoint(Vector2 pos, Color color)
+		public static void AddDebugPoint(Vector2 pos, Color color, bool perm = false)
 		{
 #if DEBUG
-			AddDebugRect(new Rectangle(pos.ToPoint(), new Point(2, 2)), color);
+			AddDebugRect(new Rectangle(pos.ToPoint(), new Point(2, 2)), color, perm);
 #endif
 		}
 
@@ -126,7 +123,7 @@ namespace MugEngine.Core
 			{
 				info.mCanvas.DrawRect(debugRect.mRectangle, debugRect.mColor, layer);
 			}
-			mDebugRectToDraw.Clear();
+			mDebugRectToDraw.RemoveAll(r => !r.mPerm);
 
 #if USE_BUFFERED_LOG
 			string allMessages = mMessageBuffer.ToString();

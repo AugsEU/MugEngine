@@ -287,6 +287,47 @@
 			return digits;
 		}
 
+
+
+		/// <summary>
+		/// Find min of 3 numbers
+		/// </summary>
+		public static int Min(int n1, int n2, int n3)
+		{
+			return Math.Min(Math.Min(n1, n2), n3);
+		}
+
+
+
+		/// <summary>
+		/// Find min of 3 numbers
+		/// </summary>
+		public static int Min(int n1, int n2, int n3, int n4)
+		{
+			return Math.Min(Math.Min(Math.Min(n1, n2), n3), n4);
+		}
+
+
+
+		/// <summary>
+		/// Find min of 3 numbers
+		/// </summary>
+		public static int Max(int n1, int n2, int n3)
+		{
+			return Math.Max(Math.Max(n1, n2), n3);
+		}
+
+
+
+		/// <summary>
+		/// Find min of 3 numbers
+		/// </summary>
+		public static int Max(int n1, int n2, int n3, int n4)
+		{
+			return Math.Max(Math.Max(Math.Max(n1, n2), n3), n4);
+		}
+
+
 		#endregion rNumber
 
 
@@ -348,6 +389,43 @@
 			returnVal.Add(new Point(point.X, point.Y + 1));
 			returnVal.Add(new Point(point.X, point.Y - 1));
 			return returnVal;
+		}
+
+
+
+
+		/// <summary>
+		/// Create a rectangle surrounding 3 points
+		/// </summary>
+		public static Rectangle CreateRectangle(Point pt1, Point pt2, Point pt3)
+		{
+			Point topLeft = new Point(Min(pt1.X, pt2.X, pt3.X), Min(pt1.Y, pt2.Y, pt3.Y));
+			Point botRight = new Point(Max(pt1.X, pt2.X, pt3.X), Max(pt1.Y, pt2.Y, pt3.Y));
+
+			return new Rectangle(topLeft, botRight - topLeft);
+		}
+
+
+
+		/// <summary>
+		/// Create a rectangle surrounding 4 points
+		/// </summary>
+		public static Rectangle CreateRectangle(Point pt1, Point pt2, Point pt3, Point pt4)
+		{
+			Point topLeft = new Point(Min(pt1.X, pt2.X, pt3.X, pt4.X), Min(pt1.Y, pt2.Y, pt3.Y, pt4.Y));
+			Point botRight = new Point(Max(pt1.X, pt2.X, pt3.X, pt4.X), Max(pt1.Y, pt2.Y, pt3.Y, pt4.Y));
+
+			return new Rectangle(topLeft, botRight - topLeft);
+		}
+
+
+
+		/// <summary>
+		/// Multiply point by scalar
+		/// </summary>
+		public static Point Multiply(this Point pt, int m)
+		{
+			return new Point(pt.X * m, pt.Y * m);
 		}
 
 

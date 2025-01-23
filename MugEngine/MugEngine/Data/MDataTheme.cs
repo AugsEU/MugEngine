@@ -46,7 +46,7 @@ namespace MugEngine.Data
 
 		public string GetPath(string alias)
 		{
-			if (alias.StartsWith("Content"))
+			if (alias.StartsWith("@Data"))
 			{
 				alias = alias.Substring(8);
 			}

@@ -32,5 +32,19 @@ namespace MugEngine.Core
 		{
 			return Enumerable.Range(0, list.Count);
 		}
+
+
+		/// <summary>
+		/// Get first item in iter
+		/// </summary>
+		public static T? FirstOptional<T>(this IEnumerable<T> iter) where T : struct
+		{
+			foreach (var item in iter)
+			{
+				return item;
+			}
+
+			return null;
+		}
 	}
 }
