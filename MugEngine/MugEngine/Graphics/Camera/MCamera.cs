@@ -134,10 +134,12 @@
 
 			Vector3 initDelta = new Vector3(-(int)cameraTopLeft.X, -(int)cameraTopLeft.Y, 0) - centrePoint3;
 
-			return Matrix.CreateTranslation(initDelta) *
+			Matrix result = Matrix.CreateTranslation(initDelta) *
 				   Matrix.CreateRotationZ(ourSpec.mRotation) *
 				   Matrix.CreateScale(new Vector3(ourSpec.mZoom, ourSpec.mZoom, 1)) *
 				   Matrix.CreateTranslation(centrePoint3);
+
+			return result;
 		}
 
 		#endregion rDraw

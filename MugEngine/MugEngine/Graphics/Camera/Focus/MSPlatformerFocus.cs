@@ -13,8 +13,8 @@ namespace MugEngine.Graphics
 		public MSPlatformerFocus(MSPlatformingActor actor)
 		{
 			mActor = actor;
-			mGroundFollowSpeed = new Vector4(4.5f, 4.2f, 4.5f, 6.2f);
-			mAirFollowSpeed = new Vector4(4.5f, 12.0f, 4.5f, 2.9f);
+			mGroundFollowSpeed = new Vector4(7.5f, 4.2f, 7.5f, 6.2f);
+			mAirFollowSpeed = new Vector4(7.5f, 12.0f, 7.5f, 2.9f);
 
 			mRollingTargetWindow = new MRollingVector2(4);
 		}
