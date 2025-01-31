@@ -59,5 +59,25 @@
 
 			return result;
 		}
+
+
+		/// <summary>
+		/// Gets a walk direction from left-right
+		/// </summary>
+		public MWalkDir WalkDirFromButtons<T>(T left, T right) where T : Enum
+		{
+			bool isLeft = ButtonDown(left);
+			bool isRight = ButtonDown(right);
+
+			if (isLeft == isRight)
+			{
+				return MWalkDir.None;
+			}
+
+			if (isLeft) return MWalkDir.Left;
+			if (isRight) return MWalkDir.Right;
+
+			throw new NotImplementedException();
+		}
 	}
 }

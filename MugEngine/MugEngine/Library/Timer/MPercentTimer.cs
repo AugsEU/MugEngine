@@ -40,9 +40,9 @@
 		/// <returns>Number in the range [0.0,1.0]</returns>
 		public float GetPercentage()
 		{
-			if (GetElapsedMs() < mTotalTime)
+			if (GetElapsed() < mTotalTime)
 			{
-				return GetElapsedMs() / mTotalTime;
+				return GetElapsed() / mTotalTime;
 			}
 
 			//Return 1.0 after exceeding the total time
@@ -57,7 +57,7 @@
 		/// <returns>Number in the range [0.0f, inf)</returns>
 		public float GetPercentageUncap()
 		{
-			return GetElapsedMs() / mTotalTime;
+			return GetElapsed() / mTotalTime;
 		}
 
 
@@ -67,7 +67,7 @@
 		/// </summary>
 		public bool IsComplete()
 		{
-			return GetElapsedMs() >= mTotalTime;
+			return GetElapsed() >= mTotalTime;
 		}
 
 

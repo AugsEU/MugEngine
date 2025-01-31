@@ -136,6 +136,7 @@
 				if (mNumRepeats != 0 && mRepeatsRemaining == 0)
 				{
 					Stop();
+					mPlayHead = mTotalDuration;
 				}
 			}
 		}

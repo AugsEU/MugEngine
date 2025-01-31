@@ -136,6 +136,16 @@
 			return a;
 		}
 
+
+
+		/// <summary>
+		/// Spaceship operator on length. 
+		/// </summary>
+		public static int CmpLength(this Vector2 v, float l)
+		{
+			return v.LengthSquared().CompareTo(l);
+		}
+
 		#endregion rVector
 
 
@@ -327,6 +337,24 @@
 			return Math.Max(Math.Max(Math.Max(n1, n2), n3), n4);
 		}
 
+
+
+		/// <summary>
+		/// Move towards zero by amount but not over
+		/// </summary>
+		public static float MoveToZero(float start, float amount)
+		{
+			if (start > 0.0f)
+			{
+				return Math.Max(start - amount, 0.0f);
+			}
+			else
+			{
+				return Math.Min(start + amount, 0.0f);
+			}
+
+			throw new Exception("How did we get here?");
+		}
 
 		#endregion rNumber
 

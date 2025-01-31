@@ -111,8 +111,8 @@
 		/// <summary>
 		/// Get's elapsed time.
 		/// </summary>
-		/// <returns>Time in MS</returns>
-		public float GetElapsedMs()
+		/// <returns>Time in seconds</returns>
+		public float GetElapsed()
 		{
 			return mElapsedTime;
 		}
@@ -120,9 +120,9 @@
 
 
 		/// <summary>
-		/// Set elapsed milliseconds.
+		/// Set elapsed seconds.
 		/// </summary>
-		public void SetElapsedMs(float time)
+		public void SetElapsed(float time)
 		{
 			mElapsedTime = time;
 		}

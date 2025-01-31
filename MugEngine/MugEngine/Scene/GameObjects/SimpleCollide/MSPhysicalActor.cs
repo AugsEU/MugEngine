@@ -37,5 +37,23 @@ namespace MugEngine.Scene
 		{
 			return mVelocity;
 		}
+
+		public Vector2 GetHorzVelocity()
+		{
+			Vector2 sideVec = mGravityDir.ToVec().Perpendicular();
+			return Vector2.Dot(sideVec, mVelocity) * sideVec;
+		}
+
+		public Vector2 GetVertVelocity()
+		{
+			Vector2 downVec = mGravityDir.ToVec();
+			return Vector2.Dot(downVec, mVelocity) * downVec;
+		}
+
+
+		public (Vector2, Vector2) GetVelocityBasis()
+		{
+			return (GetHorzVelocity(), GetVertVelocity());
+		}
 	}
 }

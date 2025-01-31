@@ -132,13 +132,15 @@ namespace MugEngine.Scene
 		public void WalkIn(MWalkDir dir, float speed)
 		{
 			Vector2 walkVec = dir.ToVec(mGravityDir);
-
 			Vector2 componentInWalkVec = Vector2.Dot(mVelocity, walkVec) * walkVec;
 
-			mVelocity = mVelocity - componentInWalkVec + walkVec * speed;
-
-			if (dir != MWalkDir.None)
+			if (dir == MWalkDir.None)
 			{
+				mVelocity = mVelocity - componentInWalkVec;
+			}
+			else
+			{
+				mVelocity = mVelocity - componentInWalkVec + walkVec * speed;
 				mFacingDir = dir;
 			}
 		}
