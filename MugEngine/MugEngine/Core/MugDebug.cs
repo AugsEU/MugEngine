@@ -90,6 +90,7 @@ namespace MugEngine.Core
 			if (!condition)
 			{
 				Log(msg, args);
+				FlushConsoleMessges();
 				Break("Assertion failed.");
 			}
 #elif FAIL_ON_ASSERT
@@ -125,6 +126,12 @@ namespace MugEngine.Core
 			}
 			mDebugRectToDraw.RemoveAll(r => !r.mPerm);
 
+			FlushConsoleMessges();
+#endif
+		}
+
+		private static void FlushConsoleMessges()
+		{
 #if USE_BUFFERED_LOG
 			string allMessages = mMessageBuffer.ToString();
 
@@ -133,7 +140,6 @@ namespace MugEngine.Core
 				Debug.WriteLine(allMessages);
 			}
 			mMessageBuffer.Clear();
-#endif
 #endif
 		}
 	}

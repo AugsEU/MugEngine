@@ -20,13 +20,26 @@
 		/// <summary>
 		/// Is this button currently down but wasn't on the previous frame?
 		/// </summary>
-		public bool ButtonPressed<T>(T id) where T : Enum
+		public bool ButtonPressed<T>(T id, int buffer = 1) where T : Enum
 		{
 			MButtonSet set = GetButtonSet(id);
-			MInputSnapshot snapShotNow = mHistory.SnapshotFromFrames(0);
-			MInputSnapshot snapShotBefore = mHistory.SnapshotFromFrames(1);
 
-			return set.IsPressed(ref snapShotNow) && !set.IsPressed(ref snapShotBefore);
+			MInputSnapshot snapShotNow = mHistory.SnapshotFromFrames(0);
+
+			if (set.IsPressed(ref snapShotNow))
+			{
+				for (int b = 0; b < buffer; b++)
+				{
+					MInputSnapshot snapShotBefore = mHistory.SnapshotFromFrames(b + 1);
+
+					if (!set.IsPressed(ref snapShotBefore))
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
 		}
 
 
