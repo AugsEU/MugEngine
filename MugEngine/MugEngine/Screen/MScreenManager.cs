@@ -7,7 +7,7 @@
 	{
 		#region rMembers
 
-		Dictionary<MScreenHandle, MScreen> mScreens = new Dictionary<MScreenHandle, MScreen>();
+		Dictionary<MHandle<MScreen>, MScreen> mScreens = new Dictionary<MHandle<MScreen>, MScreen>();
 		MScreen mActiveScreen = null;
 		MScreen mNextScreen = null;
 
@@ -46,7 +46,7 @@
 					throw new Exception(string.Format("Failed to create {0}", type.ToString()));
 				}
 
-				mScreens.Add(new MScreenHandle(type), screen);
+				mScreens.Add(new MHandle<MScreen>(type), screen);
 			}
 		}
 
@@ -55,7 +55,7 @@
 		/// <summary>
 		/// Do final init for screens.
 		/// </summary>
-		public void LoadScreens(MScreenHandle startScreen)
+		public void LoadScreens(MHandle<MScreen> startScreen)
 		{
 			foreach (MScreen screen in mScreens.Values)
 			{
@@ -187,7 +187,7 @@
 		/// <summary>
 		/// Get screen from handle
 		/// </summary>
-		public MScreen GetScreen(MScreenHandle handle)
+		public MScreen GetScreen(MHandle<MScreen> handle)
 		{
 			MScreen retScreen = null;
 			if (mScreens.TryGetValue(handle, out retScreen))
@@ -214,7 +214,7 @@
 		/// <summary>
 		/// Activates a screen of a certain type
 		/// </summary>
-		public void ActivateScreen(MScreenHandle handle)
+		public void ActivateScreen(MHandle<MScreen> handle)
 		{
 			if (mNextScreen is null)
 			{
