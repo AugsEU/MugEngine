@@ -13,6 +13,7 @@ namespace MugEngine.Scene
 
 
 
+
 		#region rMembers
 
 		MWalkDir mFacingDir;
@@ -142,6 +143,51 @@ namespace MugEngine.Scene
 			{
 				mVelocity = mVelocity - componentInWalkVec + walkVec * speed;
 				mFacingDir = dir;
+			}
+		}
+
+
+
+
+		/// <summary>
+		/// Walk in a direction.
+		/// </summary>
+		public void DriftIn(MWalkDir dir, float dv, float maxSpeed)
+		{
+			if (dir == MWalkDir.None)
+			{
+				Vector2 walkVec = GetFacingDir().ToVec(mGravityDir);
+				float componentInWalkVec = Vector2.Dot(mVelocity, walkVec);
+
+				float reducedCompInWalkVec = MugMath.MoveToZero(componentInWalkVec, dv * 0.7f);
+
+				mVelocity = mVelocity + (reducedCompInWalkVec - componentInWalkVec) * walkVec;
+			}
+			else
+			{
+				Vector2 walkVec = dir.ToVec(mGravityDir);
+
+				mVelocity = mVelocity + walkVec * dv;
+
+				float cappedLength = MugMath.ClampAbs(Vector2.Dot(mVelocity, walkVec), maxSpeed);
+
+				mVelocity = mVelocity + (cappedLength - Vector2.Dot(mVelocity, walkVec)) * walkVec;
+			}
+		}
+
+
+
+		/// <summary>
+		/// Set the direction of facing from the velocity.
+		/// </summary>
+		public void SetFacingDirFromVelocity(float thresh = 0.1f)
+		{
+			Vector2 faceVec = mFacingDir.ToVec(mGravityDir);
+			float compInFacing = Vector2.Dot(faceVec, mVelocity);
+
+			if (compInFacing < -thresh)
+			{
+				mFacingDir = mFacingDir.Inverted();
 			}
 		}
 

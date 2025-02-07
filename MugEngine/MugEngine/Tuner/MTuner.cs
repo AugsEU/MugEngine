@@ -30,7 +30,12 @@ namespace MugEngine.Tuner
 			foreach (FieldInfo field in structType.GetFields(BindingFlags.Public | BindingFlags.Instance))
 			{
 				XElement fieldElement = element.Element(field.Name);
-				MugDebug.Assert(fieldElement is not null, "Couldn't find field of name {0}", field.Name);
+
+				if(fieldElement is null)
+				{
+					MugDebug.Warning("Couldn't find field of name {0}", field.Name);
+					continue;
+				}
 
 				if (field.FieldType.IsPrimitive)
 				{
