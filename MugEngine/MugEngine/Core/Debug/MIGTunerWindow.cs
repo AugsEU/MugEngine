@@ -10,11 +10,13 @@ namespace MugEngine.Core
 	{
 		Dictionary<Type, FieldInfo[]> mFieldInfos;
 		object mTuneStructBox;
+		string mXmlPath;
 
 		Dictionary<FieldInfo, (float, float)> mFloatRanges;
 
-		public MIGTunerWindow() : base("Tuner")
+		public MIGTunerWindow(string xmlPath) : base("Tuner")
 		{
+			mXmlPath = xmlPath;
 			mFieldInfos = new();
 			mTuneStructBox = null;
 			mFloatRanges = new();
@@ -32,14 +34,12 @@ namespace MugEngine.Core
 
 			if (ImGui.Button("Load"))
 			{
-				Console.WriteLine("Load button clicked!");
-				// Add load functionality here
+				MTuner<T>.LoadValues(mXmlPath);
 			}
 			ImGui.SameLine();
 			if (ImGui.Button("Save"))
 			{
-				Console.WriteLine("Save button clicked!");
-				// Add save functionality here
+				MTuner<T>.SaveValues(mXmlPath);
 			}
 
 			Profiler.PopProfileZone();
