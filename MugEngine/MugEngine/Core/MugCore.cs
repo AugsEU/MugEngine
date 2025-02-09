@@ -1,4 +1,10 @@
-﻿namespace MugEngine.Core
+﻿#if DEBUG
+#define IMGUI_ON
+#endif
+
+using ImGuiNET;
+
+namespace MugEngine.Core
 {
 	public class MugCore : MSingleton<MugCore>
 	{
@@ -61,6 +67,10 @@
 			// Update game state
 			MScreenManager.I.Update(info);
 
+#if IMGUI_ON
+			MImGuiManager.I.Update(info);
+#endif
+
 			TracyWrapper.Profiler.PopProfileZone();
 		}
 
@@ -82,6 +92,10 @@
 			info.mCanvas = mBackBufferCanvas;
 
 			MScreenManager.I.Draw(info);
+
+#if IMGUI_ON
+			MImGuiManager.I.RenderImGui(gameTime);
+#endif
 		}
 
 		#endregion rDraw

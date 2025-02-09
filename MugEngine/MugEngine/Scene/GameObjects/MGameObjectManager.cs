@@ -20,7 +20,7 @@
 		/// </summary>
 		public MGameObjectManager()
 		{
-			mObjects = new MDelayChangeList<MGameObject>(new List<MGameObject>());
+			mObjects = new MDelayChangeList<MGameObject>();
 		}
 
 		#endregion rInit

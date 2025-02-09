@@ -1,4 +1,4 @@
-﻿namespace MugEngine
+﻿namespace MugEngine.Core
 {
 	/// <summary>
 	/// Class that contains utilities for a game.
@@ -13,7 +13,7 @@
 		private Rectangle mPrevWindowedSize;
 		private MugEngineSettings mSettings;
 
-		#endregion rRegion
+	#endregion rRegion
 
 
 
@@ -54,6 +54,10 @@
 			Window.ClientSizeChanged += OnResize;
 
 			mPrevWindowedSize = GraphicsDevice.PresentationParameters.Bounds;
+
+#if DEBUG
+			MImGuiManager.I.Init(this);
+#endif
 		}
 
 		#endregion rInit
@@ -218,7 +222,5 @@
 		}
 
 		#endregion rRegion
-
-
 	}
 }

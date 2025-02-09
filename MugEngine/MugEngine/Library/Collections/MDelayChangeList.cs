@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace MugEngine.Library
 {
@@ -7,14 +10,14 @@ namespace MugEngine.Library
 	/// </summary>
 	public class MDelayChangeList<T> : IList<T> where T : class
 	{
-		IList<T> mList;
-		List<int> mDeletePool;
+		List<T> mList;
+		HashSet<T> mDeletePool;
 		List<T> mAddPool;
 
-		public MDelayChangeList(IList<T> list)
+		public MDelayChangeList()
 		{
-			mList = list;
-			mDeletePool = new List<int>();
+			mList = new();
+			mDeletePool = new HashSet<T>();
 			mAddPool = new List<T>();
 		}
 
@@ -25,18 +28,40 @@ namespace MugEngine.Library
 		public void ProcessAddsDeletes()
 		{
 			// Handle deletes
-			mDeletePool.Sort((a, b) => b.CompareTo(a)); // Must delete elements at the end of the array first otherwise the indeces become invalid.
-			for (int i = 0; i < mDeletePool.Count; i++)
+			if (mDeletePool.Count > 0)
 			{
-				int idx = mDeletePool[i];
-				mList.RemoveAt(idx);
+				int freeIndex = 0;
+
+				// Find the first item which needs to be removed.
+				while (!mDeletePool.Contains(mList[freeIndex]))
+				{
+					freeIndex++;
+				}
+
+				int current = freeIndex + 1;
+				while (current < mList.Count)
+				{
+					// Find the first item which needs to be kept.
+					while (mDeletePool.Contains(mList[current]))
+					{
+						current++;
+						if (current >= mList.Count)
+						{
+							goto lEndSwaps;
+						}
+					}
+
+					// Copy item to the free slot.
+					mList[freeIndex++] = mList[current++];
+				}
+			lEndSwaps:
+
+				mList.RemoveRange(freeIndex, mList.Count - freeIndex);
 			}
 
+
 			// Now add new elements
-			for (int i = 0; i < mAddPool.Count; i++)
-			{
-				mList.Add(mAddPool[i]);
-			}
+			mList.AddRange(mAddPool);
 
 			mDeletePool.Clear();
 			mAddPool.Clear();
@@ -46,7 +71,7 @@ namespace MugEngine.Library
 
 		public int Count => mList.Count;
 
-		public bool IsReadOnly => mList.IsReadOnly;
+		public bool IsReadOnly => false;
 
 		public void Add(T item)
 		{
@@ -55,10 +80,9 @@ namespace MugEngine.Library
 
 		public void Clear()
 		{
-			mDeletePool.Clear();
 			for (int i = 0; i < mList.Count; i++)
 			{
-				mDeletePool.Add(i);
+				mDeletePool.Add(mList[i]);
 			}
 		}
 
@@ -96,19 +120,20 @@ namespace MugEngine.Library
 
 		public bool Remove(T item)
 		{
-			int index = IndexOf(item);
-			if (index == -1)
+#if DEBUG // Perf hack: do not allow this case. But it should normally return false
+			if (!mList.Contains(item))
 			{
-				return false;
+				throw new Exception("Can't delete element no in list.");
 			}
+#endif // DEBUG
 
-			mDeletePool.Add(index);
+			mDeletePool.Add(item);
 			return true;
 		}
 
 		public void RemoveAt(int index)
 		{
-			mDeletePool.Add(index);
+			mDeletePool.Add(mList[index]);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()

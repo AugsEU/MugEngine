@@ -300,6 +300,25 @@
 
 
 		/// <summary>
+		/// Get digits of a number as a list
+		/// </summary>
+		public static int CountDigits(float num)
+		{
+			if (num < 0.0f) num = -num;
+
+			int digits = 1;
+			while (num >= 10.0f)
+			{
+				num /= 10.0f;
+				digits++;
+			}
+
+			return digits;
+		}
+
+
+
+		/// <summary>
 		/// Find min of 3 numbers
 		/// </summary>
 		public static int Min(int n1, int n2, int n3)
