@@ -1,6 +1,4 @@
 ﻿using LDtk;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using TracyWrapper;
 
 namespace MugEngine.Scene
@@ -8,16 +6,26 @@ namespace MugEngine.Scene
 	/// <summary>
 	/// Represents a map of square tiles.
 	/// </summary>
-	public class MTileMap : IMCollisionQueryable, IMSceneUpdate, IMSceneDraw
+	public class MTileMap<P> : IMCollisionQueryable, IMSceneUpdate, IMSceneDraw 
+		where P : struct, IMTilePolicy
 	{
+		#region rConstants
+
+		const byte INVALID_ANIM = byte.MaxValue;
+
+		#endregion rConstants
+
+
+
+
+
 		#region rMembers
 
 		Vector2 mBasePosition;
 		Point mTileSize;
 		MTile[,] mTileMap;
-		MTile mDummyTile;
-		Dictionary<string, MAnimation> mTileAnimations;
-		HashSet<ushort> mTileTypes;
+		List<MAnimation> mTileAnimations;
+		P mPolicy;
 		int mDrawLayer;
 
 		#endregion rMembers
@@ -39,7 +47,6 @@ namespace MugEngine.Scene
 			mTileMap = null;
 
 			mTileAnimations = new();
-			mTileTypes = new();
 		}
 
 
@@ -108,7 +115,7 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Load tilemap from ldtk level.
 		/// </summary>
-		public void LoadFromLDtkLevel(LDtkLevel level, IMTileFactory factory, bool loadPositionFromFile = false)
+		public void LoadFromLDtkLevel(LDtkLevel level, bool loadPositionFromFile = false)
 		{
 			LDtkIntGrid typeGrid = level.GetIntGrid("Type");
 			LDtkIntGrid rotGrid = level.GetIntGrid("Rotation");
@@ -116,7 +123,7 @@ namespace MugEngine.Scene
 
 			Vector2 basePos = loadPositionFromFile ? new Vector2(level.Position.X, level.Position.Y) : mBasePosition;
 
-			LoadFromIntGrids(factory, basePos, typeGrid.Get2DArray(), rotGrid.Get2DArray(), paramGrid.Get2DArray());
+			LoadFromIntGrids(basePos, typeGrid.Get2DArray(), rotGrid.Get2DArray(), paramGrid.Get2DArray());
 		}
 
 
@@ -124,42 +131,38 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Load from int grids
 		/// </summary>
-		public void LoadFromIntGrids(IMTileFactory factory, Vector2 basePosition, int[,] types, int[,] rot, int[,] param)
+		public void LoadFromIntGrids(Vector2 basePosition, int[,] types, int[,] rot, int[,] param)
 		{
 			mBasePosition = basePosition;
 
-			mDummyTile = factory.GenerateDummyTile();
-
 			mTileMap = new MTile[types.GetLength(0), types.GetLength(1)];
-
 			Point basePt = mBasePosition.ToPoint();
+
+			Dictionary<string, int> animToIdx = new();
 
 			for (int x = 0; x < mTileMap.GetLength(0); x++)
 			{
 				for (int y = 0; y < mTileMap.GetLength(1); y++)
 				{
 					Point tilePos = new Point(x * mTileSize.X, y * mTileSize.Y) + basePt;
-					(MTile newTile, string animPath) = factory.GenerateTile(types[x, y], rot[x, y], param[x, y]);
+					MTile newTile = new MTile((ushort)types[x, y], (MCardDir)rot[x, y]);
+
+					string animPath = mPolicy.GetTileAnimPath(newTile, param[x, y]);
 
 					MAnimation anim = null;
-					if (animPath != "" && !mTileAnimations.TryGetValue(animPath, out anim))
+
+					int idx = INVALID_ANIM;
+					if (animPath != "" && !animToIdx.TryGetValue(animPath, out idx))
 					{
 						anim = MData.I.LoadAnimation(animPath);
-						mTileAnimations[animPath] = anim;
+
+						mTileAnimations.Add(anim);
+						idx = mTileAnimations.Count - 1;
+						MugDebug.Assert(idx != INVALID_ANIM, "Maximum limit of 256 animations exceeded");
+						animToIdx.Add(animPath, idx);
 					}
 
-					newTile.PlaceAt(tilePos, mTileSize);
-					newTile.mAnimation = anim;
-
-					mTileTypes.Add(newTile.mType);
-
-					// HACK
-					if (newTile.mType == 0)
-					{
-						newTile.mBoundingBox.Width = 0;
-						newTile.mBoundingBox.Height = 0;
-					}
-
+					newTile.mAnimIdx = (byte)idx;
 					mTileMap[x, y] = newTile;
 				}
 			}
@@ -180,9 +183,9 @@ namespace MugEngine.Scene
 		/// </summary>
 		public void Update(MScene scene, MUpdateInfo info)
 		{
-			foreach(var kv in mTileAnimations)
+			foreach(MAnimation anim in mTileAnimations)
 			{
-				kv.Value.Update(info);
+				anim.Update(info);
 			}
 		}
 
@@ -200,9 +203,9 @@ namespace MugEngine.Scene
 		public void Draw(MScene scene, MDrawInfo info)
 		{
 			// Draw by type for better batching
-			foreach (ushort type in mTileTypes)
+			for (int i = 0; i < mTileAnimations.Count; i++)
 			{
-				Draw(scene, info, type);
+				Draw(scene, info, i);
 			}
 		}
 
@@ -211,12 +214,20 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Draw the tilemap. Only draw 1 type of layer for better batching.
 		/// </summary>
-		public void Draw(MScene scene, MDrawInfo info, ushort tileType)
+		public void Draw(MScene scene, MDrawInfo info, int tileAnimIdx)
 		{
+			if (tileAnimIdx >= mTileAnimations.Count)
+			{
+				return;
+			}
+
+			float drawDepth = info.mCanvas.GetBaseDepth(mDrawLayer);
+
 			Profiler.PushProfileZone("Tile Draw layer");
 
 			int width = mTileMap.GetLength(0);
 			int height = mTileMap.GetLength(1);
+			int rngSeed = tileAnimIdx * 13;
 
 			for (int x = 0; x < width; x++)
 			{
@@ -224,20 +235,76 @@ namespace MugEngine.Scene
 				{
 					MTile tile = mTileMap[x, y];
 
-					if(tile.mAnimation is null || tile.mType != tileType)
+					if(tile.mAnimIdx == INVALID_ANIM || tile.mAnimIdx != tileAnimIdx)
 					{
 						continue;
 					}
 
+					rngSeed = MRandom.NextRng(rngSeed);
+					float randomFloat = rngSeed / (float)int.MaxValue;
+					float animOffset = tile.UsesAnimOffset() ? randomFloat : 0.0f;
+
 					Vector2 tilePos = mBasePosition + new Vector2(x * mTileSize.X, y * mTileSize.Y);
-					TileTexDrawInfo tileDrawInfo = MTileDrawHelpers.GetTileDrawInfo(this, tile);
+					TileTexDrawInfo tileDrawInfo = GetTileDrawInfo(tile, animOffset);
 					Rectangle sourceRectangle = new Rectangle(tileDrawInfo.mTexturePart.mUV.Location + tileDrawInfo.mTileIndex * mTileSize, mTileSize);
 
-					info.mCanvas.DrawTexture(tileDrawInfo.mTexturePart.mTexture, tilePos, sourceRectangle, Color.White, tileDrawInfo.mRotation, Vector2.Zero, 1.0f, tileDrawInfo.mEffect, mDrawLayer);
+					info.mCanvas.DrawTexture(tileDrawInfo.mTexturePart.mTexture, tilePos, sourceRectangle, Color.White, tileDrawInfo.mRotation, Vector2.Zero, 1.0f, tileDrawInfo.mEffect, drawDepth);
 				}
 			}
 
 			Profiler.PopProfileZone();
+		}
+
+
+
+		/// <summary>
+		/// Find out which part of the tile atlas to draw
+		/// </summary>
+		TileTexDrawInfo GetTileDrawInfo(MTile tile, float animOffset)
+		{
+			MAnimation anim = mTileAnimations[tile.mAnimIdx];
+			MTexturePart tileTexture = anim.GetCurrentTexture(animOffset);
+
+			TileTexDrawInfo returnInfo;
+
+			int width = tileTexture.Width();
+			int height = tileTexture.Height();
+
+			//Square texture, draw as is.
+			if (width == height)
+			{
+				// Square textures can be rotated freely.
+				// Others can't since they need ot be rotated to fit together.
+				returnInfo = new TileTexDrawInfo();
+				returnInfo.mRotation = tile.GetRotation();
+				returnInfo.mEffect = tile.GetEffect();
+			}
+			// Otherwise, look for texture with different edge types
+			else if (width == 6 * height)
+			{
+				// Needs rotating
+				returnInfo = MTileDrawHelpers.SetupTileWithRotation(tile.mAdjacency);
+			}
+			else if (width == 4 * height)
+			{
+				returnInfo = MTileDrawHelpers.SetupTileNoRotation(tile.mAdjacency);
+			}
+			else if (height == 47 * width)
+			{
+				returnInfo = MTileDrawHelpers.SetupTileForBorderFill(tile.mAdjacency);
+			}
+			else if (height == 2 * width)
+			{
+				returnInfo = MTileDrawHelpers.SetupTileForUpDown(tile.mAdjacency);
+			}
+			else
+			{
+				throw new Exception("Unhandled texture dimensions");
+			}
+
+			returnInfo.mTexturePart = tileTexture;
+
+			return returnInfo;
 		}
 
 		#endregion rDraw
@@ -259,14 +326,20 @@ namespace MugEngine.Scene
 			{
 				for (int y = tileBounds.Y; y <= tileBounds.Y + tileBounds.Height; y++)
 				{
-					// Rectangle debugRect = new Rectangle(x * mTileSize.X, y * mTileSize.Y, mTileSize.X, mTileSize.Y);
-					// MugDebug.AddDebugRect(debugRect, Color.Red);
-
 					ref MTile tile = ref mTileMap[x, y];
 
-					bool emptyTile = tile.mBoundingBox.Width == 0 && tile.mBoundingBox.Height == 0;
+					// Special case for 0
+					if (tile.mType == 0)
+					{
+						continue;
+					}
 
-					if (!emptyTile && tile.QueryCollides(bounds, dir))
+					Rectangle tileRect = new Rectangle(x * mTileSize.X, y * mTileSize.Y, mTileSize.X, mTileSize.Y);
+					tileRect.X += (int)mBasePosition.X;
+					tileRect.Y += (int)mBasePosition.Y;
+					//MugDebug.AddDebugRect(tileRect, Color.Red);
+
+					if (mPolicy.QueryTileCollision(tile, tileRect, bounds))
 					{
 						return true;
 					}
@@ -294,8 +367,8 @@ namespace MugEngine.Scene
 			max.X /= mTileSize.X;
 			max.Y /= mTileSize.Y;
 
-			Point rMin = new Point(Math.Max((int)min.X - 1, 0), Math.Max((int)min.Y - 1, 0));
-			Point rMax = new Point(Math.Min((int)max.X + 2, mTileMap.GetLength(0) - 1), Math.Min((int)max.Y + 2, mTileMap.GetLength(1) - 1));
+			Point rMin = new Point(Math.Max((int)min.X, 0), Math.Max((int)min.Y, 0));
+			Point rMax = new Point(Math.Min((int)MathF.Ceiling(max.X), mTileMap.GetLength(0) - 1), Math.Min((int)MathF.Ceiling(max.Y), mTileMap.GetLength(1) - 1));
 
 			return new Rectangle(rMin, rMax - rMin);
 		}
@@ -356,7 +429,7 @@ namespace MugEngine.Scene
 				return mTileMap[x, y];
 			}
 
-			return mDummyTile;
+			return new MTile(0, MCardDir.Up);
 		}
 
 

@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Reprents a direction in 1 of 4 directions.
 	/// </summary>
-	public enum MCardDir
+	public enum MCardDir : byte
 	{
 		Up = 0,
 		Right = 1,

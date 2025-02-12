@@ -9,7 +9,7 @@ namespace MugEngine.Graphics
 	{
 		#region rConstants
 
-		static float LAYER_INCREMENT = 0.0000001f;
+		const float LAYER_INCREMENT = 0.0000001f;
 
 		#endregion rConstants
 
@@ -216,6 +216,16 @@ namespace MugEngine.Graphics
 			return result;
 		}
 
+
+
+		/// <summary>
+		/// Get z-depth from layer.
+		/// </summary>
+		public float GetBaseDepth(int layer)
+		{
+			return layer * mDivLayerCount;
+		}
+
 		#endregion rUtil
 
 
@@ -284,6 +294,16 @@ namespace MugEngine.Graphics
 		public void DrawTexture(Texture2D texture, Vector2 position, Rectangle? sourceRect, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effect, int layer)
 		{
 			mBatcher.Draw(texture, position, sourceRect, color, rotation, origin, scale, effect, GetDepth(layer));
+		}
+
+
+
+		/// <summary>
+		/// Draw a texture to the canvas
+		/// </summary>
+		public void DrawTexture(Texture2D texture, Vector2 position, Rectangle? sourceRect, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effect, float depth)
+		{
+			mBatcher.Draw(texture, position, sourceRect, color, rotation, origin, scale, effect, depth);
 		}
 
 

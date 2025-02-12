@@ -2,7 +2,7 @@
 
 namespace MugEngine.Scene
 {
-	public struct MTile : IMCollisionQueryable
+	public struct MTile
 	{
 		#region rConstants
 
@@ -21,11 +21,9 @@ namespace MugEngine.Scene
 		#region rMembers
 
 		public MTileAdjacency mAdjacency = MTileAdjacency.Ad0;
-		public ushort mType;
-
-		public Rectangle mBoundingBox;
+		public byte mAnimIdx = 0;
+		public ushort mType = 0;
 		public ulong mFlags = 0;
-		public MAnimation mAnimation;
 
 		#endregion rMembers
 
@@ -38,22 +36,11 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Create a tile with default bounds.
 		/// </summary>
-		public MTile(int type)
+		public MTile(ushort type, MCardDir rot)
 		{
-			mType = (ushort)type;
+			mType = type;
 
 			mFlags |= ANIM_OFFSET_MASK; // I think we always want this but maybe one day we want to toggle it.
-		}
-
-
-
-		/// <summary>
-		/// Inform tile is at this position.
-		/// This should not change.
-		/// </summary>
-		public void PlaceAt(Point pos, Point size)
-		{
-			mBoundingBox = new Rectangle(pos, size);
 		}
 
 
@@ -97,40 +84,16 @@ namespace MugEngine.Scene
 		}
 
 
+
 		/// <summary>
-		/// Get animation offset
+		/// Does this use animation offset?
 		/// </summary>
-		public float GetAnimOffset()
+		public bool UsesAnimOffset()
 		{
-			bool useAnimOffset = (mFlags & ANIM_OFFSET_MASK) != 0;
-
-			if (!useAnimOffset)
-			{
-				return 0.0f;
-			}
-
-			int bigNum = mBoundingBox.Location.X + 240257 * mBoundingBox.Location.Y;
-
-			return MRandom.NextRng(bigNum) / 2147483647.0f;
+			return (mFlags & ANIM_OFFSET_MASK) != 0;
 		}
 
 		#endregion rDraw
-
-
-
-
-
-		#region rCollision
-
-		/// <summary>
-		/// Query collision
-		/// </summary>
-		public bool QueryCollides(Rectangle bounds, MCardDir travelDir)
-		{
-			return mBoundingBox.Intersects(bounds);
-		}
-
-		#endregion rCollision
 
 
 

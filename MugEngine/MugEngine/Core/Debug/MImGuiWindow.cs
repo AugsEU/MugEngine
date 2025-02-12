@@ -31,8 +31,6 @@ namespace MugEngine.Core
 
 		protected abstract void AddWindowCommands(GameTime time);
 
-		public abstract void Update(MUpdateInfo info);
-
 		public string GetUniqueTitle()
 		{
 			return mUniqueTitle;

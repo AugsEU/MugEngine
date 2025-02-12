@@ -93,10 +93,6 @@ namespace MugEngine.Core
 			}
 		}
 
-		public override void Update(MUpdateInfo info)
-		{
-		}
-
 		(float, float) GetFloatMinMax(FieldInfo field, float value)
 		{
 			if (mFloatRanges.TryGetValue(field, out var minMax))

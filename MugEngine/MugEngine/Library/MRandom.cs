@@ -19,6 +19,7 @@
 		#region rMembers
 
 		private static Random sStdRandom = new Random();
+		private static object sInitMutex = new();
 		private static int sInitRandomSeed = 0;
 		private int mSeed;
 
@@ -28,14 +29,17 @@
 
 
 
-		#region rSeedConfig
+		#region rInit
 
 		/// <summary>
 		/// Create random with non-deterministic seed
 		/// </summary>
 		public static MRandom NonDetRng()
 		{
-			return new MRandom(sStdRandom.Next());
+			lock (sStdRandom)
+			{
+				return new MRandom(sStdRandom.Next());
+			}
 		}
 
 
@@ -45,8 +49,11 @@
 		/// </summary>
 		public MRandom()
 		{
-			mSeed = sInitRandomSeed;
-			sInitRandomSeed = Next();
+			lock (sInitMutex)
+			{
+				mSeed = sInitRandomSeed;
+				sInitRandomSeed = Next();
+			}
 		}
 
 
@@ -99,7 +106,7 @@
 
 
 		/// <summary>
-		/// A seed
+		/// Returns a random positive int.
 		/// </summary>
 		public static int NextRng(int seed)
 		{
@@ -117,7 +124,7 @@
 			return seed;
 		}
 
-		#endregion rSeedConfig
+		#endregion rInit
 
 
 

@@ -6,7 +6,7 @@ namespace MugEngine.Scene
 	{
 		#region rConst
 
-		const float DEFAULT_GRAVITY = 140.8f;
+		const float DEFAULT_GRAVITY = 420.0f;
 
 		#endregion rConst
 

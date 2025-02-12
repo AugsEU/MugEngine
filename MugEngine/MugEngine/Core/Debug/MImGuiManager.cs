@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using TracyWrapper;
 
 namespace MugEngine.Core
 {
@@ -29,11 +30,6 @@ namespace MugEngine.Core
 		{
 #if DEBUG
 			mComponents.ProcessAddsDeletes();
-
-			foreach (IMImGuiComponent comp in mComponents)
-			{
-				comp.Update(info);
-			}
 #endif
 		}
 
@@ -44,6 +40,8 @@ namespace MugEngine.Core
 			{
 				return;
 			}
+
+			Profiler.PushProfileZone("RenderImGui", ZoneC.LIGHT_BLUE);
 
 			mRenderer.BeforeLayout(time);
 
@@ -72,6 +70,8 @@ namespace MugEngine.Core
 			}
 
 			mRenderer.AfterLayout();
+
+			Profiler.PopProfileZone();
 #endif
 		}
 	}

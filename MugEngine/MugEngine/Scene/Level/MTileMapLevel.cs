@@ -1,10 +1,10 @@
 ﻿namespace MugEngine.Scene.Level
 {
-	public class MTileMapLevel : MLevel
+	public class MTileMapLevel<P> : MLevel where P : struct, IMTilePolicy
 	{
-		MTileMap mTileMap;
+		MTileMap<P> mTileMap;
 
-		public MTileMapLevel(MTileMap tileMap) : base()
+		public MTileMapLevel(MTileMap<P> tileMap) : base()
 		{
 			mTileMap = tileMap;
 		}

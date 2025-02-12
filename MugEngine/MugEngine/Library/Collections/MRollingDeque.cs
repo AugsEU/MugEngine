@@ -16,7 +16,7 @@ namespace MugEngine.Library
 			mQueue = new Deque<T>(mMaxSize);
 		}
 
-		public T this[int index] { get => ((IList<T>)mQueue)[index]; set => ((IList<T>)mQueue)[index] = value; }
+		public T this[int index] { get => mQueue[index]; set => mQueue[index] = value; }
 
 		public int Count => mQueue.Count;
 

@@ -18,64 +18,11 @@
 	static class MTileDrawHelpers
 	{
 		/// <summary>
-		/// Find out which part of the tile atlas to draw
-		/// </summary>
-		public static TileTexDrawInfo GetTileDrawInfo(this MTileMap tileMap, MTile tile)
-		{
-			MAnimation anim = tile.mAnimation;
-			MTexturePart tileTexture = anim.GetCurrentTexture(tile.GetAnimOffset()); // Cache this?
-
-			TileTexDrawInfo returnInfo;
-
-			int width = tileTexture.Width();
-			int height = tileTexture.Height();
-
-			//Square texture, draw as is.
-			if (width == height)
-			{
-				// Square textures can be rotated freely.
-				// Others can't since they need ot be rotated to fit together.
-				returnInfo = new TileTexDrawInfo();
-				returnInfo.mRotation = tile.GetRotation();
-				returnInfo.mEffect = tile.GetEffect();
-			}
-			// Otherwise, look for texture with different edge types
-			else if (width == 6 * height)
-			{
-				// Needs rotating
-				returnInfo = SetupTileWithRotation(tile.mAdjacency);
-			}
-			else if (width == 4 * height)
-			{
-				returnInfo = SetupTileNoRotation(tile.mAdjacency);
-			}
-			else if (height == 47 * width)
-			{
-				returnInfo = SetupTileForBorderFill(tile.mAdjacency);
-			}
-			else if (height == 2 * width)
-			{
-				returnInfo = SetupTileForUpDown(tile.mAdjacency);
-			}
-			else
-			{
-				throw new Exception("Unhandled texture dimensions");
-			}
-
-			returnInfo.mTexturePart = tileTexture;
-
-			return returnInfo;
-		}
-
-
-
-
-		/// <summary>
 		/// Used for textures that have all 16 tile types
 		/// </summary>
 		/// <param name="adjacency">Adjacency type</param>
 		/// <param name="tileIndex">Output variable of which sub-section of the texture to use</param>
-		private static TileTexDrawInfo SetupTileNoRotation(MTileAdjacency adjacency)
+		public static TileTexDrawInfo SetupTileNoRotation(MTileAdjacency adjacency)
 		{
 			TileTexDrawInfo ret = new TileTexDrawInfo();
 
@@ -157,7 +104,7 @@
 		/// The rest are generated from rotations
 		/// </summary>
 		/// <param name="adjacency">Adjacency type</param>
-		private static TileTexDrawInfo SetupTileWithRotation(MTileAdjacency adjacency)
+		public static TileTexDrawInfo SetupTileWithRotation(MTileAdjacency adjacency)
 		{
 			const float PI2 = MathHelper.PiOver2;
 			const float PI = MathHelper.Pi;
@@ -243,7 +190,7 @@
 		/// Sets up tile that are of the "border + fill" type
 		/// </summary>
 		/// <param name="adjacency">Adjacency type</param>
-		private static TileTexDrawInfo SetupTileForBorderFill(MTileAdjacency adjacency)
+		public static TileTexDrawInfo SetupTileForBorderFill(MTileAdjacency adjacency)
 		{
 			TileTexDrawInfo ret = new TileTexDrawInfo();
 
@@ -402,7 +349,7 @@
 		/// <summary>
 		/// Setup basic up/down tile
 		/// </summary>
-		private static TileTexDrawInfo SetupTileForUpDown(MTileAdjacency adjacency)
+		public static TileTexDrawInfo SetupTileForUpDown(MTileAdjacency adjacency)
 		{
 			TileTexDrawInfo ret = new TileTexDrawInfo();
 

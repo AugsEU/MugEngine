@@ -1,6 +1,6 @@
 ﻿namespace MugEngine.Core
 {
-	public interface IMImGuiComponent : IMUpdate
+	public interface IMImGuiComponent
 	{
 		public void AddImGuiCommands(GameTime time);
 	}
