@@ -339,7 +339,7 @@ namespace MugEngine.Scene
 					tileRect.Y += (int)mBasePosition.Y;
 					//MugDebug.AddDebugRect(tileRect, Color.Red);
 
-					if (mPolicy.QueryTileCollision(tile, tileRect, bounds))
+					if (mPolicy.QueryTileCollision(tile, tileRect, bounds, dir))
 					{
 						return true;
 					}

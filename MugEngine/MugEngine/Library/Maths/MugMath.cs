@@ -426,6 +426,21 @@
 
 
 		/// <summary>
+		/// Get bounding rectangle.
+		/// </summary>
+		public static Rectangle GetBoundingRectangle(Rectangle rect1, Rectangle rect2)
+		{
+			int minX = Math.Min(rect1.Left, rect2.Left);
+			int minY = Math.Min(rect1.Top, rect2.Top);
+			int maxX = Math.Max(rect1.Right, rect2.Right);
+			int maxY = Math.Max(rect1.Bottom, rect2.Bottom);
+
+			return new Rectangle(minX, minY, maxX - minX, maxY - minY);
+		}
+
+
+
+		/// <summary>
 		/// Get adjacent points.
 		/// </summary>
 		public static List<Point> GetAdjacentPoints(Point point)

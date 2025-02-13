@@ -94,6 +94,11 @@ namespace MugEngine.Scene
 		/// </summary>
 		public bool GroundCheck()
 		{
+			if (GetVertSpeed() < 0.0f)
+			{
+				return false;
+			}
+
 			Rectangle myShiftedBounds = BoundsRect();
 			myShiftedBounds.Location += mGravityDir.ToPoint();
 
