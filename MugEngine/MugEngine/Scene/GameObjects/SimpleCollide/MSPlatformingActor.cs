@@ -7,6 +7,7 @@ namespace MugEngine.Scene
 		#region rConst
 
 		const float DEFAULT_GRAVITY = 420.0f;
+		const float DEFAULT_FAST_FALL = DEFAULT_GRAVITY * 0.5f;
 
 		#endregion rConst
 
@@ -19,6 +20,8 @@ namespace MugEngine.Scene
 		MWalkDir mFacingDir;
 		MSSolid mOnlyStandingSolid = null;
 		bool mOnGround;
+		protected float mFastFallStr = DEFAULT_FAST_FALL; // Amount added by fast fall.
+		bool mInFastFall;
 
 		#endregion rMembers
 
@@ -34,6 +37,7 @@ namespace MugEngine.Scene
 		public MSPlatformingActor(Vector2 position) : base(position)
 		{
 			mGravityStrength = DEFAULT_GRAVITY;
+			mInFastFall = false;
 		}
 
 
@@ -62,6 +66,16 @@ namespace MugEngine.Scene
 		{
 			mOnlyStandingSolid = null;
 			mOnGround = GroundCheck();
+
+			if (mOnGround)
+			{
+				mInFastFall = false;
+			}
+			else if (mInFastFall)
+			{
+				mVelocity += mGravityDir.ToVec() * mFastFallStr * info.mDelta;
+			}
+
 			base.Update(info);
 		}
 
@@ -128,6 +142,29 @@ namespace MugEngine.Scene
 		public void Jump(float speed)
 		{
 			mVelocity.Y = -speed;
+			mInFastFall = false;
+		}
+
+
+
+		/// <summary>
+		/// Begin fast falling.
+		/// </summary>
+		public void BeginFastFall(float strength = DEFAULT_FAST_FALL)
+		{
+			if (mInFastFall)
+			{
+				//Already fast falling.
+				return;
+			}
+
+			mInFastFall = true;
+
+			mFastFallStr = strength;
+			Vector2 gravVec = mGravityDir.ToVec();
+			mVelocity -= Vector2.Dot(gravVec, mVelocity) * gravVec;
+
+			mVelocity += mGravityDir.ToVec() * mFastFallStr * 1.5f;
 		}
 
 
