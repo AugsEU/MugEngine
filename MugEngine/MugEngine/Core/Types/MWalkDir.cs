@@ -64,5 +64,14 @@
 		{
 			return walk.ToCardDir(gravity).ToVec();
 		}
+
+
+		/// <summary>
+		/// Convert a walk direction to a cardinal direction
+		/// </summary>
+		public static Point ToPoint(this MWalkDir walk, MCardDir gravity = MCardDir.Down)
+		{
+			return walk.ToCardDir(gravity).ToPoint();
+		}
 	}
 }

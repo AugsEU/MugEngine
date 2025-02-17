@@ -50,6 +50,12 @@ namespace MugEngine.Scene
 			return Vector2.Dot(sideVec, mVelocity);
 		}
 
+		public void SetHorzSpeed(float speed)
+		{
+			Vector2 sideVec = mGravityDir.ToVec().Perpendicular();
+			mVelocity += (speed - Vector2.Dot(mVelocity, sideVec)) * sideVec;
+		}
+
 		public Vector2 GetVertVelocity()
 		{
 			Vector2 downVec = mGravityDir.ToVec();
@@ -62,6 +68,11 @@ namespace MugEngine.Scene
 			return Vector2.Dot(downVec, mVelocity);
 		}
 
+		public void SetVertSpeed(float speed)
+		{
+			Vector2 downVec = mGravityDir.ToVec();
+			mVelocity += (speed - Vector2.Dot(mVelocity, downVec)) * downVec;
+		}
 
 		public (Vector2, Vector2) GetVelocityBasis()
 		{

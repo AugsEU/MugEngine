@@ -102,9 +102,17 @@ namespace MugEngine.Scene
 		/// </summary>
 		public bool CollidesWithAnySolid(MCardDir dir)
 		{
-			Profiler.PushProfileZone("Collides");
+			return CollidesWithAnySolid(BoundsRect(), dir);
+		}
 
-			Rectangle bounds = BoundsRect();
+
+
+		/// <summary>
+		/// Simple collision check.
+		/// </summary>
+		public bool CollidesWithAnySolid(Rectangle bounds, MCardDir dir)
+		{
+			Profiler.PushProfileZone("SA Collide");
 
 			foreach (MGameObject other in GO().GetInRect(bounds, GetLayerMask()))
 			{

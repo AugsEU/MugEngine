@@ -20,6 +20,7 @@ namespace MugEngine.Scene
 		MWalkDir mFacingDir;
 		MSSolid mOnlyStandingSolid = null;
 		bool mOnGround;
+		MWalkDir? mWallSlideCache;
 		protected float mFastFallStr = DEFAULT_FAST_FALL; // Amount added by fast fall.
 		bool mInFastFall;
 
@@ -77,6 +78,8 @@ namespace MugEngine.Scene
 			}
 
 			base.Update(info);
+
+			mWallSlideCache = null;
 		}
 
 
@@ -116,22 +119,50 @@ namespace MugEngine.Scene
 			Rectangle myShiftedBounds = BoundsRect();
 			myShiftedBounds.Location += mGravityDir.ToPoint();
 
-			foreach (MGameObject other in GO().GetInRect(myShiftedBounds, GetLayerMask()))
-			{
-				if (ReferenceEquals(other, this))
-				{
-					continue;
-				}
+			return CollidesWithAnySolid(myShiftedBounds, mGravityDir);
+		}
 
-				if (other is MSSolid solid && solid.QueryCollides(myShiftedBounds, mGravityDir))
-				{
-					return true;
-				}
+
+
+		/// <summary>
+		/// Gets the
+		/// </summary>
+		/// <returns></returns>
+		public MWalkDir WallsCheck()
+		{
+			if (mWallSlideCache.HasValue)
+			{
+				return mWallSlideCache.Value;
 			}
 
-			bool? levelCollides = GO().GetLevel()?.QueryCollides(myShiftedBounds, mGravityDir);
+			Rectangle leftBounds = BoundsRect();
+			leftBounds.Location += (MWalkDir.Left).ToPoint(mGravityDir);
 
-			return levelCollides.HasValue && levelCollides.Value;
+			Rectangle rightBounds = BoundsRect();
+			rightBounds.Location += (MWalkDir.Right).ToPoint(mGravityDir);
+
+			bool leftCollide = CollidesWithAnySolid(leftBounds, MWalkDir.Left.ToCardDir(mGravityDir));
+			bool rightCollide = CollidesWithAnySolid(rightBounds, MWalkDir.Right.ToCardDir(mGravityDir));
+
+			MWalkDir result = MWalkDir.None;
+
+			if(leftCollide)
+			{
+#if DEBUG
+				if (rightCollide)
+				{
+					MugDebug.Warning("Unresolved wall check. Defaulting to left");
+				}
+#endif
+				result = MWalkDir.Left;
+			}
+			else if(rightCollide)
+			{
+				result = MWalkDir.Right;
+			}
+
+			mWallSlideCache = result;
+			return result;
 		}
 
 
@@ -190,6 +221,15 @@ namespace MugEngine.Scene
 
 
 
+		/// <summary>
+		/// Make the actor face in a dir.
+		/// </summary>
+		public void FaceIn(MWalkDir dir)
+		{
+			mFacingDir = dir;
+		}
+
+
 
 		/// <summary>
 		/// Walk in a direction.
@@ -215,6 +255,20 @@ namespace MugEngine.Scene
 
 				mVelocity = mVelocity + (cappedLength - Vector2.Dot(mVelocity, walkVec)) * walkVec;
 			}
+		}
+
+
+
+		/// <summary>
+		/// Apply wall slide friction
+		/// </summary>
+		public void ApplyWallFriction(MUpdateInfo info, float friction)
+		{
+			float vertSpeed = GetVertSpeed(); // Negative speed is up.
+
+			vertSpeed = MugMath.MoveToZero(vertSpeed, friction * info.mDelta);
+
+			SetVertSpeed(vertSpeed);
 		}
 
 
