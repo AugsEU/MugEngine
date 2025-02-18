@@ -60,6 +60,16 @@ namespace MugEngine.Core
 
 
 
+		public static void Flog(string msg, params object[] args)
+		{
+			Log(msg, args);
+#if USE_BUFFERED_LOG
+			FlushConsoleMessges();
+#endif
+		}
+
+
+
 		/// <summary>
 		/// Log error message to console. Only if debug is on.
 		/// </summary>
@@ -160,7 +170,7 @@ namespace MugEngine.Core
 #endif
 		}
 
-		private static void FlushConsoleMessges()
+		public static void FlushConsoleMessges()
 		{
 #if USE_BUFFERED_LOG
 			string allMessages = mMessageBuffer.ToString();

@@ -121,9 +121,12 @@ namespace MugEngine.Scene
 			LDtkIntGrid rotGrid = level.GetIntGrid("Rotation");
 			LDtkIntGrid paramGrid = level.GetIntGrid("Param");
 
-			Vector2 basePos = loadPositionFromFile ? new Vector2(level.Position.X, level.Position.Y) : mBasePosition;
+			if (loadPositionFromFile)
+			{
+				mBasePosition = new Vector2(level.Position.X, level.Position.Y);
+			}
 
-			LoadFromIntGrids(basePos, typeGrid.Get2DArray(), rotGrid.Get2DArray(), paramGrid.Get2DArray());
+			LoadFromIntGrids(typeGrid.Get2DArray(), rotGrid.Get2DArray(), paramGrid.Get2DArray());
 		}
 
 
@@ -131,10 +134,8 @@ namespace MugEngine.Scene
 		/// <summary>
 		/// Load from int grids
 		/// </summary>
-		public void LoadFromIntGrids(Vector2 basePosition, int[,] types, int[,] rot, int[,] param)
+		public void LoadFromIntGrids(int[,] types, int[,] rot, int[,] param)
 		{
-			mBasePosition = basePosition;
-
 			mTileMap = new MTile[types.GetLength(0), types.GetLength(1)];
 			Point basePt = mBasePosition.ToPoint();
 
@@ -221,17 +222,18 @@ namespace MugEngine.Scene
 				return;
 			}
 
+			Rectangle visibleFrustum = info.mCanvas.GetCamera().GetViewportForCull();
+			Rectangle tilesToDraw = PossibleIntersectTiles(visibleFrustum);
+
 			float drawDepth = info.mCanvas.GetBaseDepth(mDrawLayer);
 
 			Profiler.PushProfileZone("Tile Draw layer");
 
-			int width = mTileMap.GetLength(0);
-			int height = mTileMap.GetLength(1);
 			int rngSeed = tileAnimIdx * 13;
 
-			for (int x = 0; x < width; x++)
+			for (int x = tilesToDraw.X; x < tilesToDraw.Right; x++)
 			{
-				for (int y = 0; y < height; y++)
+				for (int y = tilesToDraw.Y; y < tilesToDraw.Bottom; y++)
 				{
 					MTile tile = mTileMap[x, y];
 
