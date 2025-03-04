@@ -635,6 +635,17 @@ namespace MugEngine.Scene
 		}
 
 
+
+		/// <summary>
+		/// Get top left position of tilemap
+		/// </summary>
+		public Vector2 GetTopLeft()
+		{
+			return mBasePosition;
+		}
+
+
+
 		/// <summary>
 		/// Get approximate size in bytes of this map.
 		/// </summary>
