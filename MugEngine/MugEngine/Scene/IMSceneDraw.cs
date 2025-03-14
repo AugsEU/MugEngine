@@ -1,9 +1,9 @@
 ﻿using MugEngine.Core;
 
-namespace MugEngine.Scene
+namespace MugEngine.Scene;
+
+public interface IMSceneDraw
 {
-	public interface IMSceneDraw
-	{
-		public void Draw(MScene scene, MDrawInfo info);
-	}
+	public void Draw(MScene scene, MDrawInfo info);
 }
+

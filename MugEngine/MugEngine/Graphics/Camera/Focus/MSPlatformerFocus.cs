@@ -1,51 +1,51 @@
 ﻿
 
-namespace MugEngine.Graphics
+namespace MugEngine.Graphics;
+
+public class MSPlatformerFocus : MSmoothPointFocus
 {
-	public class MSPlatformerFocus : MSmoothPointFocus
+	MSPlatformingActor mActor;
+	Vector4 mGroundFollowSpeed;
+	Vector4 mAirFollowSpeed;
+
+	MRollingVector2 mRollingTargetWindow;
+
+	public MSPlatformerFocus(MSPlatformingActor actor)
 	{
-		MSPlatformingActor mActor;
-		Vector4 mGroundFollowSpeed;
-		Vector4 mAirFollowSpeed;
+		mActor = actor;
+		mGroundFollowSpeed = new Vector4(7.5f, 4.2f, 7.5f, 6.2f);
+		mAirFollowSpeed = new Vector4(7.5f, 12.0f, 7.5f, 2.9f);
 
-		MRollingVector2 mRollingTargetWindow;
+		mRollingTargetWindow = new MRollingVector2(4);
+	}
 
-		public MSPlatformerFocus(MSPlatformingActor actor)
+	public override MCameraSpec UpdateFocusPoint(MUpdateInfo info, MCameraSpec curr)
+	{
+		if(mActor.OnGround())
 		{
-			mActor = actor;
-			mGroundFollowSpeed = new Vector4(7.5f, 4.2f, 7.5f, 6.2f);
-			mAirFollowSpeed = new Vector4(7.5f, 12.0f, 7.5f, 2.9f);
-
-			mRollingTargetWindow = new MRollingVector2(4);
+			pSpeed = mGroundFollowSpeed;
+		}
+		else
+		{
+			pSpeed = mAirFollowSpeed;
 		}
 
-		public override MCameraSpec UpdateFocusPoint(MUpdateInfo info, MCameraSpec curr)
-		{
-			if(mActor.OnGround())
-			{
-				pSpeed = mGroundFollowSpeed;
-			}
-			else
-			{
-				pSpeed = mAirFollowSpeed;
-			}
+		return base.UpdateFocusPoint(info, curr);
+	}
 
-			return base.UpdateFocusPoint(info, curr);
-		}
+	protected override Vector2 GetTargetPoint()
+	{
+		Vector2 targetPoint = mActor.GetCentreOfMass();
 
-		protected override Vector2 GetTargetPoint()
-		{
-			Vector2 targetPoint = mActor.GetCentreOfMass();
+		targetPoint += mActor.GetVelocity() / 10.0f;
 
-			targetPoint += mActor.GetVelocity() / 10.0f;
+		Vector2 lookAhead = mActor.GetFacingDir().ToVec(mActor.GetGravityDir());
+		lookAhead *= 18.0f;
 
-			Vector2 lookAhead = mActor.GetFacingDir().ToVec(mActor.GetGravityDir());
-			lookAhead *= 18.0f;
+		targetPoint += lookAhead;
 
-			targetPoint += lookAhead;
-
-			mRollingTargetWindow.Add(targetPoint);
-			return mRollingTargetWindow.GetAverage();
-		}
+		mRollingTargetWindow.Add(targetPoint);
+		return mRollingTargetWindow.GetAverage();
 	}
 }
+

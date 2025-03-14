@@ -1,9 +1,9 @@
 ﻿using MugEngine.Core;
 
-namespace MugEngine.Scene
+namespace MugEngine.Scene;
+
+public interface IMSceneUpdate
 {
-	public interface IMSceneUpdate
-	{
-		public void Update(MScene scene, MUpdateInfo info);
-	}
+	public void Update(MScene scene, MUpdateInfo info);
 }
+

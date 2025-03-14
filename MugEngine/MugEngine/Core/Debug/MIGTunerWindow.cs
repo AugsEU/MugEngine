@@ -4,112 +4,112 @@ using MugEngine.Tuner;
 using System.Reflection;
 using TracyWrapper;
 
-namespace MugEngine.Core
+namespace MugEngine.Core;
+
+public class MIGTunerWindow<T> : MImGuiWindow where T : struct
 {
-	public class MIGTunerWindow<T> : MImGuiWindow where T : struct
+	Dictionary<Type, FieldInfo[]> mFieldInfos;
+	object mTuneStructBox;
+	string mXmlPath;
+
+	Dictionary<FieldInfo, (float, float)> mFloatRanges;
+
+	public MIGTunerWindow(string xmlPath) : base("Tuner")
 	{
-		Dictionary<Type, FieldInfo[]> mFieldInfos;
-		object mTuneStructBox;
-		string mXmlPath;
+		mXmlPath = xmlPath;
+		mFieldInfos = new();
+		mTuneStructBox = null;
+		mFloatRanges = new();
+	}
 
-		Dictionary<FieldInfo, (float, float)> mFloatRanges;
+	protected override void AddWindowCommands(GameTime time)
+	{
+		Profiler.PushProfileZone("Tuner values", ZoneC.ORANGE);
+		
+		mTuneStructBox = MTuner<T>.I;
+		RenderStruct(mTuneStructBox);
+		MTuner<T>.I = (T)mTuneStructBox;
 
-		public MIGTunerWindow(string xmlPath) : base("Tuner")
+		ImGui.Separator();
+
+		if (ImGui.Button("Load"))
 		{
-			mXmlPath = xmlPath;
-			mFieldInfos = new();
-			mTuneStructBox = null;
-			mFloatRanges = new();
+			MTuner<T>.LoadValues(mXmlPath);
+		}
+		ImGui.SameLine();
+		if (ImGui.Button("Save"))
+		{
+			MTuner<T>.SaveValues(mXmlPath);
 		}
 
-		protected override void AddWindowCommands(GameTime time)
+		Profiler.PopProfileZone();
+	}
+
+	void RenderStruct(object obj)
+	{
+		Type type = obj.GetType();
+
+		if (!mFieldInfos.TryGetValue(type, out var fields))
 		{
-			Profiler.PushProfileZone("Tuner values", ZoneC.ORANGE);
-			
-			mTuneStructBox = MTuner<T>.I;
-			RenderStruct(mTuneStructBox);
-			MTuner<T>.I = (T)mTuneStructBox;
-
-			ImGui.Separator();
-
-			if (ImGui.Button("Load"))
-			{
-				MTuner<T>.LoadValues(mXmlPath);
-			}
-			ImGui.SameLine();
-			if (ImGui.Button("Save"))
-			{
-				MTuner<T>.SaveValues(mXmlPath);
-			}
-
-			Profiler.PopProfileZone();
+			fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+			mFieldInfos.Add(type, fields);
 		}
 
-		void RenderStruct(object obj)
+		foreach (FieldInfo field in fields)
 		{
-			Type type = obj.GetType();
+			object value = field.GetValue(obj);
+			field.GetHashCode();
 
-			if (!mFieldInfos.TryGetValue(type, out var fields))
+			if (field.FieldType == typeof(float))
 			{
-				fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
-				mFieldInfos.Add(type, fields);
-			}
-
-			foreach (FieldInfo field in fields)
-			{
-				object value = field.GetValue(obj);
-				field.GetHashCode();
-
-				if (field.FieldType == typeof(float))
+				float floatValue = (float)value;
+				(float min, float max) = GetFloatMinMax(field, floatValue);
+				if (ImGui.SliderFloat(field.Name, ref floatValue, min, max))
 				{
-					float floatValue = (float)value;
-					(float min, float max) = GetFloatMinMax(field, floatValue);
-					if (ImGui.SliderFloat(field.Name, ref floatValue, min, max))
-					{
-						field.SetValueDirect(__makeref(obj), floatValue);
-					}
-				}
-				else if (field.FieldType == typeof(int))
-				{
-					int intValue = (int)value;
-					if (ImGui.InputInt(field.Name, ref intValue))
-					{
-						field.SetValueDirect(__makeref(obj), intValue);
-					}
-				}
-				else if (field.FieldType.IsValueType) // Nested struct
-				{
-					if (ImGui.CollapsingHeader(field.Name))
-					{
-						object nestedObj = value;
-						RenderStruct(nestedObj);
-						field.SetValueDirect(__makeref(obj), nestedObj);
-					}
-				}
-				else
-				{
-					throw new NotImplementedException();
+					field.SetValueDirect(__makeref(obj), floatValue);
 				}
 			}
-		}
-
-		(float, float) GetFloatMinMax(FieldInfo field, float value)
-		{
-			if (mFloatRanges.TryGetValue(field, out var minMax))
+			else if (field.FieldType == typeof(int))
 			{
-				return minMax;
+				int intValue = (int)value;
+				if (ImGui.InputInt(field.Name, ref intValue))
+				{
+					field.SetValueDirect(__makeref(obj), intValue);
+				}
 			}
-
-			minMax = (0.0f, 1.0f);
-			if (value < 0.0f)
+			else if (field.FieldType.IsValueType) // Nested struct
 			{
-				minMax = (value * 3.0f, value * 3.0f);
+				if (ImGui.CollapsingHeader(field.Name))
+				{
+					object nestedObj = value;
+					RenderStruct(nestedObj);
+					field.SetValueDirect(__makeref(obj), nestedObj);
+				}
 			}
-
-			minMax = (0.0f, value * 3.0f);
-
-			mFloatRanges.Add(field, minMax);
-			return minMax;
+			else
+			{
+				throw new NotImplementedException();
+			}
 		}
 	}
+
+	(float, float) GetFloatMinMax(FieldInfo field, float value)
+	{
+		if (mFloatRanges.TryGetValue(field, out var minMax))
+		{
+			return minMax;
+		}
+
+		minMax = (0.0f, 1.0f);
+		if (value < 0.0f)
+		{
+			minMax = (value * 3.0f, value * 3.0f);
+		}
+
+		minMax = (0.0f, value * 3.0f);
+
+		mFloatRanges.Add(field, minMax);
+		return minMax;
+	}
 }
+

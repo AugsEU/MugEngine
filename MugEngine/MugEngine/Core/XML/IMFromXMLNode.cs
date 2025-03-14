@@ -1,9 +1,9 @@
 ﻿using System.Xml;
 
-namespace MugEngine.Core
+namespace MugEngine.Core;
+
+public interface IMFromXMLNode<T> where T : class, IMFromXMLNode<T>
 {
-	public interface IMFromXMLNode<T> where T : class, IMFromXMLNode<T>
-	{
-		static abstract T FromNode(XmlNode node);
-	}
+	static abstract T FromNode(XmlNode node);
 }
+

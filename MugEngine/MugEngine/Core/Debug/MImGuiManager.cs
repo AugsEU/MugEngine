@@ -1,78 +1,78 @@
 ﻿using ImGuiNET;
 using TracyWrapper;
 
-namespace MugEngine.Core
+namespace MugEngine.Core;
+
+public class MImGuiManager : MSingleton<MImGuiManager>, IMUpdate
 {
-	public class MImGuiManager : MSingleton<MImGuiManager>, IMUpdate
+
+	MDelayChangeList<IMImGuiComponent> mComponents;
+	MImGuiRenderer mRenderer;
+
+	public MImGuiManager()
 	{
+	}
 
-		MDelayChangeList<IMImGuiComponent> mComponents;
-		MImGuiRenderer mRenderer;
+	public void Init(Game game)
+	{
+		mRenderer = new MImGuiRenderer(game);
+		mComponents = new MDelayChangeList<IMImGuiComponent>();
+	}
 
-		public MImGuiManager()
-		{
-		}
-
-		public void Init(Game game)
-		{
-			mRenderer = new MImGuiRenderer(game);
-			mComponents = new MDelayChangeList<IMImGuiComponent>();
-		}
-
-		public void AddComponent(IMImGuiComponent component)
-		{
+	public void AddComponent(IMImGuiComponent component)
+	{
 #if DEBUG
-			mComponents.Add(component);
+		mComponents.Add(component);
 #endif
-		}
+	}
 
-		public void Update(MUpdateInfo info)
-		{
+	public void Update(MUpdateInfo info)
+	{
 #if DEBUG
-			mComponents.ProcessAddsDeletes();
+		mComponents.ProcessAddsDeletes();
 #endif
+	}
+
+	public void RenderImGui(GameTime time)
+	{
+#if DEBUG
+		if(mComponents.Count == 0)
+		{
+			return;
 		}
 
-		public void RenderImGui(GameTime time)
+		Profiler.PushProfileZone("RenderImGui", ZoneC.LIGHT_BLUE);
+
+		mRenderer.BeforeLayout(time);
+
+		// Top level menu bar.
+		if (ImGui.BeginMainMenuBar())
 		{
-#if DEBUG
-			if(mComponents.Count == 0)
+			if (ImGui.BeginMenu("Windows"))
 			{
-				return;
-			}
-
-			Profiler.PushProfileZone("RenderImGui", ZoneC.LIGHT_BLUE);
-
-			mRenderer.BeforeLayout(time);
-
-			// Top level menu bar.
-			if (ImGui.BeginMainMenuBar())
-			{
-				if (ImGui.BeginMenu("Windows"))
+				foreach (MImGuiWindow window in mComponents.OfType<MImGuiWindow>())
 				{
-					foreach (MImGuiWindow window in mComponents.OfType<MImGuiWindow>())
+					bool showWindow = window.Visible;
+					if (ImGui.MenuItem(window.GetUniqueTitle(), null, showWindow))
 					{
-						bool showWindow = window.Visible;
-						if (ImGui.MenuItem(window.GetUniqueTitle(), null, showWindow))
-						{
-							window.Visible = !window.Visible; // Toggle window visibility
-						}
+						window.Visible = !window.Visible; // Toggle window visibility
 					}
-
-					ImGui.EndMenu();
 				}
-				ImGui.EndMainMenuBar();
+
+				ImGui.EndMenu();
 			}
-
-			foreach (IMImGuiComponent comp in mComponents)
-			{
-				comp.AddImGuiCommands(time);
-			}
-
-			mRenderer.AfterLayout();
-
-			Profiler.PopProfileZone();
-#endif
+			ImGui.EndMainMenuBar();
 		}
+
+		foreach (IMImGuiComponent comp in mComponents)
+		{
+			comp.AddImGuiCommands(time);
+		}
+
+		mRenderer.AfterLayout();
+
+		Profiler.PopProfileZone();
+#endif
 	}
 }
+
