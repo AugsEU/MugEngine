@@ -237,7 +237,7 @@ namespace MugEngine.Scene
 				{
 					MTile tile = mTileMap[x, y];
 
-					if(tile.mAnimIdx == INVALID_ANIM || tile.mAnimIdx != tileAnimIdx)
+					if(tile.mType == 0 || tile.mAnimIdx == INVALID_ANIM || tile.mAnimIdx != tileAnimIdx)
 					{
 						continue;
 					}
