@@ -5,10 +5,10 @@ using static MugEngine.Graphics.MAnimation;
 
 namespace MugEngine.Data;
 
-    /// <summary>
-    /// Utility class for loading animations from data
-    /// </summary>
-    internal class MAnimationData
+/// <summary>
+/// Utility class for loading animations from data
+/// </summary>
+internal class MAnimationData
 {
 	private struct FrameData
 	{
