@@ -25,7 +25,7 @@ public class MTileMap<P> : IMCollisionQueryable, IMSceneUpdate, IMSceneDraw
 	Point mTileSize;
 	MTile[,] mTileMap;
 	List<MAnimation> mTileAnimations;
-	P mPolicy;
+	P mPolicy = default;
 	int mDrawLayer;
 
 	#endregion rMembers

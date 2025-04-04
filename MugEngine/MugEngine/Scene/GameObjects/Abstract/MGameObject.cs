@@ -5,7 +5,7 @@ namespace MugEngine.Scene;
 /// <summary>
 /// A game object is something that exists within the game.
 /// </summary>
-public abstract class MGameObject : IMUpdate, IMDraw, IMBounds
+public abstract class MGameObject : IMUpdate, IMDraw, IMBounds, IMObjectPoolItem
 {
 	#region rMembers
 
@@ -28,10 +28,28 @@ public abstract class MGameObject : IMUpdate, IMDraw, IMBounds
 	/// <summary>
 	/// Create game object at position.
 	/// </summary>
-	public MGameObject(Vector2 position)
+	public MGameObject()
 	{
-		mPosition = position;
+		mPosition = Vector2.Zero;
 		mSize = new Point(1, 1);
+	}
+
+
+
+	/// <summary>
+	/// Called when added to the object pool(reactivated)
+	/// </summary>
+	public virtual void OnCreate()
+	{
+	}
+
+
+
+	/// <summary>
+	/// Called when destroying the object from the pool.
+	/// </summary>
+	public virtual void OnDestroy()
+	{
 	}
 
 	#endregion rInit
@@ -101,7 +119,7 @@ public abstract class MGameObject : IMUpdate, IMDraw, IMBounds
 	public virtual void Kill()
 	{
 		// By default we just delete instantly.
-		GO().QueueDelete(this);
+		GO().Delete(this);
 	}
 
 	#endregion rUpdate

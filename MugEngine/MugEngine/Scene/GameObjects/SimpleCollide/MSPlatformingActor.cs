@@ -35,7 +35,7 @@ abstract public class MSPlatformingActor : MSPhysicalActor
 	/// <summary>
 	/// Create platfomer at position.
 	/// </summary>
-	public MSPlatformingActor(Vector2 position) : base(position)
+	public MSPlatformingActor()
 	{
 		mGravityStrength = DEFAULT_GRAVITY;
 		mInFastFall = false;

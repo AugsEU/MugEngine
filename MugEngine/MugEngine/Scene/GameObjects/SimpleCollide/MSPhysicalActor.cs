@@ -9,10 +9,6 @@ public abstract class MSPhysicalActor : MSActor
 	protected MCardDir mGravityDir = MCardDir.Down;
 	protected float mGravityStrength = 0.0f;
 
-	public MSPhysicalActor(Vector2 position) : base(position)
-	{
-	}
-
 	public override void Update(MUpdateInfo info)
 	{
 		mVelocity += mGravityDir.ToVec() * mGravityStrength * info.mDelta;

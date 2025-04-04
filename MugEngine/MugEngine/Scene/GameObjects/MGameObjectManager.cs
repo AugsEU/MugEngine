@@ -1,10 +1,12 @@
 ﻿namespace MugEngine.Scene
 {
-	public class MGameObjectManager : MComponent
+	public class MGameObjectManager : MComponent, IMSubclassFactory<MGameObject>
 	{
 		#region rMembers
 
-		MDelayChangeList<MGameObject> mObjects;
+		MObjectPool<MGameObject> mPooledObjects;
+		List<MGameObject> mObjects;
+		List<MGameObject> mUpdateList;
 		MLevel mLevel;
 
 		#endregion rMembers
@@ -20,7 +22,9 @@
 		/// </summary>
 		public MGameObjectManager()
 		{
-			mObjects = new MDelayChangeList<MGameObject>();
+			mPooledObjects = new MObjectPool<MGameObject>();
+			mObjects = new List<MGameObject>();
+			mUpdateList = new List<MGameObject>(1024);
 		}
 
 		#endregion rInit
@@ -38,12 +42,17 @@
 		{
 			mLevel?.Update(GetParent(), info);
 
-			for (int i = 0; i < mObjects.Count; i++)
+			// Copy over in case collection changes. @perf
+			mUpdateList.Clear();
+			foreach(MGameObject go in ActiveObjects())
 			{
-				mObjects[i].Update(info);
+				mUpdateList.Add(go);
 			}
 
-			mObjects.ProcessAddsDeletes();
+			foreach(MGameObject go in mUpdateList)
+			{
+				go.Update(info);
+			}
 		}
 
 		#endregion rUpdate
@@ -61,9 +70,9 @@
 		{
 			mLevel?.Draw(GetParent(), info);
 
-			for (int i = 0; i < mObjects.Count; i++)
+			foreach (MGameObject go in ActiveObjects())
 			{
-				mObjects[i].Draw(info);
+				go.Draw(info);
 			}
 		}
 
@@ -78,9 +87,16 @@
 		/// <summary>
 		/// Queue an object to be deleted at the end of the frame.
 		/// </summary>
-		public void QueueDelete(MGameObject go)
+		public void Delete(MGameObject go)
 		{
-			mObjects.Remove(go);
+			if (mObjects.Remove(go))
+			{
+				// Do nothing.
+			}
+			else
+			{
+				mPooledObjects.Destroy(go);
+			}
 		}
 
 
@@ -88,21 +104,9 @@
 		/// <summary>
 		/// Queue an object to be deleted at the end of the frame.
 		/// </summary>
-		public void QueueAdd(MGameObject go)
+		public T CreatePooled<T>() where T : MGameObject, new()
 		{
-			mObjects.Add(go);
-			go.SetScene(GetParent());
-			go.PostInitSetup();
-		}
-
-
-
-		/// <summary>
-		/// Make sure queued entites get added immediately.
-		/// </summary>
-		public void FlushQueues()
-		{
-			mObjects.ProcessAddsDeletes();
+			return mPooledObjects.GetFreshInstance<T>(this);
 		}
 
 
@@ -112,7 +116,43 @@
 		/// </summary>
 		public void ClearAllGameObjects()
 		{
-			mObjects.ForceClearAll();
+			mPooledObjects.Clear();
+			mObjects.Clear();
+		}
+
+
+
+		/// <summary>
+		/// Deletes all game objects. Doesn't clear out level.
+		/// </summary>
+		public void ClearPoolGameObjects()
+		{
+			mPooledObjects.Clear();
+		}
+
+
+
+		/// <summary>
+		/// Create a new gameobject subclass
+		/// </summary>
+		public U CreateNew<U>() where U : MGameObject, new()
+		{
+			U newGameObject = new();
+			newGameObject.SetScene(GetParent());
+			return newGameObject;
+		}
+
+
+
+		/// <summary>
+		/// Add game object to be updated.
+		/// </summary>
+		/// <param name="go"></param>
+		public void Add(MGameObject go)
+		{
+			mObjects.Add(go);
+			go.SetScene(GetParent());
+			go.PostInitSetup();
 		}
 
 		#endregion rUtil
@@ -124,30 +164,18 @@
 		#region rAccess
 
 		/// <summary>
-		/// Get number of game objects
-		/// </summary>
-		public int GetCount()
-		{
-			return mObjects.Count;
-		}
-
-
-
-		/// <summary>
-		/// Get a game object at index
-		/// </summary>
-		public MGameObject Get(int index)
-		{
-			return mObjects[index];
-		}
-
-
-
-		/// <summary>
 		/// Get iterator over active objects.
 		/// </summary>
 		public IEnumerable<MGameObject> ActiveObjects()
 		{
+			foreach(MGameObject go in mPooledObjects.GetEnumerator())
+			{
+				if (go.IsEnabled())
+				{
+					yield return go;
+				}
+			}
+
 			foreach(MGameObject go in mObjects)
 			{
 				if (go.IsEnabled())
@@ -164,9 +192,9 @@
 		/// </summary>
 		public IEnumerable<MGameObject> ActiveObjects(MLayerMask mask)
 		{
-			foreach (MGameObject go in mObjects)
+			foreach (MGameObject go in ActiveObjects())
 			{
-				if (go.IsEnabled() && go.InteractsWith(mask))
+				if (go.InteractsWith(mask))
 				{
 					yield return go;
 				}

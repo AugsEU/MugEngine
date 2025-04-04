@@ -5,7 +5,7 @@ namespace MugEngine.Library;
 /// <summary>
 /// Thing which can be added to an object pool.
 /// </summary>
-interface IMObjectPoolItem
+public interface IMObjectPoolItem
 {
 	/// <summary>
 	/// Called when "created in the pool"

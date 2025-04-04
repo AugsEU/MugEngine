@@ -13,15 +13,6 @@ namespace MugEngine.Scene;
 public abstract class MSSolid : MGameObject, IMCollisionQueryable
 {
 	/// <summary>
-	/// Create solid at position
-	/// </summary>
-	public MSSolid(Vector2 position) : base(position)
-	{
-	}
-
-
-
-	/// <summary>
 	/// Move by an amount, pushing actors along the way.
 	/// </summary>
 	public void Move(Vector2 delta)
