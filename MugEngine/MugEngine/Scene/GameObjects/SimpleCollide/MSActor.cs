@@ -14,6 +14,7 @@ public abstract class MSActor : MGameObject
 	// Since we move per-pixel, the cost of moving is O(n). We want to limit this.
 	const float MAX_MOVE = 10.0f;
 
+	protected CollisionFlags mCollisionFlags;
 
 
 	/// <summary>
@@ -116,7 +117,7 @@ public abstract class MSActor : MGameObject
 
 			if (other is MSSolid solid)
 			{
-				bool collides = solid.QueryCollides(bounds, dir);
+				bool collides = solid.QueryCollides(bounds, dir, mCollisionFlags);
 				if (collides)
 				{
 					Profiler.PopProfileZone();
@@ -125,7 +126,7 @@ public abstract class MSActor : MGameObject
 			}
 		}
 
-		bool? levelCollides = GO().GetLevel()?.QueryCollides(bounds, dir);
+		bool? levelCollides = GO().QueryLevelCollision(bounds, dir, mCollisionFlags);
 
 		Profiler.PopProfileZone();
 		return levelCollides.HasValue && levelCollides.Value;

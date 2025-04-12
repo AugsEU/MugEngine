@@ -318,14 +318,14 @@
 		/// <summary>
 		/// Query for collision with the level
 		/// </summary>
-		public bool QueryLevelCollision(Rectangle rect, MCardDir direction)
+		public bool QueryLevelCollision(Rectangle rect, MCardDir direction, CollisionFlags flags)
 		{
 			if (mLevel is null)
 			{
 				return false;
 			}
 
-			return mLevel.QueryCollides(rect, direction);
+			return mLevel.QueryCollides(rect, direction, flags);
 		}
 
 

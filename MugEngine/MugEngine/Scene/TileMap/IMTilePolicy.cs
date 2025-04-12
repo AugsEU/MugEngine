@@ -4,6 +4,6 @@
 	{
 		public string GetTileAnimPath(MTile tile, int param);
 
-		public bool QueryTileCollision(MTile tile, Rectangle tileRect, Rectangle objectRect, MCardDir objectTravelDir);
+		public bool QueryTileCollision(MTile tile, Rectangle tileRect, Rectangle objectRect, MCardDir objectTravelDir, CollisionFlags flags);
 	}
 }

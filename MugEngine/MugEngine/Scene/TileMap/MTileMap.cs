@@ -320,7 +320,7 @@ public class MTileMap<P> : IMCollisionQueryable, IMSceneUpdate, IMSceneDraw
 	/// <summary>
 	/// Does this collide?
 	/// </summary>
-	public bool QueryCollides(Rectangle bounds, MCardDir dir)
+	public bool QueryCollides(Rectangle bounds, MCardDir dir, CollisionFlags flags)
 	{
 		Rectangle tileBounds = PossibleIntersectTiles(bounds);
 
@@ -341,7 +341,7 @@ public class MTileMap<P> : IMCollisionQueryable, IMSceneUpdate, IMSceneDraw
 				tileRect.Y += (int)mBasePosition.Y;
 				//MugDebug.AddDebugRect(tileRect, Color.Red);
 
-				if (mPolicy.QueryTileCollision(tile, tileRect, bounds, dir))
+				if (mPolicy.QueryTileCollision(tile, tileRect, bounds, dir, flags))
 				{
 					return true;
 				}

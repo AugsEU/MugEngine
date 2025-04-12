@@ -46,7 +46,7 @@ public abstract class MSSolid : MGameObject, IMCollisionQueryable
 
 				foreach (MSActor actor in GO().GetInRect(xMovedRect).OfType<MSActor>())
 				{
-					if (QueryCollides(actor.BoundsRect(), dirX.Inverted()))
+					if (QueryCollides(actor.BoundsRect(), dirX.Inverted(), 0))
 					{
 						float moveDist = (float)GetPushDistance(xMovedRect, actor, dirX);
 						actor.MoveX(moveDist, true);
@@ -79,7 +79,7 @@ public abstract class MSSolid : MGameObject, IMCollisionQueryable
 
 				foreach (MSActor actor in GO().GetInRect(yMovedRect).OfType<MSActor>())
 				{
-					if (QueryCollides(actor.BoundsRect(), dirY.Inverted()))
+					if (QueryCollides(actor.BoundsRect(), dirY.Inverted(), 0))
 					{
 						float moveDist = (float)GetPushDistance(yMovedRect, actor, dirY);
 						actor.MoveY(moveDist, true);
@@ -112,7 +112,7 @@ public abstract class MSSolid : MGameObject, IMCollisionQueryable
 	/// <summary>
 	/// Query collides
 	/// </summary>
-	public virtual bool QueryCollides(Rectangle bounds, MCardDir travelDir)
+	public virtual bool QueryCollides(Rectangle bounds, MCardDir travelDir, CollisionFlags flags)
 	{
 		return BoundsRect().Intersects(bounds);
 	}

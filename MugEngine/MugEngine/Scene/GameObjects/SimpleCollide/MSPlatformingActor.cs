@@ -93,7 +93,7 @@ abstract public class MSPlatformingActor : MSPhysicalActor
 			Rectangle myShiftedBounds = BoundsRect();
 			myShiftedBounds.Location += mGravityDir.ToPoint();
 
-			if (solid.QueryCollides(myShiftedBounds, mGravityDir))
+			if (solid.QueryCollides(myShiftedBounds, mGravityDir, 0))
 			{
 				mOnlyStandingSolid = solid;
 				return true;
@@ -101,68 +101,6 @@ abstract public class MSPlatformingActor : MSPhysicalActor
 		}
 
 		return false;
-	}
-
-
-
-	/// <summary>
-	/// Check if we are on the ground.
-	/// Run only once per frame then cached.
-	/// </summary>
-	public bool GroundCheck()
-	{
-		if (GetVertSpeed() < 0.0f)
-		{
-			return false;
-		}
-
-		Rectangle myShiftedBounds = BoundsRect();
-		myShiftedBounds.Location += mGravityDir.ToPoint();
-
-		return CollidesWithAnySolid(myShiftedBounds, mGravityDir);
-	}
-
-
-
-	/// <summary>
-	/// Gets the
-	/// </summary>
-	/// <returns></returns>
-	public MWalkDir WallsCheck()
-	{
-		if (mWallSlideCache.HasValue)
-		{
-			return mWallSlideCache.Value;
-		}
-
-		Rectangle leftBounds = BoundsRect();
-		leftBounds.Location += (MWalkDir.Left).ToPoint(mGravityDir);
-
-		Rectangle rightBounds = BoundsRect();
-		rightBounds.Location += (MWalkDir.Right).ToPoint(mGravityDir);
-
-		bool leftCollide = CollidesWithAnySolid(leftBounds, MWalkDir.Left.ToCardDir(mGravityDir));
-		bool rightCollide = CollidesWithAnySolid(rightBounds, MWalkDir.Right.ToCardDir(mGravityDir));
-
-		MWalkDir result = MWalkDir.None;
-
-		if(leftCollide)
-		{
-#if DEBUG
-			if (rightCollide)
-			{
-				MugDebug.Warning("Unresolved wall check. Defaulting to left");
-			}
-#endif
-			result = MWalkDir.Left;
-		}
-		else if(rightCollide)
-		{
-			result = MWalkDir.Right;
-		}
-
-		mWallSlideCache = result;
-		return result;
 	}
 
 
@@ -373,12 +311,75 @@ abstract public class MSPlatformingActor : MSPhysicalActor
 		return mFacingDir;
 	}
 
+
+
+
+
+
+	/// <summary>
+	/// Check if we are on the ground.
+	/// Run only once per frame then cached.
+	/// </summary>
+	public bool GroundCheck()
+	{
+		if (GetVertSpeed() < 0.0f)
+		{
+			return false;
+		}
+
+		Rectangle myShiftedBounds = BoundsRect();
+		myShiftedBounds.Location += mGravityDir.ToPoint();
+
+		return CollidesWithAnySolid(myShiftedBounds, mGravityDir);
+	}
+
+
+
+	/// <summary>
+	/// Gets the
+	/// </summary>
+	/// <returns></returns>
+	public MWalkDir WallsCheck()
+	{
+		if (mWallSlideCache.HasValue)
+		{
+			return mWallSlideCache.Value;
+		}
+
+		MugDebug.Assert(mGravityDir == MCardDir.Down, "This assumes we are facing down");
+
+		Rectangle leftBounds = BoundsRect();
+		leftBounds.Location += (MWalkDir.Left).ToPoint(mGravityDir);
+		leftBounds.Height /= 4;
+
+		Rectangle rightBounds = BoundsRect();
+		rightBounds.Location += (MWalkDir.Right).ToPoint(mGravityDir);
+		rightBounds.Height /= 4;
+
+		bool leftCollide = CollidesWithAnySolid(leftBounds, MWalkDir.Left.ToCardDir(mGravityDir));
+		bool rightCollide = CollidesWithAnySolid(rightBounds, MWalkDir.Right.ToCardDir(mGravityDir));
+
+		MWalkDir result = MWalkDir.None;
+
+		if (leftCollide)
+		{
+#if DEBUG
+			if (rightCollide)
+			{
+				MugDebug.Warning("Unresolved wall check. Defaulting to left");
+			}
+#endif
+			result = MWalkDir.Left;
+		}
+		else if (rightCollide)
+		{
+			result = MWalkDir.Right;
+		}
+
+		mWallSlideCache = result;
+		return result;
+	}
+
 	#endregion rUtil
-
-
-
-
-
-
 }
 
