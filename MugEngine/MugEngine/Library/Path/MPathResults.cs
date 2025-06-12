@@ -8,11 +8,17 @@ public struct MPathResults<T> where T : class, IMGraphNode<T>
 	public Dictionary<T, T> mCameFrom;
 	public Dictionary<T, float> mDistances;
 
+
+	/// <summary>
+	/// Default path results.
+	/// </summary>
 	public MPathResults()
 	{
 		mCameFrom = new();
 		mDistances = new();
 	}
+
+
 
 	/// <summary>
 	/// Get the shortest distance of a node from the start nodes.

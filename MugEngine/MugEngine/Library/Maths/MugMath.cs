@@ -143,7 +143,7 @@
 		/// </summary>
 		public static int CmpLength(this Vector2 v, float l)
 		{
-			return v.LengthSquared().CompareTo(l);
+			return v.LengthSquared().CompareTo(l*l);
 		}
 
 		#endregion rVector
