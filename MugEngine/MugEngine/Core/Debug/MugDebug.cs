@@ -6,6 +6,7 @@
 #define USE_BUFFERED_LOG
 
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -13,14 +14,17 @@ namespace MugEngine.Core;
 
 public static class MugDebug
 {
-	struct DebugRect(Rectangle rect, Color color, bool perm)
+	struct DebugRect(Rectangle rect, Color color, bool perm, int layer)
 	{
 		public Rectangle mRectangle = rect;
 		public Color mColor = color;
 		public bool mPerm = perm;
+		public int mLayer = layer;
 	}
 
 	private static List<DebugRect> mDebugRectToDraw = new List<DebugRect>();
+	static Dictionary<int, bool> mDebugRectLayerShow = new();
+	static List<(int, string)> mDebugRectLayerNames = new();
 
 	static uint mLogLineNum = 0;
 
@@ -143,26 +147,111 @@ public static class MugDebug
 	}
 
 
-	public static void AddDebugRect(Rectangle rect, Color color, bool perm = false)
+
+	/// <summary>
+	/// Add a rectangle for debugging.
+	/// </summary>
+	public static void AddDebugRect(Rectangle rect, Color color, int layer, bool perm = false)
 	{
 #if DEBUG
-		mDebugRectToDraw.Add(new DebugRect(rect, color, perm));
+		mDebugRectToDraw.Add(new DebugRect(rect, color, perm, layer));
 #endif
 	}
 
-	public static void AddDebugPoint(Vector2 pos, Color color, bool perm = false)
+
+
+	/// <summary>
+	/// Add a dot for debugging.
+	/// </summary>
+	public static void AddDebugPoint(Vector2 pos, Color color, int layer, bool perm = false)
 	{
 #if DEBUG
-		AddDebugRect(new Rectangle(pos.ToPoint(), new Point(2, 2)), color, perm);
+		AddDebugRect(new Rectangle(pos.ToPoint(), new Point(2, 2)), color, layer, perm);
 #endif
 	}
 
+
+
+	/// <summary>
+	/// Clear debug rectangles on a specific layer.
+	/// </summary>
+	public static void ClearDebugRects(int layer)
+	{
+#if DEBUG
+		mDebugRectToDraw.RemoveAll(r => { return r.mLayer == layer; });
+#endif
+	}
+
+
+
+	/// <summary>
+	/// Set if the debug rect layer is visible or not.
+	/// </summary>
+	public static void SetDebugRectLayerVisible(int layer, bool visible)
+	{
+#if DEBUG
+		mDebugRectLayerShow[layer] = visible;
+#endif
+	}
+
+
+
+	/// <summary>
+	/// Set if the debug rect layer is visible or not.
+	/// </summary>
+	public static bool GetDebugRectLayerVisible(int layer)
+	{
+#if DEBUG
+		if (mDebugRectLayerShow.TryGetValue(layer, out bool vis))
+		{
+			return vis;
+		}
+
+		return true;
+#endif
+	}
+
+
+
+	/// <summary>
+	/// Set the name of a debug rect layer.
+	/// </summary>
+	public static void SetDebugRectLayerName(int layer, string name)
+	{
+#if DEBUG
+		mDebugRectLayerNames.Add((layer, name));
+#endif
+	}
+
+
+
+	/// <summary>
+	/// Get list of id-name pairs for debug layers.
+	/// </summary>
+	public static List<(int, string)> GetDebugRectLayerNames()
+	{
+		return mDebugRectLayerNames;
+	}
+
+
+	/// <summary>
+	/// Called once per frame to do debug stuff like printing.
+	/// </summary>
 	public static void FinalizeDebug(MDrawInfo info, int layer)
 	{
 #if DEBUG
 		foreach (DebugRect debugRect in mDebugRectToDraw)
 		{
-			info.mCanvas.DrawRect(debugRect.mRectangle, debugRect.mColor, layer);
+			bool visible = true;
+			if(mDebugRectLayerShow.TryGetValue(debugRect.mLayer, out bool dictVisible))
+			{
+				visible = dictVisible;
+			}
+
+			if(visible)
+			{
+				info.mCanvas.DrawRect(debugRect.mRectangle, debugRect.mColor, layer);
+			}
 		}
 		mDebugRectToDraw.RemoveAll(r => !r.mPerm);
 
@@ -170,6 +259,11 @@ public static class MugDebug
 #endif
 	}
 
+
+
+	/// <summary>
+	/// Write all buffered console messages.
+	/// </summary>
 	public static void FlushConsoleMessges()
 	{
 #if USE_BUFFERED_LOG

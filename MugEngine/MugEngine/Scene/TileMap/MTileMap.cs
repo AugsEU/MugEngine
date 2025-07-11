@@ -370,7 +370,7 @@ public class MTileMap<P> : IMCollisionQueryable, IMSceneUpdate, IMSceneDraw
 		max.Y /= mTileSize.Y;
 
 		Point rMin = new Point(Math.Max((int)min.X, 0), Math.Max((int)min.Y, 0));
-		Point rMax = new Point(Math.Min((int)MathF.Ceiling(max.X), mTileMap.GetLength(0) - 1), Math.Min((int)MathF.Ceiling(max.Y), mTileMap.GetLength(1) - 1));
+		Point rMax = new Point(Math.Min((int)MathF.Ceiling(max.X), mTileMap.GetLength(0)), Math.Min((int)MathF.Ceiling(max.Y), mTileMap.GetLength(1)));
 
 		return new Rectangle(rMin, rMax - rMin);
 	}

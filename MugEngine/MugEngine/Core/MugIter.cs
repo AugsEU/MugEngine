@@ -46,5 +46,33 @@ public static class MugIter
 
 		return null;
 	}
+
+
+
+	/// <summary>
+	/// Pick a random element from a subset of a list.
+	/// Default returned if none found.
+	/// </summary>
+	public static T RandomElementWhere<T>(this IList<T> list, Func<T, bool> predicate, MRandom rng = null)
+	{
+		T result = default;
+		int count = 0;
+
+		for (int i = 0; i < list.Count; i++)
+		{
+			T item = list[i];
+			if (predicate(item))
+			{
+				// With probability 1/count, replace the current result
+				if (count == 0 || rng.GetIntRange(0, count-1) == 0)
+				{
+					result = item;
+				}
+				count++;
+			}
+		}
+
+		return result;
+	}
 }
 
