@@ -14,7 +14,7 @@ public abstract class MSActor : MGameObject
 	// Since we move per-pixel, the cost of moving is O(n). We want to limit this.
 	const float MAX_MOVE = 10.0f;
 
-	protected CollisionFlags mCollisionFlags;
+	protected MCollisionFlags mCollisionFlags;
 
 
 	/// <summary>

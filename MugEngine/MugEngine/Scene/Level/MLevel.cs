@@ -17,7 +17,7 @@
 
 		public abstract void Update(MScene scene, MUpdateInfo info);
 
-		public abstract bool QueryCollides(Rectangle bounds, MCardDir travelDir, CollisionFlags flags);
+		public abstract bool QueryCollides(Rectangle bounds, MCardDir travelDir, MCollisionFlags flags);
 
 		public abstract void Draw(MScene scene, MDrawInfo info);
 	}

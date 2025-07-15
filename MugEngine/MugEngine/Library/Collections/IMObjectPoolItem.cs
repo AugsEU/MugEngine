@@ -10,12 +10,12 @@ public interface IMObjectPoolItem
 	/// <summary>
 	/// Called when "created in the pool"
 	/// </summary>
-	public void OnCreate();
+	public void OnPoolAdd();
 
 
 
 	/// <summary>
 	/// Called when "destroyed" in the object pool
 	/// </summary>
-	public void OnDestroy();
+	public void OnPoolRemove();
 }

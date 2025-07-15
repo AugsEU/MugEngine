@@ -63,7 +63,7 @@ internal class MPoolList<T> where T : class, IMObjectPoolItem
 			newItem = mItems[mItemCount];
 		}
 
-		newItem.OnCreate();
+		newItem.OnPoolAdd();
 		mItemCount += 1;
 
 		MugDebug.Assert(VerifyItemTypes(), "Mixed types in object pool. They should all be the same types.");
@@ -79,7 +79,7 @@ internal class MPoolList<T> where T : class, IMObjectPoolItem
 	public void Destroy(int index)
 	{
 		MugDebug.Assert(0 <= index && index < mItemCount, "Invalid index {0}", index);
-		mItems[index].OnDestroy();
+		mItems[index].OnPoolRemove();
 
 		if (index < mItemCount - 1)
 		{
@@ -104,7 +104,7 @@ internal class MPoolList<T> where T : class, IMObjectPoolItem
 		{
 			if (mItems[i] == item)
 			{
-				Destroy(item);
+				Destroy(i);
 				return;
 			}
 		}
@@ -121,7 +121,7 @@ internal class MPoolList<T> where T : class, IMObjectPoolItem
 	{
 		for (int i = 0; i < mItemCount; i++)
 		{
-			mItems[i].OnDestroy();
+			mItems[i].OnPoolRemove();
 		}
 
 		mItemCount = 0;

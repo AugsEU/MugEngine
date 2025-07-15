@@ -112,7 +112,7 @@ public abstract class MSSolid : MGameObject, IMCollisionQueryable
 	/// <summary>
 	/// Query collides
 	/// </summary>
-	public virtual bool QueryCollides(Rectangle bounds, MCardDir travelDir, CollisionFlags flags)
+	public virtual bool QueryCollides(Rectangle bounds, MCardDir travelDir, MCollisionFlags flags)
 	{
 		return BoundsRect().Intersects(bounds);
 	}

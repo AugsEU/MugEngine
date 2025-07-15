@@ -39,7 +39,7 @@ public abstract class MGameObject : IMUpdate, IMDraw, IMBounds, IMObjectPoolItem
 	/// <summary>
 	/// Called when added to the object pool(reactivated)
 	/// </summary>
-	public virtual void OnCreate()
+	public virtual void OnPoolAdd()
 	{
 	}
 
@@ -48,7 +48,7 @@ public abstract class MGameObject : IMUpdate, IMDraw, IMBounds, IMObjectPoolItem
 	/// <summary>
 	/// Called when destroying the object from the pool.
 	/// </summary>
-	public virtual void OnDestroy()
+	public virtual void OnPoolRemove()
 	{
 	}
 

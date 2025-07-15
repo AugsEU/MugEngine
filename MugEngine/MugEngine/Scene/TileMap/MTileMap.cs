@@ -320,7 +320,7 @@ public class MTileMap<P> : IMCollisionQueryable, IMSceneUpdate, IMSceneDraw
 	/// <summary>
 	/// Does this collide?
 	/// </summary>
-	public bool QueryCollides(Rectangle bounds, MCardDir dir, CollisionFlags flags)
+	public bool QueryCollides(Rectangle bounds, MCardDir dir, MCollisionFlags flags)
 	{
 		Rectangle tileBounds = PossibleIntersectTiles(bounds);
 

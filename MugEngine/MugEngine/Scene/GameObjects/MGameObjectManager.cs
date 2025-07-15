@@ -1,10 +1,10 @@
 ﻿namespace MugEngine.Scene
 {
-	public class MGameObjectManager : MComponent, IMSubclassFactory<MPooledGameObject>
+	public class MGameObjectManager : MComponent, IMSubclassFactory<MGameObject>
 	{
 		#region rMembers
 
-		MObjectPool<MPooledGameObject> mPooledObjects;
+		MObjectPool<MGameObject> mPooledObjects;
 		List<MGameObject> mObjects;
 		List<MGameObject> mUpdateList;
 		MLevel mLevel;
@@ -22,7 +22,7 @@
 		/// </summary>
 		public MGameObjectManager()
 		{
-			mPooledObjects = new MObjectPool<MPooledGameObject>();
+			mPooledObjects = new MObjectPool<MGameObject>();
 			mObjects = new List<MGameObject>();
 			mUpdateList = new List<MGameObject>(1024);
 		}
@@ -93,7 +93,7 @@
 			{
 				// Do nothing.
 			}
-			else if(go is MPooledGameObject pgo)
+			else if(go is MGameObject pgo)
 			{
 				mPooledObjects.Destroy(pgo);
 			}
@@ -104,7 +104,7 @@
 		/// <summary>
 		/// Queue an object to be deleted at the end of the frame.
 		/// </summary>
-		public T CreatePooled<T>() where T : MPooledGameObject, new()
+		public T CreatePooled<T>() where T : MGameObject, new()
 		{
 			return mPooledObjects.GetFreshInstance<T>(this);
 		}
@@ -135,7 +135,7 @@
 		/// <summary>
 		/// Create a new gameobject subclass
 		/// </summary>
-		public U CreateNew<U>() where U : MPooledGameObject, new()
+		public U CreateNew<U>() where U : MGameObject, new()
 		{
 			U newGameObject = new();
 			newGameObject.SetScene(GetParent());
@@ -318,7 +318,7 @@
 		/// <summary>
 		/// Query for collision with the level
 		/// </summary>
-		public bool QueryLevelCollision(Rectangle rect, MCardDir direction, CollisionFlags flags)
+		public bool QueryLevelCollision(Rectangle rect, MCardDir direction, MCollisionFlags flags)
 		{
 			if (mLevel is null)
 			{

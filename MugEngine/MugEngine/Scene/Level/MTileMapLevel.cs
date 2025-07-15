@@ -14,7 +14,7 @@
 			mTileMap.Update(scene, info);
 		}
 
-		public override bool QueryCollides(Rectangle bounds, MCardDir travelDir, CollisionFlags flags)
+		public override bool QueryCollides(Rectangle bounds, MCardDir travelDir, MCollisionFlags flags)
 		{
 			return mTileMap.QueryCollides(bounds, travelDir, flags);
 		}

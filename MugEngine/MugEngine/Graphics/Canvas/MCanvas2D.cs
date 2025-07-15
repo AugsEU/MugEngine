@@ -1,4 +1,5 @@
-﻿using TracyWrapper;
+﻿using Microsoft.Xna.Framework.Graphics;
+using TracyWrapper;
 
 namespace MugEngine.Graphics;
 
@@ -368,6 +369,43 @@ public class MCanvas2D : IMUpdate
 		mBatcher.Draw(texture, destRectangle, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GetDepth(layer));
 	}
 
+
+
+	/// <summary>
+	/// Simple texture draw at centre
+	/// </summary>
+	public void DrawTextureCentre(Texture2D texture, Vector2 position, int layer = 0)
+	{
+		position.X -= texture.Width;
+		position.Y -= texture.Height;
+		DrawTexture(texture, position, null, Color.White, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, layer);
+	}
+
+
+
+	/// <summary>
+	/// Draw a texture at centre position(with effect).
+	/// </summary>
+	public void DrawTextureCentre(Texture2D texture2D, Vector2 position, SpriteEffects effect, int layer = 0)
+	{
+		position.X -= texture2D.Width;
+		position.Y -= texture2D.Height;
+		DrawTexture(texture2D, position, null, Color.White, 0.0f, Vector2.Zero, Vector2.One, effect, layer);
+	}
+
+
+
+
+	/// <summary>
+	/// Draw a texture at centre position(with effect).
+	/// </summary>
+	public void DrawTextureCentre(Texture2D texture2D, Vector2 position, Vector2 scale, int layer = 0)
+	{
+		position.X -= texture2D.Width * scale.X;
+		position.Y -= texture2D.Height * scale.Y;
+		DrawTexture(texture2D, position, null, Color.White, 0.0f, Vector2.Zero, scale, SpriteEffects.None, layer);
+	}
+
 	#endregion rTexture
 
 
@@ -443,6 +481,43 @@ public class MCanvas2D : IMUpdate
 	public void DrawTexture(MTexturePart texture, Rectangle destRectangle, int layer)
 	{
 		mBatcher.Draw(texture.mTexture, destRectangle, texture.mUV, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GetDepth(layer));
+	}
+
+
+
+	/// <summary>
+	/// Simple texture draw at centre
+	/// </summary>
+	public void DrawTextureCentre(MTexturePart texture, Vector2 position, int layer = 0)
+	{
+		position.X -= texture.mUV.Width;
+		position.Y -= texture.mUV.Height;
+		DrawTexture(texture, position, layer);
+	}
+
+
+
+	/// <summary>
+	/// Draw a texture at centre position(with effect).
+	/// </summary>
+	public void DrawTextureCentre(MTexturePart texture, Vector2 position, SpriteEffects effect, int layer = 0)
+	{
+		position.X -= texture.mUV.Width;
+		position.Y -= texture.mUV.Height;
+		DrawTexture(texture, position, effect, layer);
+	}
+
+
+
+
+	/// <summary>
+	/// Draw a texture at centre position(with effect).
+	/// </summary>
+	public void DrawTextureCentre(MTexturePart texture, Vector2 position, Vector2 scale, int layer = 0)
+	{
+		position.X -= texture.mUV.Width * scale.X;
+		position.Y -= texture.mUV.Height * scale.Y;
+		DrawTexture(texture, position, scale, layer);
 	}
 
 	#endregion rTexture
