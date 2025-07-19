@@ -7,6 +7,7 @@
 		MInputHistory mHistory;
 		Dictionary<int, MButtonSet> mButtonBindings;
 		Dictionary<int, MInputAxis> mAxisBindings;
+		Dictionary<int, Vector2> mSpaceToCursorPos;
 
 		#endregion rMembers
 
@@ -22,6 +23,7 @@
 			mButtonBindings = new Dictionary<int, MButtonSet>();
 			mAxisBindings = new Dictionary<int, MInputAxis>();
 			mHistory = new MInputHistory(historySize);
+			mSpaceToCursorPos = new Dictionary<int, Vector2>();
 		}
 
 
@@ -129,6 +131,29 @@
 			return retVal;
 		}
 
+
+
+		/// <summary>
+		/// Get the mouse position within a coord space.
+		/// </summary>
+		public Vector2 GetMousePosition(int spaceId)
+		{
+			if (mSpaceToCursorPos.TryGetValue(spaceId, out Vector2 pos))
+			{
+				return pos;
+			}
+
+			return Vector2.Zero;
+		}
+
+
+		/// <summary>
+		/// Update the mouse position.
+		/// </summary>
+		public void UpdateMousePosition(int spaceId, Vector2 pos)
+		{
+			mSpaceToCursorPos[spaceId] = pos;
+		}
 		#endregion rUtil
 	}
 }

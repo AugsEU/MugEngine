@@ -1,4 +1,6 @@
-﻿namespace MugEngine.Input
+﻿using Microsoft.Xna.Framework.Input;
+
+namespace MugEngine.Input
 {
 	/// <summary>
 	/// All the data for a single frame of inputs
@@ -10,7 +12,10 @@
 		public KeyboardState mKeyboardState;
 		public MouseState mMouseState;
 
-		public GamePadState[] mGamepadStates;
+		public GamePadState mGamepadState0; // As 4 values to avoid garbage creation.
+		public GamePadState mGamepadState1;
+		public GamePadState mGamepadState2;
+		public GamePadState mGamepadState3;
 
 		public TimeSpan mTimeStamp;
 
@@ -26,11 +31,10 @@
 
 			int numGamepads = GamePad.MaximumGamePadCount;
 
-			mGamepadStates = new GamePadState[numGamepads];
-			for (int i = 0; i < numGamepads; i++)
-			{
-				mGamepadStates[i] = GamePad.GetState(i);
-			}
+			mGamepadState0 = GamePad.GetState(0);
+			mGamepadState1 = GamePad.GetState(1);
+			mGamepadState2 = GamePad.GetState(2);
+			mGamepadState3 = GamePad.GetState(3);
 		}
 
 
@@ -43,12 +47,47 @@
 			mKeyboardState = new KeyboardState();
 			mMouseState = new MouseState();
 
-			int numGamepads = GamePad.MaximumGamePadCount;
-			mGamepadStates = new GamePadState[numGamepads];
-			for (int i = 0; i < numGamepads; i++)
+			mGamepadState0 = GamePad.GetState(0);
+			mGamepadState1 = GamePad.GetState(1);
+			mGamepadState2 = GamePad.GetState(2);
+			mGamepadState3 = GamePad.GetState(3);
+		}
+
+
+
+		/// <summary>
+		/// Enumerate over gamepad states
+		/// </summary>
+		public IEnumerable<GamePadState> EnumerateGamepads()
+		{
+			yield return mGamepadState0;
+			yield return mGamepadState1;
+			yield return mGamepadState2;
+			yield return mGamepadState3;
+		}
+
+
+
+		/// <summary>
+		/// Get a gamepad state by index
+		/// </summary>
+		public GamePadState GetGamePadState(int idx)
+		{
+			switch (idx)
 			{
-				mGamepadStates[i] = GamePadState.Default;
+				case 0:
+					return mGamepadState0;
+				case 1: 
+					return mGamepadState1;
+				case 2: 
+					return mGamepadState2;
+				case 3: 
+					return mGamepadState3;
+				default:
+					break;
 			}
+
+			throw new IndexOutOfRangeException();
 		}
 	}
 }

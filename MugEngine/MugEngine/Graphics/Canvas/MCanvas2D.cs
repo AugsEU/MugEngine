@@ -227,6 +227,16 @@ public class MCanvas2D : IMUpdate
 		return layer * mDivLayerCount;
 	}
 
+
+
+	/// <summary>
+	/// Convert a screen space coord to world space.
+	/// </summary>
+	public Vector2 ScreenSpaceToWorldSpace(Vector2 screenSpace)
+	{
+		return Vector2.Transform(screenSpace, Matrix.Invert(mCamMatrixCache));
+	}
+
 	#endregion rUtil
 
 
@@ -490,8 +500,8 @@ public class MCanvas2D : IMUpdate
 	/// </summary>
 	public void DrawTextureCentre(MTexturePart texture, Vector2 position, int layer = 0)
 	{
-		position.X -= texture.mUV.Width;
-		position.Y -= texture.mUV.Height;
+		position.X -= texture.mUV.Width / 2;
+		position.Y -= texture.mUV.Height / 2;
 		DrawTexture(texture, position, layer);
 	}
 

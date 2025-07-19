@@ -93,9 +93,9 @@
 			{
 				// Do nothing.
 			}
-			else if(go is MGameObject pgo)
+			else
 			{
-				mPooledObjects.Destroy(pgo);
+				mPooledObjects.Destroy(go);
 			}
 		}
 

@@ -151,7 +151,7 @@ public static class MugDebug
 	/// <summary>
 	/// Add a rectangle for debugging.
 	/// </summary>
-	public static void AddDebugRect(Rectangle rect, Color color, int layer, bool perm = false)
+	public static void AddDebugRect(Rectangle rect, Color color, int layer = 0, bool perm = false)
 	{
 #if DEBUG
 		mDebugRectToDraw.Add(new DebugRect(rect, color, perm, layer));
@@ -163,7 +163,7 @@ public static class MugDebug
 	/// <summary>
 	/// Add a dot for debugging.
 	/// </summary>
-	public static void AddDebugPoint(Vector2 pos, Color color, int layer, bool perm = false)
+	public static void AddDebugPoint(Vector2 pos, Color color, int layer = 0, bool perm = false)
 	{
 #if DEBUG
 		AddDebugRect(new Rectangle(pos.ToPoint(), new Point(2, 2)), color, layer, perm);

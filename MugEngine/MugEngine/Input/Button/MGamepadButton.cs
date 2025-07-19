@@ -19,7 +19,7 @@
 				padIdx = MugInput.I.GetMainGamepadIdx();
 			}
 
-			return inputSnapshot.mGamepadStates[padIdx].IsButtonDown(mButton);
+			return inputSnapshot.GetGamePadState(padIdx).IsButtonDown(mButton);
 		}
 	}
 }

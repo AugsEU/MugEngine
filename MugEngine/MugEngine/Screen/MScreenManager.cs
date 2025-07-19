@@ -118,6 +118,12 @@
 
 			Rectangle destBounds = GetDestScreenBounds(backBuffer, finalFrame);
 
+			Point mouseWindowPoint = MugInput.I.GetCurrState().mMouseState.Position - destBounds.Location;
+			Vector2 mouseScreenPos = mouseWindowPoint.ToVector2();
+			mouseScreenPos.X *= ((float)finalFrame.Width / (float)destBounds.Width);
+			mouseScreenPos.Y *= ((float)finalFrame.Height / (float)destBounds.Height);
+			MugInput.I.UpdateMousePosition(0, mouseScreenPos);
+
 			// Draw the frame
 			MDrawInfo canvasInfo = info.mCanvas.BeginDraw(info.mDelta);
 

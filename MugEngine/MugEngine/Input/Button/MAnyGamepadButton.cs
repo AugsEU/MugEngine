@@ -15,9 +15,9 @@
 
 		public override bool IsPressed(ref MInputSnapshot inputSnapshot)
 		{
-			for (int i = 0; i < inputSnapshot.mGamepadStates.Length; i++)
+			foreach(GamePadState gamePadState in inputSnapshot.EnumerateGamepads())
 			{
-				if (inputSnapshot.mGamepadStates[i].IsButtonDown(mButton))
+				if (gamePadState.IsButtonDown(mButton))
 				{
 					return true;
 				}
