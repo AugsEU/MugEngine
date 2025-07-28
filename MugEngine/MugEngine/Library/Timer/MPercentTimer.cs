@@ -90,6 +90,26 @@
 			mElapsedTime = mTotalTime * timePercent;
 		}
 
+
+
+		/// <summary>
+		/// Get the "goal" amount of time.
+		/// </summary>
+		public float GetTotalTime()
+		{
+			return mTotalTime;
+		}
+
+
+
+		/// <summary>
+		/// Get remaining time until complete
+		/// </summary>
+		public float GetRemainingTime()
+		{
+			return (mTotalTime - mElapsedTime);
+		}
+
 		#endregion rUtility
 	}
 }

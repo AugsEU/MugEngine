@@ -242,7 +242,7 @@ public static class MugDebug
 #if DEBUG
 		foreach (DebugRect debugRect in mDebugRectToDraw)
 		{
-			bool visible = true;
+			bool visible = false;
 			if(mDebugRectLayerShow.TryGetValue(debugRect.mLayer, out bool dictVisible))
 			{
 				visible = dictVisible;

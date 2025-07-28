@@ -481,6 +481,15 @@
 		}
 
 
+		/// <summary>
+		/// Create a rectangle from floating points
+		/// </summary>
+		public static Rectangle RectFromFloats(float x, float y, float w, float h)
+		{
+			return new Rectangle(Round(x), Round(y), Round(w), Round(h));
+		}
+
+
 
 		/// <summary>
 		/// Multiply point by scalar

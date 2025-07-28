@@ -2,7 +2,7 @@
 
 namespace MugEngine.Library;
 
-class MRollingVector2 : MRollingDeque<Vector2>
+public class MRollingVector2 : MRollingDeque<Vector2>
 {
 	public MRollingVector2(int maxSize) : base(maxSize)
 	{

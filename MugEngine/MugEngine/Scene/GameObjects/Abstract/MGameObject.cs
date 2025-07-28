@@ -74,7 +74,7 @@ public abstract class MGameObject : IMUpdate, IMDraw, IMBounds, IMObjectPoolItem
 	/// <summary>
 	/// Get the scene we are in.
 	/// </summary>
-	protected MScene Scene()
+	public MScene Scene()
 	{
 		return mScene;
 	}

@@ -206,13 +206,13 @@
 		/// <summary>
 		/// Get the first game object of a certain type.
 		/// </summary>
-		public MGameObject GetFirst<T>()
+		public T GetFirst<T>() where T : MGameObject
 		{
 			foreach (MGameObject go in ActiveObjects())
 			{
 				if (go.GetType() == typeof(T))
 				{
-					return go;
+					return go as T;
 				}
 			}
 

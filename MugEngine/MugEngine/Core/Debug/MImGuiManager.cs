@@ -56,6 +56,10 @@ public class MImGuiManager : MSingleton<MImGuiManager>, IMUpdate
 					if (ImGui.MenuItem(window.GetUniqueTitle(), null, showWindow))
 					{
 						window.Visible = !window.Visible; // Toggle window visibility
+						if(window.Visible)
+						{
+
+						}
 					}
 				}
 
