@@ -311,6 +311,17 @@ public abstract class MGameObject : IMUpdate, IMDraw, IMBounds, IMObjectPoolItem
 		mSize = size;
 	}
 
+	/// <summary>
+	/// Enumerate over other gameobjects touching this.
+	/// </summary>
+	public IEnumerable<MGameObject> GetTouching()
+	{
+		foreach(MGameObject obj in GO().GetInRect(BoundsRect()))
+		{
+			yield return obj;
+		}
+	}
+
 	#endregion rUtil
 }
 

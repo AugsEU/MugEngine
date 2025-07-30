@@ -1,11 +1,14 @@
-﻿namespace MugEngine.Core
+﻿using MugEngine.Tuner;
+using System.Text;
+
+namespace MugEngine.Core
 {
 	/// <summary>
 	/// Class that contains utilities for a game.
 	/// </summary>
 	public class MugMainGame : Game
 	{
-		#region rRegion
+		#region rMembers
 
 		static protected MugMainGame sSelf = null;
 
@@ -13,7 +16,7 @@
 		private Rectangle mPrevWindowedSize;
 		private MugEngineSettings mSettings;
 
-	#endregion rRegion
+		#endregion rMembers
 
 
 
@@ -57,7 +60,20 @@
 
 #if DEBUG
 			MImGuiManager.I.Init(this);
+			MImGuiManager.I.AddComponent(new MIGDebugInfo());
+			MImGuiManager.I.AddComponent(new MIGDebugRectWindow());
 #endif
+		}
+
+
+
+		/// <summary>
+		/// Init the tuner.
+		/// </summary>
+		protected void InitTuner<T>(T tuning, string tuneXmlPath) where T : struct
+		{
+			MTuner<T>.LoadValues(tuneXmlPath);
+			MImGuiManager.I.AddComponent(new MIGTunerWindow<T>(tuneXmlPath));
 		}
 
 		#endregion rInit
