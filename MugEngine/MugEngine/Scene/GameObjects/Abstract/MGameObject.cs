@@ -171,6 +171,16 @@ public abstract class MGameObject : IMUpdate, IMDraw, IMBounds, IMObjectPoolItem
 		return BoundsRect().Center.ToVector2();
 	}
 
+	/// <summary>
+	/// Set centre of mass
+	/// </summary>
+	public void SetCentreOfMass(Vector2 centre)
+	{
+		mPosition = centre;
+		mPosition.X -= mSize.X / 2;
+		mPosition.Y -= mSize.Y / 2;
+	}
+
 	#endregion rCollision
 
 

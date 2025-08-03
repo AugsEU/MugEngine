@@ -48,7 +48,7 @@ abstract public class MSPlatformingActor : MSPhysicalActor
 	/// </summary>
 	public override void PostInitSetup()
 	{
-		PushUntilOnGround();
+		//PushUntilOnGround();
 		base.PostInitSetup();
 	}
 
@@ -261,14 +261,14 @@ abstract public class MSPlatformingActor : MSPhysicalActor
 	/// React to solid.
 	/// </summary>
 	/// <param name="normal"></param>
-	public override void OnHitSolid(MCardDir normal)
+	public override void OnHitSolid(MSSolid solid, MCardDir normal)
 	{
 		if (normal == MCardDir.Up)
 		{
 			mVelocity.Y = 0;
 		}
 
-		base.OnHitSolid(normal);
+		base.OnHitSolid(solid, normal);
 	}
 
 
@@ -330,7 +330,7 @@ abstract public class MSPlatformingActor : MSPhysicalActor
 		Rectangle myShiftedBounds = BoundsRect();
 		myShiftedBounds.Location += mGravityDir.ToPoint();
 
-		return CollidesWithAnySolid(myShiftedBounds, mGravityDir);
+		return CollidesWithAnySolid(myShiftedBounds, mGravityDir).mHit;
 	}
 
 
@@ -356,8 +356,8 @@ abstract public class MSPlatformingActor : MSPhysicalActor
 		rightBounds.Location += (MWalkDir.Right).ToPoint(mGravityDir);
 		rightBounds.Height /= 4;
 
-		bool leftCollide = CollidesWithAnySolid(leftBounds, MWalkDir.Left.ToCardDir(mGravityDir));
-		bool rightCollide = CollidesWithAnySolid(rightBounds, MWalkDir.Right.ToCardDir(mGravityDir));
+		bool leftCollide = CollidesWithAnySolid(leftBounds, MWalkDir.Left.ToCardDir(mGravityDir)).mHit;
+		bool rightCollide = CollidesWithAnySolid(rightBounds, MWalkDir.Right.ToCardDir(mGravityDir)).mHit;
 
 		MWalkDir result = MWalkDir.None;
 

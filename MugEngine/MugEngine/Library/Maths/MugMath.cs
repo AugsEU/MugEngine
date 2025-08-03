@@ -55,6 +55,16 @@
 
 
 		/// <summary>
+		/// Vector 2 from angle.
+		/// </summary>
+		public static Vector2 FromAngle(float angle)
+		{
+			return Rotate(new Vector2(1.0f, 0.0f), angle);
+		}
+
+
+
+		/// <summary>
 		/// Lerp two vectors
 		/// </summary>
 		public static Vector2 Lerp(Vector2 p1, Vector2 p2, float t)

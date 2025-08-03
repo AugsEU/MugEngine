@@ -38,11 +38,12 @@ public abstract class MSActor : MGameObject
 				move -= sign;
 				mPosition.X += sign;
 
-				if (CollidesWithAnySolid(dir))
+				MSolidCollision col = CollidesWithAnySolid(dir);
+				if (col.mHit)
 				{
 					// Hit something, move back and do callback.
 					mPosition.X -= sign;
-					ResolveHitSolid(dir.Inverted(), isPush);
+					ResolveHitSolid(col.mSolid, dir.Inverted(), isPush);
 					return;
 				}
 			}
@@ -75,11 +76,12 @@ public abstract class MSActor : MGameObject
 				move -= sign;
 				mPosition.Y += sign;
 
-				if (CollidesWithAnySolid(dir))
+				MSolidCollision col = CollidesWithAnySolid(dir);
+				if (col.mHit)
 				{
 					// Hit something, move back and do callback.
 					mPosition.Y -= sign;
-					ResolveHitSolid(dir.Inverted(), isPush);
+					ResolveHitSolid(col.mSolid, dir.Inverted(), isPush);
 					return;
 				}
 			}
@@ -94,7 +96,7 @@ public abstract class MSActor : MGameObject
 	/// <summary>
 	/// Simple collision check.
 	/// </summary>
-	public bool CollidesWithAnySolid(MCardDir dir)
+	public MSolidCollision CollidesWithAnySolid(MCardDir dir)
 	{
 		return CollidesWithAnySolid(BoundsRect(), dir);
 	}
@@ -104,7 +106,7 @@ public abstract class MSActor : MGameObject
 	/// <summary>
 	/// Simple collision check.
 	/// </summary>
-	public bool CollidesWithAnySolid(Rectangle bounds, MCardDir dir)
+	protected MSolidCollision CollidesWithAnySolid(Rectangle bounds, MCardDir dir)
 	{
 		Profiler.PushProfileZone("SA Collide");
 
@@ -121,7 +123,7 @@ public abstract class MSActor : MGameObject
 				if (collides)
 				{
 					Profiler.PopProfileZone();
-					return true;
+					return MSolidCollision.HitSolid(solid);
 				}
 			}
 		}
@@ -129,7 +131,12 @@ public abstract class MSActor : MGameObject
 		bool? levelCollides = GO().QueryLevelCollision(bounds, dir, mCollisionFlags);
 
 		Profiler.PopProfileZone();
-		return levelCollides.HasValue && levelCollides.Value;
+		if(levelCollides.HasValue &&  levelCollides.Value)
+		{
+			return MSolidCollision.HitLevel();
+		}
+
+		return MSolidCollision.Empty();
 	}
 
 
@@ -137,15 +144,15 @@ public abstract class MSActor : MGameObject
 	/// <summary>
 	/// Dispatch hit solid event to relevent function
 	/// </summary>
-	void ResolveHitSolid(MCardDir normal, bool isPush)
+	void ResolveHitSolid(MSSolid solid, MCardDir normal, bool isPush)
 	{
 		if (isPush)
 		{
-			Squish(normal);
+			Squish(solid, normal);
 		}
 		else
 		{
-			OnHitSolid(normal);
+			OnHitSolid(solid, normal);
 		}
 	}
 
@@ -154,7 +161,7 @@ public abstract class MSActor : MGameObject
 	/// <summary>
 	/// Called every time a solid stops us from moving.
 	/// </summary>
-	public virtual void OnHitSolid(MCardDir normal)
+	public virtual void OnHitSolid(MSSolid solid, MCardDir normal)
 	{
 	}
 
@@ -164,7 +171,7 @@ public abstract class MSActor : MGameObject
 	/// Called every time something pushes us into a another solid.
 	/// Usually we should just die.
 	/// </summary>
-	public virtual void Squish(MCardDir normal)
+	public virtual void Squish(MSSolid solid, MCardDir normal)
 	{
 		Kill();
 	}
@@ -185,7 +192,7 @@ public abstract class MSActor : MGameObject
 	{
 		Vector2 originalPos = mPosition;
 		int i = 0;
-		while(CollidesWithAnySolid(dir))
+		while(CollidesWithAnySolid(dir).mHit)
 		{
 			if (i > maxIterations)
 			{
@@ -220,7 +227,7 @@ public abstract class MSActor : MGameObject
 			mPosition += dir.ToVec();
 			i++;
 
-			if (CollidesWithAnySolid(dir))
+			if (CollidesWithAnySolid(dir).mHit)
 			{
 				mPosition -= dir.ToVec();
 				break;
