@@ -87,6 +87,24 @@
 		}
 
 
+		/// <summary>
+		/// Stop all camera movement follow movement.
+		/// </summary>
+		public void ClearMovements(bool goToEnd)
+		{
+			if(goToEnd)
+			{
+				for (int i = 0; i < mMovements.Count; i++)
+				{
+					MCameraMovementPlayer movement = mMovements[i];
+					mCurrentSpec += movement.GetFinalDelta();
+				}
+			}
+
+			mMovements.Clear();
+		}
+
+
 
 		/// <summary>
 		/// Focus the camera on something.

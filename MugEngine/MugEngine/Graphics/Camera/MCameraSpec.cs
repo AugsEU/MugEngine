@@ -24,7 +24,7 @@
 			{
 				mPosition = a.mPosition + b.mPosition,
 				mRotation = a.mRotation + b.mRotation,
-				mZoom = a.mZoom + b.mZoom
+				mZoom = a.mZoom * b.mZoom
 			};
 		}
 	}
