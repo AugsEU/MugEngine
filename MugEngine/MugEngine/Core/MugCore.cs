@@ -3,6 +3,7 @@
 #endif
 
 using ImGuiNET;
+using System.Diagnostics;
 
 namespace MugEngine.Core;
 
@@ -13,6 +14,10 @@ public class MugCore : MSingleton<MugCore>
 	MugEngineSettings mSettings;
 	MCanvas2D mBackBufferCanvas;
 	GraphicsDeviceManager mGraphics;
+
+#if DEBUG
+	bool mShowImGui = true;
+#endif // DEBUG
 
 	#endregion rMembers
 
@@ -68,6 +73,10 @@ public class MugCore : MSingleton<MugCore>
 		MScreenManager.I.Update(info);
 
 #if IMGUI_ON
+		if(MugInput.I.DebugButtonPressed(Keys.F11))
+		{
+			mShowImGui = !mShowImGui;
+		}
 		MImGuiManager.I.Update(info);
 #endif
 
@@ -94,7 +103,10 @@ public class MugCore : MSingleton<MugCore>
 		MScreenManager.I.Draw(info);
 
 #if IMGUI_ON
-		MImGuiManager.I.RenderImGui(gameTime);
+		if (mShowImGui)
+		{
+			MImGuiManager.I.RenderImGui(gameTime);
+		}
 #endif
 	}
 

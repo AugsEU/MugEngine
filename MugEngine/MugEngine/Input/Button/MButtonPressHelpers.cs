@@ -92,5 +92,34 @@
 
 			throw new NotImplementedException();
 		}
+
+
+		/// <summary>
+		/// For debugging presses. Will always return false in release.
+		/// </summary>
+		public bool DebugButtonPressed(Keys key, int buffer = 1)
+		{
+#if DEBUG
+			MInputSnapshot snapShotNow = mHistory.SnapshotFromFrames(0);
+
+			if (snapShotNow.mKeyboardState.IsKeyDown(key))
+			{
+				for (int b = 0; b < buffer; b++)
+				{
+					MInputSnapshot snapShotBefore = mHistory.SnapshotFromFrames(b + 1);
+
+					if (!snapShotBefore.mKeyboardState.IsKeyDown(key))
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
+#else // DEBUG
+			return false;
+#endif // DEBUG
+
+		}
 	}
 }
