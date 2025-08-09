@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace MugEngine.Library;
 
@@ -19,7 +20,7 @@ public class MSelector<T> where T : class
 
 	public void Add<S>(S item) where S : T
 	{
-		mHandleToClasses.Add(MHandle<T>.From<S>(), item);
+		mHandleToClasses.Add(new MHandle<T>(item.GetType()), item);
 	}
 
 	public T GetCurr()
@@ -30,6 +31,14 @@ public class MSelector<T> where T : class
 	public MHandle<T> GetCurrHandle()
 	{
 		return mCurrHandle;
+	}
+
+	public IEnumerable<T> GetStates()
+	{
+		foreach(T type in mHandleToClasses.Values)
+		{
+			yield return type;
+		}
 	}
 
 	public void SetCurr(MHandle<T> newType)
