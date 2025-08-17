@@ -5,6 +5,16 @@
 	/// </summary>
 	public static class MugMath
 	{
+		#region rConstants
+
+		public const float SQRT_2 = 1.41421356237f;
+		public const float I_SQRT_2 = 0.70710678118f;
+
+		#endregion rConstants
+
+
+
+
 		#region rVector
 
 		/// <summary>
