@@ -56,26 +56,45 @@ public class MTileMap<P> : IMCollisionQueryable, IMSceneUpdate, IMSceneDraw
 	/// </summary>
 	private void CalculateTileAdjacency()
 	{
-		for (int x = 0; x < mTileMap.GetLength(0); x++)
+		int width = mTileMap.GetLength(0);
+		int height = mTileMap.GetLength(1);
+
+		for (int x = 0; x < width; x++)
 		{
-			for (int y = 0; y < mTileMap.GetLength(1); y++)
+			for (int y = 0; y < height; y++)
 			{
 				mTileMap[x, y].mAdjacency = MTileAdjacency.Ad0;
+				if(x == 0)
+				{
+					mTileMap[x, y].mAdjacency |= MTileAdjacency.Ad4;
+				}
+				if(y == 0)
+				{
+					mTileMap[x, y].mAdjacency |= MTileAdjacency.Ad8;
+				}
+				if(x == width-1)
+				{
+					mTileMap[x, y].mAdjacency |= MTileAdjacency.Ad6;
+				}
+				if (y == height - 1)
+				{
+					mTileMap[x, y].mAdjacency |= MTileAdjacency.Ad2;
+				}
 			}
 		}
 
-		for (int x = 0; x < mTileMap.GetLength(0); x++)
+		for (int x = 0; x < width; x++)
 		{
-			for (int y = 0; y < mTileMap.GetLength(1); y++)
+			for (int y = 0; y < height; y++)
 			{
-				if (x + 1 < mTileMap.GetLength(0))
+				if (x + 1 < width)
 				{
 					if (mTileMap[x, y].mType == mTileMap[x + 1, y].mType)
 					{
 						mTileMap[x, y].InformAdjacent(ref mTileMap[x + 1, y], MTileAdjacency.Ad6);
 					}
 
-					if (y + 1 < mTileMap.GetLength(1))
+					if (y + 1 < height)
 					{
 						if (mTileMap[x, y].mType == mTileMap[x + 1, y + 1].mType)
 						{
@@ -93,7 +112,7 @@ public class MTileMap<P> : IMCollisionQueryable, IMSceneUpdate, IMSceneDraw
 
 				}
 
-				if (y + 1 < mTileMap.GetLength(1))
+				if (y + 1 < height)
 				{
 					if (mTileMap[x, y].mType == mTileMap[x, y + 1].mType)
 					{
@@ -250,7 +269,10 @@ public class MTileMap<P> : IMCollisionQueryable, IMSceneUpdate, IMSceneDraw
 				TileTexDrawInfo tileDrawInfo = GetTileDrawInfo(tile, animOffset);
 				Rectangle sourceRectangle = new Rectangle(tileDrawInfo.mTexturePart.mUV.Location + tileDrawInfo.mTileIndex * mTileSize, mTileSize);
 
-				info.mCanvas.DrawTexture(tileDrawInfo.mTexturePart.mTexture, tilePos, sourceRectangle, Color.White, tileDrawInfo.mRotation, Vector2.Zero, 1.0f, tileDrawInfo.mEffect, drawDepth);
+				info.mCanvas.DrawTexture(tileDrawInfo.mTexturePart.mTexture, tilePos, drawDepth, 
+					srcRect: sourceRectangle, 
+					rot: tileDrawInfo.mRotation, 
+					effect: tileDrawInfo.mEffect);
 			}
 		}
 

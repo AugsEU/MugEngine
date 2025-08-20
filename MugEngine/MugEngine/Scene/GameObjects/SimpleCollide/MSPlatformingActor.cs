@@ -246,7 +246,7 @@ abstract public class MSPlatformingActor : MSPhysicalActor
 
 		SpriteEffects spriteFlip = mFacingDir == MWalkDir.Right ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-		info.mCanvas.DrawTexture(texture, texTopLeft, spriteFlip, layer);
+		info.mCanvas.DrawTexture(texture, texTopLeft, layer, effect: spriteFlip);
 	}
 
 	#endregion rDraw

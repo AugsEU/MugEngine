@@ -220,6 +220,23 @@ public class MCanvas2D : IMUpdate
 
 
 	/// <summary>
+	/// Get depth float between 0 and 1 for d layers.
+	/// </summary>
+	float GetDDepth(int layer, float depth)
+	{
+		mLayerOffset += LAYER_INCREMENT;
+		float depthOffset = MugMath.SquashToRange(depth + mLayerOffset, -0.5f, 0.5f) * mDivLayerCount;
+		float result = layer * mDivLayerCount + 0.5f + depthOffset;
+
+		MugDebug.Assert(mLayerOffset < mDivLayerCount, "Too many objects have been drawn!");
+		MugDebug.Assert(0.0f < result && result < 1.0f, "Layer outside of clip bounds.");
+
+		return result;
+	}
+
+
+
+	/// <summary>
 	/// Get z-depth from layer.
 	/// </summary>
 	public float GetBaseDepth(int layer)
@@ -290,11 +307,14 @@ public class MCanvas2D : IMUpdate
 	#region rTexture
 
 	/// <summary>
-	/// Draw a texture to the canvas
+	/// Draw a texture to the canvas. Vector scaling
 	/// </summary>
-	public void DrawTexture(Texture2D texture, Vector2 position, Rectangle? sourceRect, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effect, int layer)
+	public void DrawTextureVs(Texture2D texture, Vector2 pos, int layer, Rectangle? srcRect = null, Color? color = null, float rot = 0.0f, Vector2? origin = null, Vector2? scale = null, SpriteEffects effect = SpriteEffects.None)
 	{
-		mBatcher.Draw(texture, position, sourceRect, color, rotation, origin, scale, effect, GetDepth(layer));
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		Vector2 drawScale = scale ?? Vector2.One;
+		mBatcher.Draw(texture, pos, srcRect, drawColor, rot, drawOrigin, drawScale, effect, GetDepth(layer));
 	}
 
 
@@ -302,9 +322,11 @@ public class MCanvas2D : IMUpdate
 	/// <summary>
 	/// Draw a texture to the canvas
 	/// </summary>
-	public void DrawTexture(Texture2D texture, Vector2 position, Rectangle? sourceRect, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effect, int layer)
+	public void DrawTexture(Texture2D texture, Vector2 pos, int layer, Rectangle? srcRect = null, Color? color = null, float rot = 0.0f, Vector2? origin = null, float scale = 1.0f, SpriteEffects effect = SpriteEffects.None)
 	{
-		mBatcher.Draw(texture, position, sourceRect, color, rotation, origin, scale, effect, GetDepth(layer));
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		mBatcher.Draw(texture, pos, srcRect, drawColor, rot, drawOrigin, scale, effect, GetDepth(layer));
 	}
 
 
@@ -312,9 +334,11 @@ public class MCanvas2D : IMUpdate
 	/// <summary>
 	/// Draw a texture to the canvas
 	/// </summary>
-	public void DrawTexture(Texture2D texture, Vector2 position, Rectangle? sourceRect, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effect, float depth)
+	public void DrawTexture(Texture2D texture, Vector2 pos, float depth, Rectangle? srcRect = null, Color? color = null, float rot = 0.0f, Vector2? origin = null, float scale = 1.0f, SpriteEffects effect = SpriteEffects.None)
 	{
-		mBatcher.Draw(texture, position, sourceRect, color, rotation, origin, scale, effect, depth);
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		mBatcher.Draw(texture, pos, srcRect, drawColor, rot, drawOrigin, scale, effect, depth);
 	}
 
 
@@ -322,61 +346,11 @@ public class MCanvas2D : IMUpdate
 	/// <summary>
 	/// Draw a texture to the canvas
 	/// </summary>
-	public void DrawTexture(Texture2D texture, Rectangle destRectangle, Rectangle? sourceRect, Color color, float rotation, Vector2 origin, SpriteEffects effect, int layer)
+	public void DrawTexture(Texture2D texture, Rectangle destRect, int layer, Rectangle? srcRect = null, Color? color = null, float rot = 0.0f, Vector2? origin = null, SpriteEffects effect = SpriteEffects.None)
 	{
-		mBatcher.Draw(texture, destRectangle, sourceRect, color, rotation, origin, effect, GetDepth(layer));
-	}
-
-
-
-	/// <summary>
-	/// Simple texture draw
-	/// </summary>
-	public void DrawTexture(Texture2D texture, Vector2 position, int layer = 0)
-	{
-		DrawTexture(texture, position, null, Color.White, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, layer);
-	}
-
-
-
-	/// <summary>
-	/// Draw a texture at position(with effect).
-	/// </summary>
-	public void DrawTexture(Texture2D texture2D, Vector2 position, SpriteEffects effect, int layer = 0)
-	{
-		DrawTexture(texture2D, position, null, Color.White, 0.0f, Vector2.Zero, Vector2.One, effect, layer);
-	}
-
-
-
-
-	/// <summary>
-	/// Draw a texture at position(with effect).
-	/// </summary>
-	public void DrawTexture(Texture2D texture2D, Vector2 position, Vector2 scale, int layer = 0)
-	{
-		DrawTexture(texture2D, position, null, Color.White, 0.0f, Vector2.Zero, scale, SpriteEffects.None, layer);
-	}
-
-
-
-	/// <summary>
-	/// Simple texture draw
-	/// </summary>
-	public void DrawTexture(Texture2D texture, Vector2 position, Color color, int layer = 0)
-	{
-		DrawTexture(texture, position, null, color, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, layer);
-	}
-
-
-
-
-	/// <summary>
-	/// Draw a texture to the canvas
-	/// </summary>
-	public void DrawTexture(Texture2D texture, Rectangle destRectangle, int layer)
-	{
-		mBatcher.Draw(texture, destRectangle, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GetDepth(layer));
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		mBatcher.Draw(texture, destRect, srcRect, drawColor, rot, drawOrigin, effect, GetDepth(layer));
 	}
 
 
@@ -384,36 +358,11 @@ public class MCanvas2D : IMUpdate
 	/// <summary>
 	/// Simple texture draw at centre
 	/// </summary>
-	public void DrawTextureCentre(Texture2D texture, Vector2 position, int layer = 0)
+	public void DrawTexture(Texture2D texture, MAnchorVector2 pos, int layer, Rectangle? srcRect = null, Color? color = null, float rot = 0.0f, Vector2? origin = null, float scale = 1.0f, SpriteEffects effect = SpriteEffects.None)
 	{
-		position.X -= texture.Width;
-		position.Y -= texture.Height;
-		DrawTexture(texture, position, null, Color.White, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, layer);
-	}
-
-
-
-	/// <summary>
-	/// Draw a texture at centre position(with effect).
-	/// </summary>
-	public void DrawTextureCentre(Texture2D texture2D, Vector2 position, SpriteEffects effect, int layer = 0)
-	{
-		position.X -= texture2D.Width;
-		position.Y -= texture2D.Height;
-		DrawTexture(texture2D, position, null, Color.White, 0.0f, Vector2.Zero, Vector2.One, effect, layer);
-	}
-
-
-
-
-	/// <summary>
-	/// Draw a texture at centre position(with effect).
-	/// </summary>
-	public void DrawTextureCentre(Texture2D texture2D, Vector2 position, Vector2 scale, int layer = 0)
-	{
-		position.X -= texture2D.Width * scale.X;
-		position.Y -= texture2D.Height * scale.Y;
-		DrawTexture(texture2D, position, null, Color.White, 0.0f, Vector2.Zero, scale, SpriteEffects.None, layer);
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		mBatcher.Draw(texture, pos.ToVec(new Point(texture.Width, texture.Height)), srcRect, drawColor, rot, drawOrigin, scale, effect, GetDepth(layer));
 	}
 
 	#endregion rTexture
@@ -424,11 +373,14 @@ public class MCanvas2D : IMUpdate
 	#region rTexturePart
 
 	/// <summary>
-	/// Draw a texture part to the canvas
+	/// Draw a texture to the canvas. Vector scale
 	/// </summary>
-	public void DrawTexture(MTexturePart texture, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effect, int layer)
+	public void DrawTextureVs(MTexturePart texture, Vector2 pos, int layer, Color? color = null, float rot = 0.0f, Vector2? origin = null, Vector2? scale = null, SpriteEffects effect = SpriteEffects.None)
 	{
-		mBatcher.Draw(texture.mTexture, position, texture.mUV, color, rotation, origin, scale, effect, GetDepth(layer));
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		Vector2 drawScale = scale ?? Vector2.One;
+		mBatcher.Draw(texture.mTexture, pos, texture.mUV, drawColor, rot, drawOrigin, drawScale, effect, GetDepth(layer));
 	}
 
 
@@ -436,61 +388,90 @@ public class MCanvas2D : IMUpdate
 	/// <summary>
 	/// Draw a texture to the canvas
 	/// </summary>
-	public void DrawTexture(MTexturePart texture, Rectangle destRectangle, Color color, float rotation, Vector2 origin, SpriteEffects effect, int layer)
+	public void DrawTexture(MTexturePart texture, Vector2 pos, int layer, Color? color = null, float rot = 0.0f, Vector2? origin = null, float scale = 1.0f, SpriteEffects effect = SpriteEffects.None)
 	{
-		mBatcher.Draw(texture.mTexture, destRectangle, texture.mUV, color, rotation, origin, effect, GetDepth(layer));
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		mBatcher.Draw(texture.mTexture, pos, texture.mUV, drawColor, rot, drawOrigin, scale, effect, GetDepth(layer));
 	}
-
-
-
-	/// <summary>
-	/// Simple texture draw
-	/// </summary>
-	public void DrawTexture(MTexturePart texture, Vector2 position, int layer = 0)
-	{
-		mBatcher.Draw(texture.mTexture, position, texture.mUV, Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, GetDepth(layer));
-	}
-
-
-
-	/// <summary>
-	/// Draw a texture at position(with effect).
-	/// </summary>
-	public void DrawTexture(MTexturePart texture, Vector2 position, SpriteEffects effect, int layer = 0)
-	{
-		DrawTexture(texture, position, Color.White, 0.0f, Vector2.Zero, Vector2.One, effect, layer);
-	}
-
-
-
-
-	/// <summary>
-	/// Draw a texture at position(with effect).
-	/// </summary>
-	public void DrawTexture(MTexturePart texture, Vector2 position, Vector2 scale, int layer = 0)
-	{
-		DrawTexture(texture, position, Color.White, 0.0f, Vector2.Zero, scale, SpriteEffects.None, layer);
-	}
-
-
-
-	/// <summary>
-	/// Simple texture draw
-	/// </summary>
-	public void DrawTexture(MTexturePart texture, Vector2 position, Color color, int layer = 0)
-	{
-		DrawTexture(texture, position, color, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, layer);
-	}
-
 
 
 
 	/// <summary>
 	/// Draw a texture to the canvas
 	/// </summary>
-	public void DrawTexture(MTexturePart texture, Rectangle destRectangle, int layer)
+	public void DrawTexture(MTexturePart texture, Vector2 pos, float depth, Color? color = null, float rot = 0.0f, Vector2? origin = null, float scale = 1.0f, SpriteEffects effect = SpriteEffects.None)
 	{
-		mBatcher.Draw(texture.mTexture, destRectangle, texture.mUV, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, GetDepth(layer));
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		mBatcher.Draw(texture.mTexture, pos, texture.mUV, drawColor, rot, drawOrigin, scale, effect, depth);
+	}
+
+
+
+	/// <summary>
+	/// Draw a texture to the canvas
+	/// </summary>
+	public void DrawTexture(MTexturePart texture, Rectangle destRect, int layer, Color? color = null, float rot = 0.0f, Vector2? origin = null, SpriteEffects effect = SpriteEffects.None)
+	{
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		mBatcher.Draw(texture.mTexture, destRect, texture.mUV, drawColor, rot, drawOrigin, effect, GetDepth(layer));
+	}
+
+
+
+	/// <summary>
+	/// Draw a texture to the canvas.
+	/// </summary>
+	public void DrawTexture(MTexturePart texture, MAnchorVector2 pos, int layer, Color? color = null, float rot = 0.0f, Vector2? origin = null, float scale = 1.0f, SpriteEffects effect = SpriteEffects.None)
+	{
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		Texture2D tex = texture.mTexture;
+		mBatcher.Draw(tex, pos.ToVec(new Point(tex.Width, tex.Height)), texture.mUV, drawColor, rot, drawOrigin, scale, effect, GetDepth(layer));
+	}
+
+	#endregion rTexturePart
+
+
+
+
+	#region rDTexture
+
+	/// <summary>
+	/// Draw a texture to the canvas. Vector scaling
+	/// </summary>
+	public void DDrawTextureVs(Texture2D texture, Vector2 pos, int layer, float depth, Rectangle? srcRect = null, Color? color = null, float rot = 0.0f, Vector2? origin = null, Vector2? scale = null, SpriteEffects effect = SpriteEffects.None)
+	{
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		Vector2 drawScale = scale ?? Vector2.One;
+		mBatcher.Draw(texture, pos, srcRect, drawColor, rot, drawOrigin, drawScale, effect, GetDDepth(layer, depth));
+	}
+
+
+
+	/// <summary>
+	/// Draw a texture to the canvas
+	/// </summary>
+	public void DDrawTexture(Texture2D texture, Vector2 pos, int layer, float depth, Rectangle? srcRect = null, Color? color = null, float rot = 0.0f, Vector2? origin = null, float scale = 1.0f, SpriteEffects effect = SpriteEffects.None)
+	{
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		mBatcher.Draw(texture, pos, srcRect, drawColor, rot, drawOrigin, scale, effect, GetDDepth(layer, depth));
+	}
+
+
+
+	/// <summary>
+	/// Draw a texture to the canvas
+	/// </summary>
+	public void DDrawTexture(Texture2D texture, Rectangle destRect, int layer, float depth, Rectangle? srcRect = null, Color? color = null, float rot = 0.0f, Vector2? origin = null, SpriteEffects effect = SpriteEffects.None)
+	{
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		mBatcher.Draw(texture, destRect, srcRect, drawColor, rot, drawOrigin, effect, GetDDepth(layer, depth));
 	}
 
 
@@ -498,41 +479,69 @@ public class MCanvas2D : IMUpdate
 	/// <summary>
 	/// Simple texture draw at centre
 	/// </summary>
-	public void DrawTextureCentre(MTexturePart texture, Vector2 position, int layer = 0)
+	public void DDrawTexture(Texture2D texture, MAnchorVector2 pos, int layer, float depth, Rectangle? srcRect = null, Color? color = null, float rot = 0.0f, Vector2? origin = null, float scale = 1.0f, SpriteEffects effect = SpriteEffects.None)
 	{
-		position.X -= texture.mUV.Width / 2;
-		position.Y -= texture.mUV.Height / 2;
-		DrawTexture(texture, position, layer);
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		mBatcher.Draw(texture, pos.ToVec(new Point(texture.Width, texture.Height)), srcRect, drawColor, rot, drawOrigin, scale, effect, GetDDepth(layer, depth));
+	}
+
+	#endregion rDTexture
+
+
+
+
+	#region rDTexturePart
+
+	/// <summary>
+	/// Draw a texture to the canvas. Vector scale
+	/// </summary>
+	public void DDrawTextureVs(MTexturePart texture, Vector2 pos, int layer, float depth, Color? color = null, float rot = 0.0f, Vector2? origin = null, Vector2? scale = null, SpriteEffects effect = SpriteEffects.None)
+	{
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		Vector2 drawScale = scale ?? Vector2.One;
+		mBatcher.Draw(texture.mTexture, pos, texture.mUV, drawColor, rot, drawOrigin, drawScale, effect, GetDDepth(layer, depth));
 	}
 
 
 
 	/// <summary>
-	/// Draw a texture at centre position(with effect).
+	/// Draw a texture to the canvas
 	/// </summary>
-	public void DrawTextureCentre(MTexturePart texture, Vector2 position, SpriteEffects effect, int layer = 0)
+	public void DDrawTexture(MTexturePart texture, Vector2 pos, int layer, float depth, Color? color = null, float rot = 0.0f, Vector2? origin = null, float scale = 1.0f, SpriteEffects effect = SpriteEffects.None)
 	{
-		position.X -= texture.mUV.Width;
-		position.Y -= texture.mUV.Height;
-		DrawTexture(texture, position, effect, layer);
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		mBatcher.Draw(texture.mTexture, pos, texture.mUV, drawColor, rot, drawOrigin, scale, effect, GetDDepth(layer, depth));
 	}
-
 
 
 
 	/// <summary>
-	/// Draw a texture at centre position(with effect).
+	/// Draw a texture to the canvas
 	/// </summary>
-	public void DrawTextureCentre(MTexturePart texture, Vector2 position, Vector2 scale, int layer = 0)
+	public void DDrawTexture(MTexturePart texture, Rectangle destRect, int layer, float depth, Color? color = null, float rot = 0.0f, Vector2? origin = null, SpriteEffects effect = SpriteEffects.None)
 	{
-		position.X -= texture.mUV.Width * scale.X;
-		position.Y -= texture.mUV.Height * scale.Y;
-		DrawTexture(texture, position, scale, layer);
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		mBatcher.Draw(texture.mTexture, destRect, texture.mUV, drawColor, rot, drawOrigin, effect, GetDDepth(layer, depth));
 	}
 
-	#endregion rTexture
 
 
+	/// <summary>
+	/// Draw a texture to the canvas.
+	/// </summary>
+	public void DDrawTexture(MTexturePart texture, MAnchorVector2 pos, int layer, float depth, Color? color = null, float rot = 0.0f, Vector2? origin = null, float scale = 1.0f, SpriteEffects effect = SpriteEffects.None)
+	{
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		Texture2D tex = texture.mTexture;
+		mBatcher.Draw(tex, pos.ToVec(new Point(tex.Width, tex.Height)), texture.mUV, drawColor, rot, drawOrigin, scale, effect, GetDDepth(layer, depth));
+	}
+
+	#endregion rDTexturePart
 
 
 
@@ -543,7 +552,7 @@ public class MCanvas2D : IMUpdate
 	/// </summary>
 	public void DrawRect(MRect2f rect2f, Color color, int layer = 0)
 	{
-		DrawTexture(sDummyTexture, rect2f.mMin, null, color, 0.0f, Vector2.Zero, rect2f.GetSize(), SpriteEffects.None, layer);
+		DrawTextureVs(sDummyTexture, rect2f.mMin, layer, scale: rect2f.GetSize());
 	}
 
 
@@ -554,7 +563,7 @@ public class MCanvas2D : IMUpdate
 	{
 		Vector2 pos = new Vector2(rect.X, rect.Y);
 		Vector2 size = new Vector2(rect.Width, rect.Height);
-		DrawTexture(sDummyTexture, pos, null, color, 0.0f, Vector2.Zero, size, SpriteEffects.None, layer);
+		DrawTextureVs(sDummyTexture, pos, layer, scale: size);
 	}
 
 
@@ -608,7 +617,7 @@ public class MCanvas2D : IMUpdate
 	{
 		var origin = new Vector2(0f, 0.5f);
 		var scale = new Vector2(length, thickness);
-		DrawTexture(sDummyTexture, point, null, color, angle, origin, scale, SpriteEffects.None, layer);
+		DrawTextureVs(sDummyTexture, point, layer, color: color, rot: angle, origin: origin, scale: scale);
 	}
 
 
@@ -648,56 +657,58 @@ public class MCanvas2D : IMUpdate
 
 	#region rString
 
+	/// <summary>
+	/// Draw a string to the canvas
+	/// </summary>
+	public void DrawString(SpriteFont font, string text, Vector2 pos, int layer, Color? color = null, float rot = 0.0f, Vector2? origin = null, Vector2? scale = null, SpriteEffects effect = SpriteEffects.None)
+	{
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		Vector2 drawScale = scale ?? Vector2.One;
+		mBatcher.DrawString(font, text, pos, drawColor, rot, drawOrigin, drawScale, effect, GetDepth(layer));
+	}
+
+
 
 	/// <summary>
 	/// Draw a string to the canvas
 	/// </summary>
-	public void DrawString(SpriteFont font, string text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effect, int layer)
-	{
-		mBatcher.DrawString(font, text, position, color, rotation, origin, scale, effect, GetDepth(layer));
-	}
-
-
-
-	/// <summary>
-	/// Simple string draw
-	/// </summary>
-	public void DrawString(SpriteFont font, string text, Vector2 position, Color color, int layer = 0)
-	{
-		DrawString(font, text, position, color, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, layer);
-	}
-
-
-
-	/// <summary>
-	/// Draw a string centred at a position
-	/// </summary>
-	public void DrawStringCentred(SpriteFont font, Vector2 position, Color color, string text, int layer)
+	public void DrawString(SpriteFont font, string text, MAnchorVector2 pos, int layer, Color? color = null, float rot = 0.0f, Vector2? origin = null, Vector2? scale = null, SpriteEffects effect = SpriteEffects.None)
 	{
 		Vector2 size = font.MeasureString(text);
-		Vector2 drawPosition = position - size * 0.5f;
+		Vector2 drawPosition = pos.ToVec(new Point(MugMath.Round(size.X), MugMath.Round(size.Y)));
 		drawPosition.X = MathF.Round(drawPosition.X);
 		drawPosition.Y = MathF.Round(drawPosition.Y);
 
-		DrawString(font, text, drawPosition, color, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, layer);
+		Color drawColor = color ?? Color.White;
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		Vector2 drawScale = scale ?? Vector2.One;
+		mBatcher.DrawString(font, text, drawPosition, drawColor, rot, drawOrigin, drawScale, effect, GetDepth(layer));
 	}
 
 
 
 	/// <summary>  
-	/// Draw a string centred at a position with a shadow
+	/// Draw a string to the canvas with a shadow
 	/// </summary>
-	public void DrawStringCentredShadow(SpriteFont font, Vector2 position, Color color, string text, int layer)
+	public void DrawStringShadow(SpriteFont font, string text, MAnchorVector2 pos, int layer, float? dropDist = null, Color? color = null, Color? shadowColor = null, float rot = 0.0f, Vector2? origin = null, Vector2? scale = null, SpriteEffects effect = SpriteEffects.None)
 	{
-		Color shadowColor = color * 0.2f;
 		Vector2 size = font.MeasureString(text);
-		Vector2 drawPosition = position - size * 0.5f;
+		Vector2 drawPosition = pos.ToVec(new Point(MugMath.Round(size.X), MugMath.Round(size.Y)));
 		drawPosition.X = MathF.Round(drawPosition.X);
 		drawPosition.Y = MathF.Round(drawPosition.Y);
-		Vector2 shadowPos = drawPosition + new Vector2(2.0f, 2.0f);
 
-		DrawString(font, text, drawPosition, color, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, layer);
-		DrawString(font, text, shadowPos, shadowColor, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, layer);
+		Color drawColor = color ?? Color.White;
+		Color drawShadowColor = shadowColor ?? new(Color.Gray, 0.6f);
+		Vector2 drawOrigin = origin ?? Vector2.Zero;
+		Vector2 drawScale = scale ?? Vector2.One;
+
+		// Draw shadow first so it goes behind.
+		float drawDropDist = dropDist ?? size.Y * 0.3f;
+		mBatcher.DrawString(font, text, drawPosition + new Vector2(drawDropDist, drawDropDist), drawShadowColor, rot, drawOrigin, drawScale, effect, GetDepth(layer));
+
+		// Draw text
+		mBatcher.DrawString(font, text, drawPosition, drawColor, rot, drawOrigin, drawScale, effect, GetDepth(layer));
 	}
 
 	#endregion rStringHelpers

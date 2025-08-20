@@ -171,6 +171,36 @@ public abstract class MGameObject : IMUpdate, IMDraw, IMBounds, IMObjectPoolItem
 		return BoundsRect().Center.ToVector2();
 	}
 
+
+
+	/// <summary>
+	/// Get bottom centre. Often considered the foot position.
+	/// </summary>
+	public Vector2 GetFootCentre()
+	{
+		Rectangle bounds = BoundsRect();
+		Vector2 foot = bounds.Location.ToVector2();
+		foot.X += bounds.Width * 0.5f;
+		foot.Y += bounds.Height;
+
+		return foot;
+	}
+
+
+
+	/// <summary>
+	/// Get bottom centre Y coord
+	/// </summary>
+	public float GetFootY()
+	{
+		Rectangle bounds = BoundsRect();
+		float foot = bounds.Top + bounds.Height;
+
+		return foot;
+	}
+
+
+
 	/// <summary>
 	/// Set centre of mass
 	/// </summary>
