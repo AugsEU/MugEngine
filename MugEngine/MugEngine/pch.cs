@@ -11,4 +11,5 @@ global using MugEngine.Input;
 global using MugEngine.Library;
 global using MugEngine.Scene;
 global using MugEngine.Screen;
+global using System.Collections;
 global using System;

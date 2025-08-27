@@ -12,12 +12,12 @@ namespace MugEngine.Core;
 public enum MCompassDir : byte
 {
 	N = 0,
-	E = 1,
-	S = 2,
-	W = 3,
-	NE = 4,
-	SE = 5,
-	SW = 6,
+	NE = 1,
+	E = 2,
+	SE = 3,
+	S = 4,
+	SW = 5,
+	W = 6,
 	NW = 7
 }
 
@@ -113,6 +113,25 @@ public static class MCompassDirImpl
 		}
 
 		throw new NotImplementedException();
+	}
+
+
+	/// <summary>
+	/// Reflect compass along axis
+	/// </summary>
+	public static MCompassDir ReflectAlong(this MCompassDir dir, MCompassDir axis)
+	{
+		int dirValue = (int)dir;
+		int axisValue = (int)axis;
+
+		int reflectedValue = (2 * axisValue - dirValue) % 8;
+
+		if (reflectedValue < 0)
+		{
+			reflectedValue += 8;
+		}
+
+		return (MCompassDir)reflectedValue;
 	}
 }
 
