@@ -538,7 +538,7 @@ public class MCanvas2D : IMUpdate
 		Color drawColor = color ?? Color.White;
 		Vector2 drawOrigin = origin ?? Vector2.Zero;
 		Texture2D tex = texture.mTexture;
-		mBatcher.Draw(tex, pos.ToVec(new Point(tex.Width, tex.Height)), texture.mUV, drawColor, rot, drawOrigin, scale, effect, GetDDepth(layer, depth));
+		mBatcher.Draw(tex, pos.ToVec(texture.mUV.Size), texture.mUV, drawColor, rot, drawOrigin, scale, effect, GetDDepth(layer, depth));
 	}
 
 	#endregion rDTexturePart

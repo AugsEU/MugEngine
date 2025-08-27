@@ -162,6 +162,25 @@ public class MData : MSingleton<MData>
 		return alias;
 	}
 
+
+
+	/// <summary>
+	/// Find all files wtihin content folder that match pattern
+	/// </summary>
+	public List<string> SearchRecursively(string pattern, string subFolder = "")
+	{
+		List<string> foundFiles = new List<string>();
+
+		string contentPath = Path.Join(mContentManager.RootDirectory, subFolder);
+
+		if (Directory.Exists(contentPath))
+		{
+			foundFiles.AddRange(Directory.GetFiles(contentPath, pattern, SearchOption.AllDirectories));
+		}
+
+		return foundFiles;
+	}
+
 	#endregion rUtil
 }
 

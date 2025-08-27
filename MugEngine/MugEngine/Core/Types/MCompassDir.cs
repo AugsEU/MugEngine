@@ -84,5 +84,35 @@ public static class MCompassDirImpl
 
 		throw new NotImplementedException();
 	}
+
+
+
+	/// <summary>
+	/// Gets angle from compass direction
+	/// </summary>
+	public static float ToAngle(this MCompassDir dir)
+	{
+		switch (dir)
+		{
+			case MCompassDir.N:
+				return MathHelper.Pi * 0.0f;
+			case MCompassDir.NE:
+				return MathHelper.Pi * 0.25f;
+			case MCompassDir.E:
+				return MathHelper.Pi * 0.5f;
+			case MCompassDir.SE:
+				return MathHelper.Pi * 0.75f;
+			case MCompassDir.S:
+				return MathHelper.Pi * 1.0f;
+			case MCompassDir.SW:
+				return MathHelper.Pi * 1.25f;
+			case MCompassDir.W:
+				return MathHelper.Pi * 1.5f;
+			case MCompassDir.NW:
+				return MathHelper.Pi * 1.75f;
+		}
+
+		throw new NotImplementedException();
+	}
 }
 

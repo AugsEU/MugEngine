@@ -3,12 +3,12 @@
 	/// <summary>
 	/// Simple timer/stopwatch class.
 	/// </summary>
-	public class MTimer : IMUpdate
+	public struct MTimer : IMUpdate
 	{
 		#region rMembers
 
 		bool mPlaying;
-		protected float mElapsedTime;
+		float mElapsedTime;
 
 		#endregion rMembers
 

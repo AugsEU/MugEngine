@@ -227,10 +227,9 @@
 
 
 		/// <summary>
-		/// Get texture that is currently showing
+		/// Get texture at playhead time.
 		/// </summary>
-		/// <returns>Texture that is currently showing</returns>
-		private MTexturePart GetTextureAt(float playhead)
+		public MTexturePart GetTextureAt(float playhead)
 		{
 			float timeLeft = playhead;
 			int i = 0;
