@@ -208,8 +208,9 @@ public static class MugDebug
 		}
 
 		return true;
-#endif
+#else
 		return false;
+#endif
 	}
 
 
@@ -243,13 +244,15 @@ public static class MugDebug
 #if DEBUG
 		foreach (DebugRect debugRect in mDebugRectToDraw)
 		{
-			bool visible = false;
+			bool visible = true;
 			if(mDebugRectLayerShow.TryGetValue(debugRect.mLayer, out bool dictVisible))
 			{
 				visible = dictVisible;
 			}
 
-			if(visible)
+			visible = visible && MugCore.I.IsImGuiShowing();
+
+			if (visible)
 			{
 				info.mCanvas.DrawRect(debugRect.mRectangle, debugRect.mColor, layer);
 			}

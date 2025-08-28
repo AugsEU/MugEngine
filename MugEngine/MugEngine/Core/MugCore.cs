@@ -146,6 +146,19 @@ public class MugCore : MSingleton<MugCore>
 		return mSettings.mNumLayers;
 	}
 
-	#endregion rAccess
+
+	/// <summary>
+	/// Is ImGui showing?
+	/// </summary>
+	public bool IsImGuiShowing()
+	{
+#if DEBUG
+		return mShowImGui;
+#else // DEBUG
+		return false;
+#endif // DEBUG
+	}
+
+#endregion rAccess
 }
 

@@ -133,5 +133,53 @@ public static class MCompassDirImpl
 
 		return (MCompassDir)reflectedValue;
 	}
+
+
+
+	/// <summary>
+	/// Is facing cardinal direction(N, E, S, W)
+	/// </summary>
+	public static bool IsCardinal(this MCompassDir dir)
+	{
+		switch (dir)
+		{
+			case MCompassDir.N:
+			case MCompassDir.E:
+			case MCompassDir.S:
+			case MCompassDir.W:
+				return true;
+			case MCompassDir.NE:
+			case MCompassDir.SE:
+			case MCompassDir.SW:
+			case MCompassDir.NW:
+				return false;
+		}
+
+		throw new NotImplementedException();
+	}
+
+
+
+	/// <summary>
+	/// Is facing cardinal direction(N, E, S, W)
+	/// </summary>
+	public static bool IsDiagonal(this MCompassDir dir)
+	{
+		switch (dir)
+		{
+			case MCompassDir.N:
+			case MCompassDir.E:
+			case MCompassDir.S:
+			case MCompassDir.W:
+				return false;
+			case MCompassDir.NE:
+			case MCompassDir.SE:
+			case MCompassDir.SW:
+			case MCompassDir.NW:
+				return true;
+		}
+
+		throw new NotImplementedException();
+	}
 }
 
