@@ -40,7 +40,7 @@
 		/// </summary>
 		public override void Update(MUpdateInfo info)
 		{
-			mLevel?.Update(GetParent(), info);
+			mLevel?.Update(GetScene(), info);
 
 			// Copy over in case collection changes. @perf
 			mUpdateList.Clear();
@@ -68,7 +68,7 @@
 		/// </summary>
 		public override void Draw(MDrawInfo info)
 		{
-			mLevel?.Draw(GetParent(), info);
+			mLevel?.Draw(GetScene(), info);
 
 			foreach (MGameObject go in ActiveObjects())
 			{
@@ -138,7 +138,7 @@
 		public U CreateNew<U>() where U : MGameObject, new()
 		{
 			U newGameObject = new();
-			newGameObject.SetScene(GetParent());
+			newGameObject.SetScene(GetScene());
 			return newGameObject;
 		}
 
@@ -151,7 +151,7 @@
 		public void Add(MGameObject go)
 		{
 			mObjects.Add(go);
-			go.SetScene(GetParent());
+			go.SetScene(GetScene());
 			go.PostInitSetup();
 		}
 
@@ -224,13 +224,13 @@
 		/// <summary>
 		/// Get all game objects of a certain type.
 		/// </summary>
-		public IEnumerable<MGameObject> GetAll<T>()
+		public IEnumerable<T> GetAll<T>()
 		{
 			foreach (MGameObject go in ActiveObjects())
 			{
-				if (go is T)
+				if (go is T tgo)
 				{
-					yield return go;
+					yield return tgo;
 				}
 			}
 		}

@@ -1,6 +1,6 @@
 ﻿namespace MugEngine.Library;
 
-public static class MPathing<T> where T : class, IMGraphNode<T>
+public static class MPathing<T> where T : IMGraphNode<T>
 {
 	#region rMembers
 
@@ -16,7 +16,7 @@ public static class MPathing<T> where T : class, IMGraphNode<T>
 	/// Find path using A-Star algorithm. Efficient for single path but
 	/// does not calculate all distances.
 	/// </summary>
-	public static (bool found, MPathResults<T> result) AStar(T start, T end)
+	public static MPathResults<T>? AStar(T start, T end)
 	{
 		bool found = false;
 		MPathResults<T> result = new();
@@ -29,7 +29,7 @@ public static class MPathing<T> where T : class, IMGraphNode<T>
 		{
 			T curr = sOpenSet.Dequeue();
 
-			if (curr == end)
+			if (curr.IsSameNodeAs(end))
 			{
 				// Found path.
 				found = true;
@@ -52,7 +52,7 @@ public static class MPathing<T> where T : class, IMGraphNode<T>
 
 		// Clear to avoid memory leaks.
 		sOpenSet.Clear();
-		return (found, result);
+		return found ? result : null;
 	}
 
 

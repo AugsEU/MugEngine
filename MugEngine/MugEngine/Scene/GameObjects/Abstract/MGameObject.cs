@@ -16,6 +16,7 @@ public abstract class MGameObject : IMUpdate, IMDraw, IMBounds, IMObjectPoolItem
 
 	MLayerMask mLayers = new MLayerMask(1);
 	bool mEnabled = true;
+	protected bool mIsDead = false;
 
 	#endregion rMembers
 
@@ -120,6 +121,17 @@ public abstract class MGameObject : IMUpdate, IMDraw, IMBounds, IMObjectPoolItem
 	{
 		// By default we just delete instantly.
 		GO().Delete(this);
+		mIsDead = true;
+	}
+
+
+
+	/// <summary>
+	/// Has this entity been killed?
+	/// </summary>
+	public bool IsDead()
+	{
+		return mIsDead;
 	}
 
 	#endregion rUpdate

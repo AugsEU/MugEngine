@@ -522,6 +522,31 @@
 
 
 		/// <summary>
+		/// Get distance squared
+		/// </summary>
+		public static float DistSq(Point a, Point b)
+		{
+			int dx = a.X - b.X;
+			int dy = a.Y - b.Y;
+
+			return dx * dx + dy * dy;
+		}
+
+
+
+		/// <summary>
+		/// Compare the distance between two points
+		/// Returns negative if the distance between is less than d
+		/// Returns positive if the distance between is more than d
+		/// </summary>
+		public static int CmpDist(Point a, Point b, float d)
+		{
+			return DistSq(a, b).CompareTo(d*d);
+		}
+
+
+
+		/// <summary>
 		/// Convert cardinal direction enum to unit vector
 		/// </summary>
 		/// <param name="dir">Cardinal direction</param>

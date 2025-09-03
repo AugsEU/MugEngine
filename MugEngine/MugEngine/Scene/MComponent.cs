@@ -20,7 +20,7 @@
 		/// <summary>
 		/// Get the parent.
 		/// </summary>
-		public MScene GetParent()
+		public MScene GetScene()
 		{
 			MugDebug.Assert(mParent != null);
 			return mParent;
