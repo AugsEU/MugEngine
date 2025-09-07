@@ -346,9 +346,9 @@ public class MTileMap<P> : IMCollisionQueryable, IMSceneUpdate, IMSceneDraw
 	{
 		Rectangle tileBounds = PossibleIntersectTiles(bounds);
 
-		for (int x = tileBounds.X; x <= tileBounds.X + tileBounds.Width; x++)
+		for (int x = tileBounds.X; x < tileBounds.X + tileBounds.Width; x++)
 		{
-			for (int y = tileBounds.Y; y <= tileBounds.Y + tileBounds.Height; y++)
+			for (int y = tileBounds.Y; y < tileBounds.Y + tileBounds.Height; y++)
 			{
 				ref MTile tile = ref mTileMap[x, y];
 

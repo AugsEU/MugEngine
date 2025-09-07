@@ -40,7 +40,7 @@
 		/// </summary>
 		public override void Update(MUpdateInfo info)
 		{
-			mLevel?.Update(GetScene(), info);
+			mLevel?.Update(info);
 
 			// Copy over in case collection changes. @perf
 			mUpdateList.Clear();
@@ -68,7 +68,7 @@
 		/// </summary>
 		public override void Draw(MDrawInfo info)
 		{
-			mLevel?.Draw(GetScene(), info);
+			mLevel?.Draw(info);
 
 			foreach (MGameObject go in ActiveObjects())
 			{
@@ -280,7 +280,8 @@
 
 			// Start new level
 			mLevel = level;
-			level.BeginLevel(this);
+			level.SetScene(GetScene());
+			level.BeginLevel();
 		}
 
 
@@ -292,7 +293,7 @@
 		{
 			if (mLevel is not null)
 			{
-				mLevel.EndLevel(this);
+				mLevel.EndLevel();
 				mLevel = null;
 			}
 		}

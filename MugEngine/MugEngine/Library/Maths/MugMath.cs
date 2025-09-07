@@ -395,6 +395,23 @@
 			throw new Exception("How did we get here?");
 		}
 
+
+
+		/// <summary>
+		/// Sort two numbers
+		/// </summary>
+		public static (T, T) MinMax<T>(T n1, T n2) where T : IComparable<T>
+		{
+			if(n1.CompareTo(n2) < 0)
+			{
+				return (n1, n2);
+			}
+			else
+			{
+				return (n2, n1);
+			}
+		}
+
 		#endregion rNumber
 
 
@@ -458,6 +475,56 @@
 			return new Rectangle(minX, minY, maxX - minX, maxY - minY);
 		}
 
+
+		/// <summary>
+		/// Get minimal rectangle that includes both points
+		/// </summary>
+		public static Rectangle GetBoundingRectangle(Point pt1, Point pt2)
+		{
+			(int xMin, int xMax) = MinMax(pt1.X, pt2.X);
+			(int yMin, int yMax) = MinMax(pt1.Y, pt2.Y);
+
+			return new Rectangle(xMin, yMin, xMax - xMin, yMax - yMin);
+		}
+
+
+
+		/// <summary>
+		/// Get minimal rectangle that includes the rectangle and the point
+		/// </summary>
+		public static Rectangle GetBoundingRectangle(Rectangle rect, Point pt)
+		{
+			int x = rect.X;
+			int y = rect.Y;
+			int w = rect.Width;
+			int h = rect.Height;
+
+			if(pt.X > rect.X)// Point is to the right of the origin
+			{
+				// Enlarge rect to fit point
+				w = Math.Max(rect.Width, pt.X - rect.X);
+			}
+			else// Point is to the left of the origin
+			{
+				int r = rect.Right;
+				x = Math.Min(rect.X, pt.X);
+				w = r - x;
+			}
+
+			if (pt.Y > rect.Y)// Point is below the origin
+			{
+				// Enlarge rect to fit point
+				h = Math.Max(rect.Height, pt.Y - rect.Y);
+			}
+			else// Point above the origin
+			{
+				int b = rect.Bottom;
+				y = Math.Min(rect.Y, pt.Y);
+				h = b - y;
+			}
+
+			return new Rectangle(x, y, w, h);
+		}
 
 
 		/// <summary>
@@ -530,6 +597,32 @@
 			int dy = a.Y - b.Y;
 
 			return dx * dx + dy * dy;
+		}
+
+
+
+		/// <summary>
+		/// Get distance between points
+		/// </summary>
+		public static float Dist(Point a, Point b)
+		{
+			int dx = a.X - b.X;
+			int dy = a.Y - b.Y;
+
+			return MathF.Sqrt(dx * dx + dy * dy);
+		}
+
+
+
+		/// <summary>
+		/// Get manhattan distance between points
+		/// </summary>
+		public static float ManhattanDist(Point a, Point b)
+		{
+			int dx = a.X - b.X;
+			int dy = a.Y - b.Y;
+
+			return Math.Abs(dx) + Math.Abs(dy);
 		}
 
 
@@ -639,6 +732,62 @@
 			}
 
 			throw new NotImplementedException();
+		}
+
+
+
+		/// <summary>
+		/// Which compass direction should you go if you are at "from" and going to "to"
+		/// Includes margin of error.
+		/// </summary>
+		public static MCompassDir? GetDirectionToGo(Point from, Point to, int delta = 3)
+		{
+			bool east = from.X + delta < to.X;
+			bool west = from.X > to.X + delta;
+
+			bool north = from.Y > to.Y + delta;
+			bool south = from.Y + delta < to.Y;
+
+			if (east)
+			{
+				if (north)
+				{
+					return MCompassDir.NE;
+				}
+				else if (south)
+				{
+					return MCompassDir.SE;
+				}
+				else
+				{
+					return MCompassDir.E;
+				}
+			}
+			else if(west)
+			{
+				if (north)
+				{
+					return MCompassDir.NW;
+				}
+				else if (south)
+				{
+					return MCompassDir.SW;
+				}
+				else
+				{
+					return MCompassDir.W;
+				}
+			}
+			else if(north)
+			{
+				return MCompassDir.N;
+			}
+			else if(south)
+			{
+				return MCompassDir.S;
+			}
+
+			return null;
 		}
 
 		#endregion rGeom

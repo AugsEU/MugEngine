@@ -1,111 +1,191 @@
 ﻿
 using System.Diagnostics.CodeAnalysis;
 
-namespace MugEngine;
+namespace MugEngine.Library;
 
 /// <summary>
 /// Graph node for navigating spacial environments
 /// </summary>
-public struct MSpacialGraphNode : IMGraphNode<MSpacialGraphNode>, IEqualityComparer<MSpacialGraphNode>
+public struct MSpacialGraphNode : IEqualityComparer<MSpacialGraphNode>
 {
-	public Rectangle mBounds;
-	public IMCollisionQueryable mLandScape;
+	#region rMembers
 
-	public MSpacialGraphNode(Rectangle bounds, IMCollisionQueryable landScape)
+	public Rectangle mBounds;
+
+	#endregion rMembers
+
+
+
+
+
+	#region rInit
+
+	/// <summary>
+	/// Create new node at position
+	/// </summary>
+	public MSpacialGraphNode(Rectangle bounds)
 	{
 		mBounds = bounds;
-		mLandScape = landScape;
 	}
 
+	#endregion rInit
+
+
+
+
+
+	#region rEquality
+
+	/// <summary>
+	/// Are these two x and y equal?
+	/// </summary>
 	public bool Equals(MSpacialGraphNode x, MSpacialGraphNode y)
 	{
 		return x.mBounds == y.mBounds;
 	}
 
+	/// <summary>
+	/// Get the hash code of an object
+	/// </summary>
 	public int GetHashCode([DisallowNull] MSpacialGraphNode obj)
 	{
 		return obj.mBounds.GetHashCode();
 	}
 
-	public bool IsSameNodeAs(MSpacialGraphNode other)
-	{
-		float minDist = MathF.Min(mBounds.Width, mBounds.Height);
-		Point otherCen = other.mBounds.Center;
-		Point ourCen = mBounds.Center;
+	#endregion rEquality
 
-		return MugMath.CmpDist(ourCen, otherCen, minDist) <= 0;
+
+
+
+
+	#region rPathing
+
+	/// <summary>
+	/// Path heuristic to end goal
+	/// </summary>
+	public float PathHeuristic(Point end)
+	{
+		return MugMath.Dist(mBounds.Center, end);
 	}
 
-	public float PathHeuristic(MSpacialGraphNode other)
+
+
+	/// <summary>
+	/// Get distance to another node.
+	/// </summary>
+	public float PathNeighbourDistance(MSpacialGraphNode other, bool diagnonals = false)
 	{
-		return PathNeighbourDistance(other);
+		if(!diagnonals)
+		{
+			return MugMath.ManhattanDist(other.mBounds.Center, mBounds.Center);
+		}
+
+		return MugMath.Dist(other.mBounds.Center, mBounds.Center);
 	}
 
-	public float PathNeighbourDistance(MSpacialGraphNode other)
-	{
-		return MathF.Sqrt(MugMath.DistSq(other.mBounds.Center, mBounds.Center));
-	}
 
-	public IEnumerable<MSpacialGraphNode> PathNeighbours()
+
+	/// <summary>
+	/// Get neighbours of this node
+	/// </summary>
+	public IEnumerable<MSpacialGraphNode> PathNeighbours(IMCollisionQueryable landscape, Point stepSize, bool diagonals = false)
 	{
-		int xStep = mBounds.Width / 2;
-		int yStep = mBounds.Height / 2;
+		MugDebug.AddDebugPoint(mBounds.Center.ToVector2(), Color.Yellow);
+		int xStep = stepSize.X;
+		int yStep = stepSize.Y;
 		Rectangle copyBounds = mBounds;
 
 		// Right
 		copyBounds.X += xStep;
-		if(!mLandScape.QueryCollides(copyBounds, MCardDir.Right, MCollisionFlags.None))
+		if (!landscape.QueryCollides(copyBounds, MCardDir.Right, MCollisionFlags.None))
 		{
-			yield return new MSpacialGraphNode(copyBounds, mLandScape);
+			yield return new MSpacialGraphNode(copyBounds);
 		}
 
 		// Right Down
 		copyBounds.Y += yStep;
-		if (!mLandScape.QueryCollides(copyBounds, MCardDir.Right, MCollisionFlags.None))
+		if (diagonals && !landscape.QueryCollides(copyBounds, MCardDir.Right, MCollisionFlags.None))
 		{
-			yield return new MSpacialGraphNode(copyBounds, mLandScape);
+			yield return new MSpacialGraphNode(copyBounds);
 		}
 
 		// Down
 		copyBounds.X -= xStep;
-		if (!mLandScape.QueryCollides(copyBounds, MCardDir.Down, MCollisionFlags.None))
+		if (!landscape.QueryCollides(copyBounds, MCardDir.Down, MCollisionFlags.None))
 		{
-			yield return new MSpacialGraphNode(copyBounds, mLandScape);
+			yield return new MSpacialGraphNode(copyBounds);
 		}
 
 		// Down Left
 		copyBounds.X -= xStep;
-		if (!mLandScape.QueryCollides(copyBounds, MCardDir.Down, MCollisionFlags.None))
+		if (diagonals && !landscape.QueryCollides(copyBounds, MCardDir.Down, MCollisionFlags.None))
 		{
-			yield return new MSpacialGraphNode(copyBounds, mLandScape);
+			yield return new MSpacialGraphNode(copyBounds);
 		}
 
 		// Left
 		copyBounds.Y -= yStep;
-		if (!mLandScape.QueryCollides(copyBounds, MCardDir.Left, MCollisionFlags.None))
+		if (!landscape.QueryCollides(copyBounds, MCardDir.Left, MCollisionFlags.None))
 		{
-			yield return new MSpacialGraphNode(copyBounds, mLandScape);
+			yield return new MSpacialGraphNode(copyBounds);
 		}
 
 		// Left Up
 		copyBounds.Y -= yStep;
-		if (!mLandScape.QueryCollides(copyBounds, MCardDir.Left, MCollisionFlags.None))
+		if (diagonals && !landscape.QueryCollides(copyBounds, MCardDir.Left, MCollisionFlags.None))
 		{
-			yield return new MSpacialGraphNode(copyBounds, mLandScape);
+			yield return new MSpacialGraphNode(copyBounds);
 		}
 
 		// Up
 		copyBounds.X += xStep;
-		if (!mLandScape.QueryCollides(copyBounds, MCardDir.Up, MCollisionFlags.None))
+		if (!landscape.QueryCollides(copyBounds, MCardDir.Up, MCollisionFlags.None))
 		{
-			yield return new MSpacialGraphNode(copyBounds, mLandScape);
+			yield return new MSpacialGraphNode(copyBounds);
 		}
 
 		// Up Right
 		copyBounds.X += xStep;
-		if (!mLandScape.QueryCollides(copyBounds, MCardDir.Up, MCollisionFlags.None))
+		if (diagonals && !landscape.QueryCollides(copyBounds, MCardDir.Up, MCollisionFlags.None))
 		{
-			yield return new MSpacialGraphNode(copyBounds, mLandScape);
+			yield return new MSpacialGraphNode(copyBounds);
 		}
 	}
+
+
+
+	/// <summary>
+	/// Can we just walk to the end?
+	/// </summary>
+	public bool CanReachDirect(Point endPt, IMCollisionQueryable landscape)
+	{
+		Rectangle walkDirectRect = MugMath.GetBoundingRectangle(mBounds, endPt);
+
+		MCardDir walkDir = MCardDir.Up;
+
+		// This doesn't make any sense but approximates the truth enough that I don't care.
+		if (mBounds.Location == walkDirectRect.Location)
+		{
+			walkDir = MCardDir.Right;
+		}
+		else if (mBounds.X < walkDirectRect.X)
+		{
+			walkDir = MCardDir.Left;
+		}
+		else if (mBounds.Y < walkDirectRect.Y)
+		{
+			walkDir = MCardDir.Up;
+		}
+		else
+		{
+			walkDir = MCardDir.Down;
+		}
+
+		// Check if this is all clear.
+		bool allClear = !landscape.QueryCollides(walkDirectRect, walkDir, MCollisionFlags.None);
+
+		return allClear;
+	}
+
+	#endregion rPathing
 }
