@@ -271,6 +271,23 @@
 
 
 		/// <summary>
+		/// Get all game objects in a rectangle of a type.
+		/// </summary>
+		public IEnumerable<T> GetInRect<T>(Rectangle rect)
+		{
+			// TO DO: Make this performant
+			foreach (MGameObject go in ActiveObjects())
+			{
+				if (go.BoundsRect().Intersects(rect) && go is T subTypeGo)
+				{
+					yield return subTypeGo;
+				}
+			}
+		}
+
+
+
+		/// <summary>
 		/// Add some terrain that things can collide with.
 		/// </summary>
 		public void LoadLevel(MLevel level)

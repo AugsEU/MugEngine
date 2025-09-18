@@ -217,6 +217,16 @@
 			mElapsedTime = time;
 		}
 
+
+
+		/// <summary>
+		/// Used for flashing effects
+		/// </summary>
+		public bool FlashOnOff(float flashTime)
+		{
+			return mPlaying && (int)(mElapsedTime / flashTime) % 2 == 0;
+		}
+
 		#endregion rUtility
 	}
 }
