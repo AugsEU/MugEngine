@@ -166,6 +166,15 @@
 			return v.LengthSquared().CompareTo(l*l);
 		}
 
+
+		/// <summary>
+		/// Reduce the length of a vector
+		/// </summary>
+		public static Vector2 ReducedLen(this Vector2 v, float l)
+		{
+			return new Vector2(MoveToZero(v.X, l), MoveToZero(v.Y, l));
+		}
+
 		#endregion rVector
 
 
