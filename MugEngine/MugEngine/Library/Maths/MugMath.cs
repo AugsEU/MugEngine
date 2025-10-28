@@ -799,6 +799,73 @@
 			return null;
 		}
 
+
+		/// <summary>
+		/// Convert vector2 to a compass dir
+		/// </summary>
+		public static MCompassDir ToCompass(this Vector2 vector)
+		{
+			// Draw these regions on desmos to make sense of this.
+			bool l1 = 2.0f * vector.X + vector.Y > 0;
+			bool l2 = 2.0f * vector.X - vector.Y > 0;
+			bool l3 = 0.5f * vector.X + vector.Y > 0;
+			bool l4 = 0.5f * vector.X - vector.Y > 0;
+
+			MCompassDir dir;
+			if(l1)
+			{
+				if(l4)
+				{
+					if(l3)
+					{
+						dir = MCompassDir.E;
+					}
+					else
+					{
+						dir = MCompassDir.NE;
+					}
+				}
+				else
+				{
+					if(l2)
+					{
+						dir = MCompassDir.SE;
+					}
+					else
+					{
+						dir = MCompassDir.S;
+					}
+				}
+			}
+			else
+			{
+				if(l4)
+				{
+					if(l2)
+					{
+						dir = MCompassDir.N;
+					}
+					else
+					{
+						dir = MCompassDir.NW;
+					}
+				}
+				else
+				{
+					if(l3)
+					{
+						dir = MCompassDir.SW;
+					}
+					else
+					{
+						dir = MCompassDir.W;
+					}
+				}
+			}
+
+			return dir;
+		}
+
 		#endregion rGeom
 	}
 }
