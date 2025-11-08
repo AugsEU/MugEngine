@@ -10,6 +10,7 @@
 
 		Dictionary<Type, MComponent> mUniqueEntities;
 		List<MComponent> mEntities;
+		List<MSceneActionItem> mActionItems;
 		bool mEntityOrderDirty = true;
 
 		HashSet<MComponent> mDeletePool;

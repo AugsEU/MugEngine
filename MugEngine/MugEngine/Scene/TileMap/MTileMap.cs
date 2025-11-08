@@ -651,7 +651,7 @@ public class MTileMap<P> : IMCollisionQueryable, IMSceneUpdate, IMSceneDraw
 	/// <summary>
 	/// Get bounds of the entire tilemap
 	/// </summary>
-	public Rectangle GetWholeBounds()
+	public Rectangle GetRectBounds()
 	{
 		return new Rectangle((int)mBasePosition.X, (int)mBasePosition.Y, mTileSize.X * mTileMap.GetLength(0), mTileSize.Y * mTileMap.GetLength(1));
 	}

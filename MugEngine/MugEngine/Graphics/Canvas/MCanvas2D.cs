@@ -551,9 +551,9 @@ public class MCanvas2D : IMUpdate
 	/// <summary>
 	/// Draw a simple rectangle. Used mostly for debugging
 	/// </summary>
-	public void DrawRect(MRect2f rect2f, Color color, int layer = 0)
+	public void DrawRect(MRect2f rect2f, Color color, float rot = 0.0f, int layer = 0)
 	{
-		DrawTextureVs(sDummyTexture, rect2f.mMin, layer, scale: rect2f.GetSize());
+		DrawTextureVs(sDummyTexture, rect2f.mMin, layer, rot: rot, scale: rect2f.GetSize());
 	}
 
 
