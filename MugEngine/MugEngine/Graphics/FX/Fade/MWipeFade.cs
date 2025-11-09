@@ -1,6 +1,6 @@
 ﻿namespace MugEngine.Graphics;
 
-class MWipeFade : MFade
+public class MWipeFade : MFade
 {
 	MCardDir mDirection;
 

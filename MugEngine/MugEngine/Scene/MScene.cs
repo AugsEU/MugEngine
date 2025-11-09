@@ -9,11 +9,13 @@
  
 
 		Dictionary<Type, MComponent> mUniqueEntities;
-		List<MComponent> mEntities;
-		List<MSceneActionItem> mActionItems;
+		List<MComponent> mComponents;
 		bool mEntityOrderDirty = true;
 
 		HashSet<MComponent> mDeletePool;
+
+		MSceneActionItem mCurrActionItem;
+		Stack<MSceneActionItem> mActionItems = new();
 
 		#endregion rMembers
 
@@ -29,7 +31,7 @@
 		public MScene()
 		{
 			mUniqueEntities = new Dictionary<Type, MComponent>();
-			mEntities = new List<MComponent>();
+			mComponents = new List<MComponent>();
 
 			mDeletePool = new HashSet<MComponent>();
 		}
@@ -49,16 +51,41 @@
 		{
 			if (mEntityOrderDirty)
 			{
-				//mEntities.Sort(new MEntityUpdateOrderComparer());
+				mComponents.Sort(new MEntityUpdateOrderComparer());
+			}
+
+			// Action item
+			// If null we must look for the next item.
+			if (mCurrActionItem is null && mActionItems.TryPop(out MSceneActionItem actionItem))
+			{
+				mCurrActionItem = actionItem;
+				mCurrActionItem.OnBegin(this);
 			}
 
 			// Update entities in scene.
-			for (int i = 0; i < mEntities.Count; i++)
+			for (int i = 0; i < mComponents.Count; i++)
 			{
-				mEntities[i].Update(info);
+				bool blockUpdate = (mCurrActionItem?.BlockComponentUpdate(mComponents[i])).GetValueOrDefault(false);
+				if (blockUpdate)
+				{
+					continue;
+				}
+
+				mComponents[i].Update(info);
 			}
 
 			ResolveDeleteQueue();
+
+			// Update action item at the end.
+			if (mCurrActionItem is not null)
+			{
+				bool finished = mCurrActionItem.Update(info);
+
+				if (finished)
+				{
+					mCurrActionItem = null;
+				}
+			}
 		}
 
 
@@ -68,13 +95,13 @@
 		/// </summary>
 		public void ResolveDeleteQueue()
 		{
-			for (int i = 0; i < mEntities.Count && mDeletePool.Count > 0; i++)
+			for (int i = 0; i < mComponents.Count && mDeletePool.Count > 0; i++)
 			{
-				MComponent entity = mEntities[i];
+				MComponent entity = mComponents[i];
 				if (mDeletePool.Contains(entity))
 				{
 					mDeletePool.Remove(entity);
-					mEntities.RemoveAt(i);
+					mComponents.RemoveAt(i);
 
 					Type entType = entity.GetType();
 					if (mUniqueEntities.ContainsKey(entType))
@@ -103,9 +130,20 @@
 		/// </summary>
 		public void Draw(MDrawInfo info)
 		{
-			for (int i = 0; i < mEntities.Count; i++)
+			if(mCurrActionItem is not null)
 			{
-				mEntities[i].Draw(info);
+				mCurrActionItem.Draw(info);
+			}
+
+			for (int i = 0; i < mComponents.Count; i++)
+			{
+				bool blockDraw = (mCurrActionItem?.BlockComponentDraw(mComponents[i])).GetValueOrDefault(false);
+				if (blockDraw)
+				{
+					continue;
+				}
+
+				mComponents[i].Draw(info);
 			}
 		}
 
@@ -122,7 +160,7 @@
 		/// </summary>
 		public void AddEntity(MComponent entity)
 		{
-			mEntities.Add(entity);
+			mComponents.Add(entity);
 			entity.SetScene(this);
 
 			mEntityOrderDirty = true;
@@ -154,6 +192,15 @@
 			mDeletePool.Add(entity);
 		}
 
+
+		/// <summary>
+		/// Push an action item to the stack
+		/// </summary>
+		public void PushActionItem(MSceneActionItem item)
+		{
+			mActionItems.Push(item);
+		}
+
 		#endregion rUtil
 
 
@@ -177,7 +224,7 @@
 		/// </summary>
 		public MComponent Get(int index)
 		{
-			return mEntities[index];
+			return mComponents[index];
 		}
 
 
@@ -187,7 +234,7 @@
 		/// </summary>
 		public int GetNum()
 		{
-			return mEntities.Count;
+			return mComponents.Count;
 		}
 
 

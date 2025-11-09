@@ -226,7 +226,7 @@ public class MCanvas2D : IMUpdate
 	{
 		mLayerOffset += LAYER_INCREMENT;
 		float depthOffset = MugMath.SquashToRange(depth + mLayerOffset, -0.5f, 0.5f) * mDivLayerCount;
-		float result = layer * mDivLayerCount + 0.5f + depthOffset;
+		float result = (0.5f + depthOffset + layer) * mDivLayerCount;
 
 		MugDebug.Assert(mLayerOffset < mDivLayerCount, "Too many objects have been drawn!");
 		MugDebug.Assert(0.0f < result && result < 1.0f, "Layer outside of clip bounds.");
