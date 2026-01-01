@@ -82,7 +82,7 @@ internal class MAnimationData
 
 		foreach (XmlNode frameNode in frameNodes)
 		{
-			int idx = int.Parse(MugXML.GetStringAttrib(frameNode, "id"), CultureInfo.InvariantCulture);
+			int idx = MInt.Parse(MugXML.GetStringAttrib(frameNode, "id"));
 
 			FrameData frameData = new FrameData();
 			frameData.mTexturePath = MugXML.GetString(frameNode["texture"]);

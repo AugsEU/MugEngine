@@ -551,16 +551,16 @@ public class MCanvas2D : IMUpdate
 	/// <summary>
 	/// Draw a simple rectangle. Used mostly for debugging
 	/// </summary>
-	public void DrawRect(MRect2f rect2f, Color color, float rot = 0.0f, int layer = 0)
+	public void DrawRect(MRect2f rect2f, Color color, int layer, float rot = 0.0f)
 	{
-		DrawTextureVs(sDummyTexture, rect2f.mMin, layer, rot: rot, scale: rect2f.GetSize());
+		DrawTextureVs(sDummyTexture, rect2f.mMin, layer, color: color, rot: rot, scale: rect2f.GetSize());
 	}
 
 
 	/// <summary>
 	/// Draw a simple rectangle. Used mostly for debugging
 	/// </summary>
-	public void DrawRect(Rectangle rect, Color color, int layer = 0)
+	public void DrawRect(Rectangle rect, Color color, int layer)
 	{
 		Vector2 pos = new Vector2(rect.X, rect.Y);
 		Vector2 size = new Vector2(rect.Width, rect.Height);
@@ -571,7 +571,7 @@ public class MCanvas2D : IMUpdate
 	/// <summary>
 	/// Draw a simple rectangle with a shadow.
 	/// </summary>
-	public void DrawRectShadow(MRect2f rect2f, Color col, Color shadowCol, Vector2 displacement, int layer = 0)
+	public void DrawRectShadow(MRect2f rect2f, Color col, Color shadowCol, Vector2 displacement, int layer)
 	{
 		MRect2f shadowRect = rect2f;
 		shadowRect.mMin += displacement;

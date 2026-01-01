@@ -24,9 +24,9 @@ public static class MugColor
 	{
 		byte r, g, b, a;
 
-		r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture.NumberFormat);
-		g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture.NumberFormat);
-		b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture.NumberFormat);
+		r = MByte.ParseHex(hex.Substring(0, 2));
+		g = MByte.ParseHex(hex.Substring(2, 2));
+		b = MByte.ParseHex(hex.Substring(4, 2));
 
 		if (hex.Length == 6)
 		{
@@ -34,7 +34,7 @@ public static class MugColor
 		}
 		else if (hex.Length == 8)
 		{
-			a = byte.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture.NumberFormat);
+			a = MByte.ParseHex(hex.Substring(6, 2));
 		}
 		else
 		{

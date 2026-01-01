@@ -13,6 +13,7 @@ public class MData : MSingleton<MData>
 	List<MDataTheme> mActiveThemes;
 
 	Dictionary<string, MAnimationData> mAnimationDataCache;
+	Dictionary<string, SpriteFont> mIDToSpriteFont = new();
 
 	#endregion rMembers
 
@@ -101,6 +102,30 @@ public class MData : MSingleton<MData>
 		string realPath = GetRemappedPath(alias);
 
 		return LDtkFile.FromFile(GetRemappedPath(alias));
+	}
+
+
+	/// <summary>
+	/// Load a font in initialisation
+	/// </summary>
+	public void InitFont(string id, string filePath)
+	{
+		SpriteFont sf = mContentManager.Load<SpriteFont>(filePath);
+		mIDToSpriteFont.Add(id, sf);
+	}
+
+
+	/// <summary>
+	/// Get a font from the bank.
+	/// </summary>
+	public SpriteFont GetFont(string id)
+	{
+		if(mIDToSpriteFont.TryGetValue(id, out SpriteFont font))
+		{
+			return font;
+		}
+
+		return null;
 	}
 
 	#endregion rLoadUnload

@@ -18,7 +18,7 @@ public static class MugXML
 			return defaultVal;
 		}
 
-		return float.Parse(node.InnerText, CultureInfo.InvariantCulture.NumberFormat);
+		return MFloat.Parse(node.InnerText);
 	}
 
 
@@ -33,7 +33,7 @@ public static class MugXML
 			return defaultVal;
 		}
 
-		return int.Parse(node.InnerText, CultureInfo.InvariantCulture.NumberFormat);
+		return MInt.Parse(node.InnerText);
 	}
 
 
@@ -47,7 +47,7 @@ public static class MugXML
 			return defaultVal;
 		}
 
-		return ulong.Parse(node.InnerText, CultureInfo.InvariantCulture.NumberFormat);
+		return MULong.Parse(node.InnerText);
 	}
 
 

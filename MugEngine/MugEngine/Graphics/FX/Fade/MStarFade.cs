@@ -21,7 +21,7 @@ public class MStarFade : MFade
 			for (float y = yStart; y < yEnd; y += mSpacing)
 			{
 				Vector2 min = new Vector2(x, y - time * mSpacing);
-				Vector2 max = min + new Vector2(mSpacing / 2, mSpacing / 2);
+				Vector2 max = min + new Vector2(mSpacing, mSpacing) * time;
 
 				info.mCanvas.DrawRect(new MRect2f(min, max), Color.Black, rot: MathF.PI / 4, layer: layer);
 			}

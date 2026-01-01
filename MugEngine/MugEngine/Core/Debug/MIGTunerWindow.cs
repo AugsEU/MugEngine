@@ -77,6 +77,14 @@ public class MIGTunerWindow<T> : MImGuiWindow where T : struct
 					field.SetValueDirect(__makeref(obj), intValue);
 				}
 			}
+			else if(field.FieldType == typeof(bool))
+			{
+				bool boolValue = (bool)value;
+				if (ImGui.Checkbox(field.Name, ref boolValue))
+				{
+					field.SetValueDirect(__makeref(obj), boolValue);
+				}
+			}
 			else if (field.FieldType.IsValueType) // Nested struct
 			{
 				if (ImGui.CollapsingHeader(field.Name))
