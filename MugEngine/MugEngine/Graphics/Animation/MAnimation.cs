@@ -348,6 +348,14 @@
 		}
 
 
+		/// <summary>
+		/// Make it play only once
+		/// </summary>
+		public void MakeOncePlay()
+		{
+			mNumRepeats = 1;
+		}
+
 
 		/// <summary>
 		/// Get current decseconds
