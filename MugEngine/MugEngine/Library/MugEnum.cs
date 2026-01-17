@@ -18,6 +18,15 @@ public static class MugEnum
 	}
 
 
+	/// <summary>
+	/// Get an enum from a string
+	/// </summary>
+	static public T? TryGetEnumFromString<T>(string value) where T : struct, Enum
+	{
+		Enum.TryParse(typeof(T), value, out object result);
+		return (T?)result;
+	}
+
 
 	/// <summary>
 	/// Get number of enums
