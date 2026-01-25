@@ -363,6 +363,8 @@ public abstract class MGameObject : IMUpdate, IMDraw, IMBounds, IMObjectPoolItem
 		mSize = size;
 	}
 
+
+
 	/// <summary>
 	/// Enumerate over other gameobjects touching this.
 	/// </summary>
@@ -372,6 +374,99 @@ public abstract class MGameObject : IMUpdate, IMDraw, IMBounds, IMObjectPoolItem
 		{
 			yield return obj;
 		}
+	}
+
+
+
+	/// <summary>
+	/// Enumerate over other gameobjects touching this.
+	/// </summary>
+	public IEnumerable<T> GetTouching<T>() where T : MGameObject
+	{
+		foreach (MGameObject obj in GO().GetInRect(BoundsRect()))
+		{
+			if(obj is T tObj)
+			{
+				yield return tObj;
+			}
+		}
+	}
+
+
+
+	/// <summary>
+	/// Distance to another game object
+	/// </summary>
+	public float DistanceTo(MGameObject other)
+	{
+		Vector2 toOther = other.GetCentreOfMass() - GetCentreOfMass();
+		return toOther.Length();
+	}
+
+
+
+	/// <summary>
+	/// Get all gameobjects within a distance
+	/// </summary>
+	public IEnumerable<MGameObject> GetNearby(int dist)
+	{
+		Rectangle boundingBox = BoundsRect();
+		boundingBox.X -= dist;
+		boundingBox.Y -= dist;
+		boundingBox.Height += 2 * dist;
+		boundingBox.Width += 2 * dist;
+
+		foreach (MGameObject obj in GO().GetInRect(boundingBox)
+			.Where(t => DistanceTo(this) < dist))
+		{
+			yield return obj;
+		}
+	}
+
+
+
+	/// <summary>
+	/// Get all gameobjects within a distance
+	/// </summary>
+	public IEnumerable<T> GetNearby<T>(int dist) where T : MGameObject
+	{
+		Rectangle boundingBox = BoundsRect();
+		boundingBox.X -= dist;
+		boundingBox.Y -= dist;
+		boundingBox.Height += 2 * dist;
+		boundingBox.Width += 2 * dist;
+
+		foreach (MGameObject obj in GO().GetInRect(boundingBox)
+			.Where(t => DistanceTo(this) < dist))
+		{
+			if(obj is T tObj)
+			yield return tObj;
+		}
+	}
+
+
+
+	/// <summary>
+	/// Is there any of these guys nearby?
+	/// </summary>
+	public bool AnyNearby<T>(int dist) where T : MGameObject
+	{
+		Rectangle boundingBox = BoundsRect();
+		boundingBox.X -= dist;
+		boundingBox.Y -= dist;
+		boundingBox.Height += 2 * dist;
+		boundingBox.Width += 2 * dist;
+
+		foreach (MGameObject obj in GO().GetInRect(boundingBox)
+			.Where(t => DistanceTo(this) < dist))
+		{
+			if (obj is T)
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	#endregion rUtil

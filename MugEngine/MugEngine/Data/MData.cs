@@ -69,6 +69,23 @@ public class MData : MSingleton<MData>
 
 
 	/// <summary>
+	/// Generates a new animator from an XML file.
+	/// </summary>
+	public MAnimation TryLoadAnimation(string path)
+	{
+		if(path is null)
+		{
+			return null;
+		}
+
+		MAnimationData animData = LoadAnimData(path);
+
+		return animData.GenerateAnimation();
+	}
+
+
+
+	/// <summary>
 	/// Load animator data
 	/// </summary>
 	private MAnimationData LoadAnimData(string alias)

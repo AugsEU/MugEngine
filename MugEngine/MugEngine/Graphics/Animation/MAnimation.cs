@@ -260,6 +260,16 @@
 			return mFrames[index].mTexture;
 		}
 
+
+
+		/// <summary>
+		/// Get the number of frames in this animation.
+		/// </summary>
+		public int GetNumFrames()
+		{
+			return mFrames.Length;
+		}
+
 		#endregion rDraw
 
 
