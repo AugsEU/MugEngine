@@ -41,6 +41,11 @@ public class MIGTunerWindow<T> : MImGuiWindow where T : struct
 		{
 			MTuner<T>.SaveValues(mXmlPath);
 		}
+		ImGui.SameLine();
+		if (ImGui.Button("Bounds"))
+		{
+			mFloatRanges.Clear();
+		}
 
 		Profiler.PopProfileZone();
 	}

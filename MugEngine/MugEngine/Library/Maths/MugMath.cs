@@ -421,6 +421,16 @@
 			}
 		}
 
+
+
+		/// <summary>
+		/// Are two floats approximately equal?
+		/// </summary>
+		public static bool ApproxEqual(float a, float b, float epsilon = 0.00001f)
+		{
+			return MathF.Abs(a-b) <= epsilon;
+		}
+
 		#endregion rNumber
 
 

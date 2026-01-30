@@ -74,15 +74,15 @@ public struct MRotRect : IMBounds
 
 	public Vector2 GetSideVec()
 	{
-		Vector2 y = new Vector2(0.0f, mSize.Y);
-		y.Rotate(mRot);
-		return y;
+		Vector2 x = new Vector2(mSize.X, 0.0f);
+		x.Rotate(mRot);
+		return x;
 	}
 
 	public Vector2 GetForwardVec()
 	{
-		Vector2 x = new Vector2(mSize.X, 0.0f);
-		x.Rotate(mRot);
-		return x;
+		Vector2 y = new Vector2(0.0f, mSize.Y);
+		y.Rotate(mRot);
+		return y;
 	}
 }
