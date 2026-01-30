@@ -603,6 +603,14 @@ public class MCanvas2D : IMUpdate
 		DrawRectShadow(leftEdge, col, shadowCol, shadowDisp, layer);
 	}
 
+	/// <summary>
+	/// Draw a 2x2 dot, mainly for debugging
+	/// </summary>
+	public void DrawDot(Vector2 pos, Color col, int layer = 0)
+	{
+		DrawRect(MugMath.RectFromFloats(pos.X, pos.Y, 2.0f, 2.0f), col, layer);
+	}
+
 	#endregion rRect
 
 
