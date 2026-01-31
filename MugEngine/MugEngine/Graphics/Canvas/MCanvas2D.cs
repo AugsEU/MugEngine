@@ -644,6 +644,18 @@ public class MCanvas2D : IMUpdate
 
 
 	/// <summary>
+	/// Draw a line from point A to B
+	/// </summary>
+	public void DrawDebugRay(Vector2 pos, Vector2 dir, Color color, float thickness = 1.0f, int layer = 0)
+	{
+		Vector2 end = pos + dir;
+		DrawLine(pos, end, color, thickness, layer);
+		DrawRect(MugMath.RectFromFloats(end.X - 2.0f, end.Y - 2.0f, 4.0f, 4.0f), color, layer);
+	}
+
+
+
+	/// <summary>
 	/// Draw a line with drop shadow.
 	/// </summary>
 	public void DrawLineShadow(Vector2 point1, Vector2 point2, Color color, Color shadowColor, float dropDistance, float thickness = 1.0f, int layer = 0)

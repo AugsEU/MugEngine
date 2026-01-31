@@ -22,7 +22,17 @@ public static class MugDebug
 		public int mLayer = layer;
 	}
 
-	private static List<DebugRect> mDebugRectToDraw = new List<DebugRect>();
+	struct DebugRay(Vector2 pos, Vector2 dir, Color color, bool perm, int layer)
+	{
+		public Vector2 mPos = pos;
+		public Vector2 mDir = dir;
+		public Color mColor = color;
+		public bool mPerm = perm;
+		public int mLayer = layer;
+	}
+
+	private static List<DebugRect> mDebugRectToDraw = new();
+	private static List<DebugRay> mDebugRaysToDraw = new();
 	static Dictionary<int, bool> mDebugRectLayerShow = new();
 	static List<(int, string)> mDebugRectLayerNames = new();
 
@@ -170,7 +180,12 @@ public static class MugDebug
 #endif
 	}
 
-
+	public static void AddDebugRay(Vector2 pos, Vector2 dir, Color color, int layer = 0, bool perm = false)
+	{
+#if DEBUG
+		mDebugRaysToDraw.Add(new DebugRay(pos, dir, color, perm, layer));
+#endif // DEBUG
+	}
 
 	/// <summary>
 	/// Clear debug rectangles on a specific layer.
@@ -258,6 +273,12 @@ public static class MugDebug
 			}
 		}
 		mDebugRectToDraw.RemoveAll(r => !r.mPerm);
+
+		foreach (DebugRay dbgRay in mDebugRaysToDraw)
+		{
+			info.mCanvas.DrawDebugRay(dbgRay.mPos, dbgRay.mDir, dbgRay.mColor, 2.0f, dbgRay.mLayer);
+		}
+		mDebugRaysToDraw.RemoveAll(r => !r.mPerm);
 
 		FlushConsoleMessges();
 #endif
