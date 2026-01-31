@@ -113,13 +113,16 @@ public class MIGTunerWindow<T> : MImGuiWindow where T : struct
 			return minMax;
 		}
 
-		minMax = (0.0f, 1.0f);
+		minMax = (0.0f, value * 3.0f);
 		if (value < 0.0f)
 		{
 			minMax = (value * 3.0f, value * 3.0f);
 		}
+		else if(value == 0.0f)
+		{
+			minMax = (0.0f, 1.0f);
+		}
 
-		minMax = (0.0f, value * 3.0f);
 
 		mFloatRanges.Add(field, minMax);
 		return minMax;
