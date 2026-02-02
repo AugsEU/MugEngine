@@ -147,6 +147,15 @@ public class MugCore : MSingleton<MugCore>
 	}
 
 
+
+	/// <summary>
+	/// Get screen size default
+	/// </summary>
+	public Point GetResolution()
+	{
+		return mSettings.mResolution;
+	}
+
 	/// <summary>
 	/// Is ImGui showing?
 	/// </summary>

@@ -130,7 +130,7 @@ public class MCanvas2D : IMUpdate
 		thisInfo.mCanvas = this;
 
 		device.SetRenderTarget(mRenderTarget);
-		device.Clear(Color.Black);
+		device.Clear(Color.Transparent);
 
 		mCamMatrixCache = mCamera.CalculateMatrix();
 		mLayerOffset = 0.0f;
