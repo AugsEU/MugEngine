@@ -9,6 +9,7 @@
 
 		bool mPlaying;
 		float mElapsedTime;
+		float mTimeScale = 1.0f;
 
 		#endregion rMembers
 
@@ -43,7 +44,7 @@
 		{
 			if (mPlaying)
 			{
-				mElapsedTime += info.mDelta;
+				mElapsedTime += info.mDelta * mTimeScale;
 			}
 		}
 
@@ -125,6 +126,17 @@
 		public void SetElapsed(float time)
 		{
 			mElapsedTime = time;
+		}
+
+
+
+
+		/// <summary>
+		/// Set rate of time increment
+		/// </summary>
+		public void SetTimeScale(float scale)
+		{
+			mTimeScale = scale;
 		}
 
 		#endregion rUtility
