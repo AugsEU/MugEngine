@@ -48,6 +48,19 @@ public static class MugIter
 	}
 
 
+	/// <summary>
+	/// Get first item in iter
+	/// </summary>
+	public static bool Empty<T>(this IEnumerable<T> iter)
+	{
+		foreach (var item in iter)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
 
 	/// <summary>
 	/// Pick a random element from a subset of a list.

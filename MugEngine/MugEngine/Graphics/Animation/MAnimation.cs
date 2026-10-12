@@ -227,10 +227,9 @@
 
 
 		/// <summary>
-		/// Get texture that is currently showing
+		/// Get texture at playhead time.
 		/// </summary>
-		/// <returns>Texture that is currently showing</returns>
-		private MTexturePart GetTextureAt(float playhead)
+		public MTexturePart GetTextureAt(float playhead)
 		{
 			float timeLeft = playhead;
 			int i = 0;
@@ -259,6 +258,16 @@
 		public MTexturePart GetTexture(int index)
 		{
 			return mFrames[index].mTexture;
+		}
+
+
+
+		/// <summary>
+		/// Get the number of frames in this animation.
+		/// </summary>
+		public int GetNumFrames()
+		{
+			return mFrames.Length;
 		}
 
 		#endregion rDraw
@@ -348,6 +357,14 @@
 			mPlayType = type;
 		}
 
+
+		/// <summary>
+		/// Make it play only once
+		/// </summary>
+		public void MakeOncePlay()
+		{
+			mNumRepeats = 1;
+		}
 
 
 		/// <summary>

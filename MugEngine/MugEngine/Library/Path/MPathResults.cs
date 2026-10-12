@@ -3,7 +3,7 @@
 /// <summary>
 /// Describes the result of a path find.
 /// </summary>
-public struct MPathResults<T> where T : class, IMGraphNode<T>
+public struct MPathResults<T> where T : IMGraphNode<T>
 {
 	public Dictionary<T, T> mCameFrom;
 	public Dictionary<T, float> mDistances;
@@ -33,6 +33,23 @@ public struct MPathResults<T> where T : class, IMGraphNode<T>
 		return float.MaxValue;
 	}
 
+
+	public T GetClosestCameFromNode(T node)
+	{
+		T closest = node;
+		float dist = 0.0f;
+		foreach(T child in mCameFrom.Keys)
+		{
+			float newDist = node.PathNeighbourDistance(child);
+			if (dist == 0.0f || newDist < dist)
+			{
+				closest = child;
+				dist = newDist;
+			}
+		}
+
+		return closest;
+	}
 
 
 	/// <summary>

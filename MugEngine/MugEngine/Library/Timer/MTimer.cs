@@ -3,12 +3,13 @@
 	/// <summary>
 	/// Simple timer/stopwatch class.
 	/// </summary>
-	public class MTimer : IMUpdate
+	public struct MTimer : IMUpdate
 	{
 		#region rMembers
 
 		bool mPlaying;
-		protected float mElapsedTime;
+		float mElapsedTime;
+		float mTimeScale = 1.0f;
 
 		#endregion rMembers
 
@@ -43,7 +44,7 @@
 		{
 			if (mPlaying)
 			{
-				mElapsedTime += info.mDelta;
+				mElapsedTime += info.mDelta * mTimeScale;
 			}
 		}
 
@@ -125,6 +126,17 @@
 		public void SetElapsed(float time)
 		{
 			mElapsedTime = time;
+		}
+
+
+
+
+		/// <summary>
+		/// Set rate of time increment
+		/// </summary>
+		public void SetTimeScale(float scale)
+		{
+			mTimeScale = scale;
 		}
 
 		#endregion rUtility

@@ -1,27 +1,26 @@
-﻿namespace MugEngine.Scene.Level
+﻿namespace MugEngine.Scene;
+
+public class MTileMapLevel<P> : MLevel where P : struct, IMTilePolicy
 {
-	public class MTileMapLevel<P> : MLevel where P : struct, IMTilePolicy
+	MTileMap<P> mTileMap;
+
+	public MTileMapLevel(MTileMap<P> tileMap) : base()
 	{
-		MTileMap<P> mTileMap;
+		mTileMap = tileMap;
+	}
 
-		public MTileMapLevel(MTileMap<P> tileMap) : base()
-		{
-			mTileMap = tileMap;
-		}
+	public override void Update(MUpdateInfo info)
+	{
+		mTileMap.Update(GetScene(), info);
+	}
 
-		public override void Update(MScene scene, MUpdateInfo info)
-		{
-			mTileMap.Update(scene, info);
-		}
+	public override bool QueryCollides(Rectangle bounds, MCardDir travelDir, MCollisionFlags flags)
+	{
+		return mTileMap.QueryCollides(bounds, travelDir, flags);
+	}
 
-		public override bool QueryCollides(Rectangle bounds, MCardDir travelDir, MCollisionFlags flags)
-		{
-			return mTileMap.QueryCollides(bounds, travelDir, flags);
-		}
-
-		public override void Draw(MScene scene, MDrawInfo info)
-		{
-			mTileMap.Draw(scene, info);
-		}
+	public override void Draw(MDrawInfo info)
+	{
+		mTileMap.Draw(GetScene(), info);
 	}
 }

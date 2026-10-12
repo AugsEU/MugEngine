@@ -9,7 +9,7 @@ namespace MugEngine.Library;
 /// O(1) Clear
 /// No safety!
 /// </summary>
-internal class MStructArray<T> : IList<T> where T : struct
+public class MStructArray<T> : IList<T> where T : struct
 {
 	#region rMembers
 
@@ -145,6 +145,13 @@ internal class MStructArray<T> : IList<T> where T : struct
 	IEnumerator IEnumerable.GetEnumerator()
 	{
 		return GetEnumerator();
+	}
+
+
+	public void RemoveInplace(int index)
+	{
+		mData[index] = mData[mHead-1];
+		mHead--;
 	}
 
 	#endregion rInterface

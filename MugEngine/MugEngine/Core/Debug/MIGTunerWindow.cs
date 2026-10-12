@@ -42,7 +42,7 @@ public class MIGTunerWindow<T> : MImGuiWindow where T : struct
 			MTuner<T>.SaveValues(mXmlPath);
 		}
 		ImGui.SameLine();
-		if(ImGui.Button("Bounds"))
+		if (ImGui.Button("Bounds"))
 		{
 			mFloatRanges.Clear();
 		}
@@ -82,6 +82,14 @@ public class MIGTunerWindow<T> : MImGuiWindow where T : struct
 					field.SetValueDirect(__makeref(obj), intValue);
 				}
 			}
+			else if(field.FieldType == typeof(bool))
+			{
+				bool boolValue = (bool)value;
+				if (ImGui.Checkbox(field.Name, ref boolValue))
+				{
+					field.SetValueDirect(__makeref(obj), boolValue);
+				}
+			}
 			else if (field.FieldType.IsValueType) // Nested struct
 			{
 				if (ImGui.CollapsingHeader(field.Name))
@@ -105,13 +113,16 @@ public class MIGTunerWindow<T> : MImGuiWindow where T : struct
 			return minMax;
 		}
 
-		minMax = (0.0f, 1.0f);
+		minMax = (0.0f, value * 3.0f);
 		if (value < 0.0f)
 		{
 			minMax = (value * 3.0f, value * 3.0f);
 		}
+		else if(value == 0.0f)
+		{
+			minMax = (0.0f, 1.0f);
+		}
 
-		minMax = (0.0f, value * 3.0f);
 
 		mFloatRanges.Add(field, minMax);
 		return minMax;

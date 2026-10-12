@@ -222,6 +222,16 @@
 			return new Color(r, g, b);
 		}
 
+
+		/// <summary>
+		/// Given a delta time and a rate of occurence, what is the chance that this
+		/// frame is triggered?
+		/// </summary>
+		public bool ChanceOverTime(float dt, float period)
+		{
+			return GetUnitFloat() < (dt / period);
+		}
+
 		#endregion rAccessors
 	}
 }

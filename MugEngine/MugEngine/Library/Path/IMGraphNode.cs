@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace MugEngine.Library;
 
-namespace MugEngine.Library;
-
-public interface IMGraphNode<T> where T : class
+public interface IMGraphNode<T>
 {
 	float PathNeighbourDistance(T other);
 
 	float PathHeuristic(T other);
 
 	IEnumerable<T> PathNeighbours();
+
+	bool IsSameNodeAs(T other);
 }

@@ -88,7 +88,7 @@ public class MInputHistory
 	/// </summary>
 	public MInputSnapshot SnapshotFromFrames(int frames)
 	{
-		if (mHistory.Count < frames)
+		if (mHistory.Count <= frames)
 		{
 			return MInputSnapshot.Default;
 		}

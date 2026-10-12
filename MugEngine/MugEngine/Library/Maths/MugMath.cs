@@ -5,6 +5,16 @@
 	/// </summary>
 	public static class MugMath
 	{
+		#region rConstants
+
+		public const float SQRT_2 = 1.41421356237f;
+		public const float I_SQRT_2 = 0.70710678118f;
+
+		#endregion rConstants
+
+
+
+
 		#region rVector
 
 		/// <summary>
@@ -154,6 +164,15 @@
 		public static int CmpLength(this Vector2 v, float l)
 		{
 			return v.LengthSquared().CompareTo(l*l);
+		}
+
+
+		/// <summary>
+		/// Reduce the length of a vector
+		/// </summary>
+		public static Vector2 ReducedLen(this Vector2 v, float l)
+		{
+			return new Vector2(MoveToZero(v.X, l), MoveToZero(v.Y, l));
 		}
 
 		#endregion rVector
@@ -385,6 +404,33 @@
 			throw new Exception("How did we get here?");
 		}
 
+
+
+		/// <summary>
+		/// Sort two numbers
+		/// </summary>
+		public static (T, T) MinMax<T>(T n1, T n2) where T : IComparable<T>
+		{
+			if(n1.CompareTo(n2) < 0)
+			{
+				return (n1, n2);
+			}
+			else
+			{
+				return (n2, n1);
+			}
+		}
+
+
+
+		/// <summary>
+		/// Are two floats approximately equal?
+		/// </summary>
+		public static bool ApproxEqual(float a, float b, float epsilon = 0.00001f)
+		{
+			return MathF.Abs(a-b) <= epsilon;
+		}
+
 		#endregion rNumber
 
 
@@ -449,6 +495,56 @@
 		}
 
 
+		/// <summary>
+		/// Get minimal rectangle that includes both points
+		/// </summary>
+		public static Rectangle GetBoundingRectangle(Point pt1, Point pt2)
+		{
+			(int xMin, int xMax) = MinMax(pt1.X, pt2.X);
+			(int yMin, int yMax) = MinMax(pt1.Y, pt2.Y);
+
+			return new Rectangle(xMin, yMin, xMax - xMin, yMax - yMin);
+		}
+
+
+
+		/// <summary>
+		/// Get minimal rectangle that includes the rectangle and the point
+		/// </summary>
+		public static Rectangle GetBoundingRectangle(Rectangle rect, Point pt)
+		{
+			int x = rect.X;
+			int y = rect.Y;
+			int w = rect.Width;
+			int h = rect.Height;
+
+			if(pt.X > rect.X)// Point is to the right of the origin
+			{
+				// Enlarge rect to fit point
+				w = Math.Max(rect.Width, pt.X - rect.X);
+			}
+			else// Point is to the left of the origin
+			{
+				int r = rect.Right;
+				x = Math.Min(rect.X, pt.X);
+				w = r - x;
+			}
+
+			if (pt.Y > rect.Y)// Point is below the origin
+			{
+				// Enlarge rect to fit point
+				h = Math.Max(rect.Height, pt.Y - rect.Y);
+			}
+			else// Point above the origin
+			{
+				int b = rect.Bottom;
+				y = Math.Min(rect.Y, pt.Y);
+				h = b - y;
+			}
+
+			return new Rectangle(x, y, w, h);
+		}
+
 
 		/// <summary>
 		/// Get adjacent points.
@@ -507,6 +603,57 @@
 		public static Point Multiply(this Point pt, int m)
 		{
 			return new Point(pt.X * m, pt.Y * m);
+		}
+
+
+
+		/// <summary>
+		/// Get distance squared
+		/// </summary>
+		public static float DistSq(Point a, Point b)
+		{
+			int dx = a.X - b.X;
+			int dy = a.Y - b.Y;
+
+			return dx * dx + dy * dy;
+		}
+
+
+
+		/// <summary>
+		/// Get distance between points
+		/// </summary>
+		public static float Dist(Point a, Point b)
+		{
+			int dx = a.X - b.X;
+			int dy = a.Y - b.Y;
+
+			return MathF.Sqrt(dx * dx + dy * dy);
+		}
+
+
+
+		/// <summary>
+		/// Get manhattan distance between points
+		/// </summary>
+		public static float ManhattanDist(Point a, Point b)
+		{
+			int dx = a.X - b.X;
+			int dy = a.Y - b.Y;
+
+			return Math.Abs(dx) + Math.Abs(dy);
+		}
+
+
+
+		/// <summary>
+		/// Compare the distance between two points
+		/// Returns negative if the distance between is less than d
+		/// Returns positive if the distance between is more than d
+		/// </summary>
+		public static int CmpDist(Point a, Point b, float d)
+		{
+			return DistSq(a, b).CompareTo(d*d);
 		}
 
 
@@ -604,6 +751,129 @@
 			}
 
 			throw new NotImplementedException();
+		}
+
+
+
+		/// <summary>
+		/// Which compass direction should you go if you are at "from" and going to "to"
+		/// Includes margin of error.
+		/// </summary>
+		public static MCompassDir? GetDirectionToGo(Point from, Point to, int delta = 3)
+		{
+			bool east = from.X + delta < to.X;
+			bool west = from.X > to.X + delta;
+
+			bool north = from.Y > to.Y + delta;
+			bool south = from.Y + delta < to.Y;
+
+			if (east)
+			{
+				if (north)
+				{
+					return MCompassDir.NE;
+				}
+				else if (south)
+				{
+					return MCompassDir.SE;
+				}
+				else
+				{
+					return MCompassDir.E;
+				}
+			}
+			else if(west)
+			{
+				if (north)
+				{
+					return MCompassDir.NW;
+				}
+				else if (south)
+				{
+					return MCompassDir.SW;
+				}
+				else
+				{
+					return MCompassDir.W;
+				}
+			}
+			else if(north)
+			{
+				return MCompassDir.N;
+			}
+			else if(south)
+			{
+				return MCompassDir.S;
+			}
+
+			return null;
+		}
+
+
+		/// <summary>
+		/// Convert vector2 to a compass dir
+		/// </summary>
+		public static MCompassDir ToCompass(this Vector2 vector)
+		{
+			// Draw these regions on desmos to make sense of this.
+			bool l1 = 2.0f * vector.X + vector.Y > 0;
+			bool l2 = 2.0f * vector.X - vector.Y > 0;
+			bool l3 = 0.5f * vector.X + vector.Y > 0;
+			bool l4 = 0.5f * vector.X - vector.Y > 0;
+
+			MCompassDir dir;
+			if(l1)
+			{
+				if(l4)
+				{
+					if(l3)
+					{
+						dir = MCompassDir.E;
+					}
+					else
+					{
+						dir = MCompassDir.NE;
+					}
+				}
+				else
+				{
+					if(l2)
+					{
+						dir = MCompassDir.SE;
+					}
+					else
+					{
+						dir = MCompassDir.S;
+					}
+				}
+			}
+			else
+			{
+				if(l4)
+				{
+					if(l2)
+					{
+						dir = MCompassDir.N;
+					}
+					else
+					{
+						dir = MCompassDir.NW;
+					}
+				}
+				else
+				{
+					if(l3)
+					{
+						dir = MCompassDir.SW;
+					}
+					else
+					{
+						dir = MCompassDir.W;
+					}
+				}
+			}
+
+			return dir;
 		}
 
 		#endregion rGeom

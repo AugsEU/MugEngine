@@ -18,7 +18,7 @@ public static class MugXML
 			return defaultVal;
 		}
 
-		return float.Parse(node.InnerText, CultureInfo.InvariantCulture.NumberFormat);
+		return MFloat.Parse(node.InnerText);
 	}
 
 
@@ -33,7 +33,7 @@ public static class MugXML
 			return defaultVal;
 		}
 
-		return int.Parse(node.InnerText, CultureInfo.InvariantCulture.NumberFormat);
+		return MInt.Parse(node.InnerText);
 	}
 
 
@@ -47,7 +47,7 @@ public static class MugXML
 			return defaultVal;
 		}
 
-		return ulong.Parse(node.InnerText, CultureInfo.InvariantCulture.NumberFormat);
+		return MULong.Parse(node.InnerText);
 	}
 
 
@@ -93,7 +93,7 @@ public static class MugXML
 	/// <summary>
 	/// Parse vector from xml node. Default = Zero
 	/// </summary>
-	static public Vector2 GetVector(XmlNode node)
+	static public Vector2 GetVector2(XmlNode node)
 	{
 		XmlNode xNode = node.SelectSingleNode("x");
 		XmlNode yNode = node.SelectSingleNode("y");
@@ -138,7 +138,7 @@ public static class MugXML
 		XmlNode wNode = node.SelectSingleNode("width");
 		XmlNode hNode = node.SelectSingleNode("height");
 
-		return new MRect2f(GetVector(node), GetFloat(wNode), GetFloat(hNode));
+		return new MRect2f(GetVector2(node), GetFloat(wNode), GetFloat(hNode));
 	}
 
 

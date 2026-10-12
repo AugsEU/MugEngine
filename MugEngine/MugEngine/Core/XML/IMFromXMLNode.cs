@@ -2,7 +2,7 @@
 
 namespace MugEngine.Core;
 
-public interface IMFromXMLNode<T> where T : class, IMFromXMLNode<T>
+public interface IMFromXMLNode<T> where T : IMFromXMLNode<T>
 {
 	static abstract T FromNode(XmlNode node);
 }

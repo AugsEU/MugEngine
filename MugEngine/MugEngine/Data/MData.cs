@@ -13,6 +13,7 @@ public class MData : MSingleton<MData>
 	List<MDataTheme> mActiveThemes;
 
 	Dictionary<string, MAnimationData> mAnimationDataCache;
+	Dictionary<string, SpriteFont> mIDToSpriteFont = new();
 
 	#endregion rMembers
 
@@ -68,6 +69,23 @@ public class MData : MSingleton<MData>
 
 
 	/// <summary>
+	/// Generates a new animator from an XML file.
+	/// </summary>
+	public MAnimation TryLoadAnimation(string path)
+	{
+		if(path is null)
+		{
+			return null;
+		}
+
+		MAnimationData animData = LoadAnimData(path);
+
+		return animData.GenerateAnimation();
+	}
+
+
+
+	/// <summary>
 	/// Load animator data
 	/// </summary>
 	private MAnimationData LoadAnimData(string alias)
@@ -101,6 +119,30 @@ public class MData : MSingleton<MData>
 		string realPath = GetRemappedPath(alias);
 
 		return LDtkFile.FromFile(GetRemappedPath(alias));
+	}
+
+
+	/// <summary>
+	/// Load a font in initialisation
+	/// </summary>
+	public void InitFont(string id, string filePath)
+	{
+		SpriteFont sf = mContentManager.Load<SpriteFont>(filePath);
+		mIDToSpriteFont.Add(id, sf);
+	}
+
+
+	/// <summary>
+	/// Get a font from the bank.
+	/// </summary>
+	public SpriteFont GetFont(string id)
+	{
+		if(mIDToSpriteFont.TryGetValue(id, out SpriteFont font))
+		{
+			return font;
+		}
+
+		return null;
 	}
 
 	#endregion rLoadUnload
@@ -160,6 +202,25 @@ public class MData : MSingleton<MData>
 		}
 
 		return alias;
+	}
+
+
+
+	/// <summary>
+	/// Find all files wtihin content folder that match pattern
+	/// </summary>
+	public List<string> SearchRecursively(string pattern, string subFolder = "")
+	{
+		List<string> foundFiles = new List<string>();
+
+		string contentPath = Path.Join(mContentManager.RootDirectory, subFolder);
+
+		if (Directory.Exists(contentPath))
+		{
+			foundFiles.AddRange(Directory.GetFiles(contentPath, pattern, SearchOption.AllDirectories));
+		}
+
+		return foundFiles;
 	}
 
 	#endregion rUtil

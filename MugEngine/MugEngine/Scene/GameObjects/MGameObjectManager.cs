@@ -40,7 +40,7 @@
 		/// </summary>
 		public override void Update(MUpdateInfo info)
 		{
-			mLevel?.Update(GetParent(), info);
+			mLevel?.Update(info);
 
 			// Copy over in case collection changes. @perf
 			mUpdateList.Clear();
@@ -68,7 +68,7 @@
 		/// </summary>
 		public override void Draw(MDrawInfo info)
 		{
-			mLevel?.Draw(GetParent(), info);
+			mLevel?.Draw(info);
 
 			foreach (MGameObject go in ActiveObjects())
 			{
@@ -138,7 +138,7 @@
 		public U CreateNew<U>() where U : MGameObject, new()
 		{
 			U newGameObject = new();
-			newGameObject.SetScene(GetParent());
+			newGameObject.SetScene(GetScene());
 			return newGameObject;
 		}
 
@@ -151,7 +151,7 @@
 		public void Add(MGameObject go)
 		{
 			mObjects.Add(go);
-			go.SetScene(GetParent());
+			go.SetScene(GetScene());
 			go.PostInitSetup();
 		}
 
@@ -224,13 +224,13 @@
 		/// <summary>
 		/// Get all game objects of a certain type.
 		/// </summary>
-		public IEnumerable<MGameObject> GetAll<T>()
+		public IEnumerable<T> GetAll<T>()
 		{
 			foreach (MGameObject go in ActiveObjects())
 			{
-				if (go is T)
+				if (go is T tgo)
 				{
-					yield return go;
+					yield return tgo;
 				}
 			}
 		}
@@ -271,6 +271,23 @@
 
 
 		/// <summary>
+		/// Get all game objects in a rectangle of a type.
+		/// </summary>
+		public IEnumerable<T> GetInRect<T>(Rectangle rect)
+		{
+			// TO DO: Make this performant
+			foreach (MGameObject go in ActiveObjects())
+			{
+				if (go.BoundsRect().Intersects(rect) && go is T subTypeGo)
+				{
+					yield return subTypeGo;
+				}
+			}
+		}
+
+
+
+		/// <summary>
 		/// Add some terrain that things can collide with.
 		/// </summary>
 		public void LoadLevel(MLevel level)
@@ -280,7 +297,8 @@
 
 			// Start new level
 			mLevel = level;
-			level.BeginLevel(this);
+			level.SetScene(GetScene());
+			level.BeginLevel();
 		}
 
 
@@ -292,7 +310,7 @@
 		{
 			if (mLevel is not null)
 			{
-				mLevel.EndLevel(this);
+				mLevel.EndLevel();
 				mLevel = null;
 			}
 		}

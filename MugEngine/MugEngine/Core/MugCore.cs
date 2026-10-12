@@ -16,7 +16,7 @@ public class MugCore : MSingleton<MugCore>
 	GraphicsDeviceManager mGraphics;
 
 #if DEBUG
-	bool mShowImGui = true;
+	bool mShowImGui = false;
 #endif // DEBUG
 
 	#endregion rMembers
@@ -73,7 +73,7 @@ public class MugCore : MSingleton<MugCore>
 		MScreenManager.I.Update(info);
 
 #if IMGUI_ON
-		if(MugInput.I.DebugButtonPressed(Keys.F11))
+		if(MugInput.I.DebugButtonPressed(Keys.F10))
 		{
 			mShowImGui = !mShowImGui;
 		}
@@ -146,6 +146,28 @@ public class MugCore : MSingleton<MugCore>
 		return mSettings.mNumLayers;
 	}
 
-	#endregion rAccess
+
+
+	/// <summary>
+	/// Get screen size default
+	/// </summary>
+	public Point GetResolution()
+	{
+		return mSettings.mResolution;
+	}
+
+	/// <summary>
+	/// Is ImGui showing?
+	/// </summary>
+	public bool IsImGuiShowing()
+	{
+#if DEBUG
+		return mShowImGui;
+#else // DEBUG
+		return false;
+#endif // DEBUG
+	}
+
+#endregion rAccess
 }
 
