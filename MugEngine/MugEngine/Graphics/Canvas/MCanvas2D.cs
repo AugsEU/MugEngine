@@ -428,6 +428,7 @@ public class MCanvas2D : IMUpdate
 	/// </summary>
 	public void DrawTexture(MTexturePart texture, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effect, int layer)
 	{
+		position = MugMath.Round(position);
 		mBatcher.Draw(texture.mTexture, position, texture.mUV, color, rotation, origin, scale, effect, GetDepth(layer));
 	}
 
