@@ -77,7 +77,7 @@ public static class MugIter
 			if (predicate(item))
 			{
 				// With probability 1/count, replace the current result
-				if (count == 0 || rng.GetIntRange(0, count-1) == 0)
+				if (count == 0 || rng.GetIntRange(0, count) == 0)
 				{
 					result = item;
 				}
