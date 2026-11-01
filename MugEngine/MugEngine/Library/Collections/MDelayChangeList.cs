@@ -9,13 +9,13 @@ public class MDelayChangeList<T> : IList<T> where T : class
 {
 	List<T> mList;
 	HashSet<T> mDeletePool;
-	List<T> mAddPool;
+	HashSet<T> mAddPool;
 
 	public MDelayChangeList()
 	{
 		mList = new();
 		mDeletePool = new HashSet<T>();
-		mAddPool = new List<T>();
+		mAddPool = new HashSet<T>();
 	}
 
 
@@ -117,12 +117,15 @@ public class MDelayChangeList<T> : IList<T> where T : class
 
 	public bool Remove(T item)
 	{
-#if DEBUG // Perf hack: do not allow this case. But it should normally return false
+		if(mAddPool.Remove(item))
+		{
+			return true;
+		}
+
 		if (!mList.Contains(item))
 		{
-			throw new Exception("Can't delete element no in list.");
+			return false;
 		}
-#endif // DEBUG
 
 		mDeletePool.Add(item);
 		return true;

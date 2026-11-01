@@ -5,8 +5,7 @@
 		#region rMembers
 
 		MObjectPool<MGameObject> mPooledObjects;
-		List<MGameObject> mObjects;
-		List<MGameObject> mUpdateList;
+		MDelayChangeList<MGameObject> mObjects;
 		MLevel mLevel;
 
 		#endregion rMembers
@@ -23,8 +22,7 @@
 		public MGameObjectManager()
 		{
 			mPooledObjects = new MObjectPool<MGameObject>();
-			mObjects = new List<MGameObject>();
-			mUpdateList = new List<MGameObject>(1024);
+			mObjects = new MDelayChangeList<MGameObject>();
 		}
 
 		#endregion rInit
@@ -42,17 +40,11 @@
 		{
 			mLevel?.Update(info);
 
-			// Copy over in case collection changes. @perf
-			mUpdateList.Clear();
 			foreach(MGameObject go in ActiveObjects())
-			{
-				mUpdateList.Add(go);
-			}
-
-			foreach(MGameObject go in mUpdateList)
 			{
 				go.Update(info);
 			}
+			mObjects.ProcessAddsDeletes();
 		}
 
 		#endregion rUpdate
@@ -299,6 +291,8 @@
 			mLevel = level;
 			level.SetScene(GetScene());
 			level.BeginLevel();
+
+			mObjects.ProcessAddsDeletes();
 		}
 
 
